@@ -2,8 +2,8 @@
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Core.Entities;
-using WebAPI.Core.Interfaces;
+using WebAPI.Domain.Core.Entities;
+using WebAPI.Domain.Core.Interfaces;
 using WebAPI.Infrastructure.Data.Helpers;
 
 namespace WebAPI.Presentation.Controllers
