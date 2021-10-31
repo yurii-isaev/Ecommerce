@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
-using WebAPI.Authentication.Data.Entities;
 
 namespace WebAPI.Authentication.Infrastructure
 {

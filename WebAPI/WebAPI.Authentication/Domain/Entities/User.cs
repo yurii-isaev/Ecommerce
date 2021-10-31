@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity;
 
-namespace WebAPI.Authentication.Data.Entities
+namespace WebAPI.Authentication.DataAccess.Entities
 {
     public class User : IdentityUser
     {

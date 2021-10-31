@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WebAPI.Authentication.Models
+namespace WebAPI.Authentication.Domain.Models
 {
     /// <summary>
     /// Login view model as contract form.

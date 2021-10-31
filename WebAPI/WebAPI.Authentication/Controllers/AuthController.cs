@@ -1,17 +1,19 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using WebAPI.Authentication.Data.Entities;
+using WebAPI.Authentication.DataAccess.Entities;
+using WebAPI.Authentication.Domain.Models;
 using WebAPI.Authentication.Infrastructure;
-using WebAPI.Authentication.Models;
+using WebAPI.Authentication.UseCases.Requests;
 
 namespace WebAPI.Authentication.Controllers
 {
@@ -19,15 +21,27 @@ namespace WebAPI.Authentication.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        private readonly JwtConfig _jwtConfig;
+        private IMediator _mediator = null!;
 
-        public AuthController(UserManager<User> manager, SignInManager<User> signManager, IOptions<JwtConfig> jwtConfig)
+        protected IMediator Mediator => _mediator ??= HttpContext
+            .RequestServices
+            .GetRequiredService<IMediator>();
+        
+        /// <summary>
+        /// Get all user from database.   
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// POST /auth/GetAllUsers.
+        /// </remarks>
+        /// <returns>User list.</returns>
+        /// <response code="200">Success.</response>
+        // [Authorize(Roles = "Admin")]
+        [HttpGet("GetAllUsers")]
+        public async Task<ActionResult<IEnumerable>> GetUserList()
         {
-            _userManager = manager;
-            _signInManager = signManager;
-            _jwtConfig = jwtConfig.Value;
+            var request = new GetUserListQuery();
+            return Ok(await Mediator.Send(request));
         }
         
         [HttpPost("RegisterUser")]

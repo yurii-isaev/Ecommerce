@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using WebAPI.Authentication.Data.Entities;
+using WebAPI.Authentication.DataAccess.Entities;
 
 namespace WebAPI.Authentication.Infrastructure
 {

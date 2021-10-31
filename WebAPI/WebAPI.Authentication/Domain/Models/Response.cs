@@ -1,4 +1,4 @@
-namespace WebAPI.Authentication.Models
+namespace WebAPI.Authentication.Domain.Models
 {
     public class Response
     {

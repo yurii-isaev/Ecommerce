@@ -1,4 +1,3 @@
-using AutoMapper.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebAPI.DataAccess.Persistence;
 using WebAPI.DataAccess.Repositories;
@@ -9,7 +8,7 @@ namespace WebAPI.DataAccess
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddDataAccess(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddDataAccess(this IServiceCollection services)
         {
             services.AddScoped(p => p.GetService<AppDbContext>());
             services.AddScoped<ICrudRepository<Employee>, EmployeeRepository>();

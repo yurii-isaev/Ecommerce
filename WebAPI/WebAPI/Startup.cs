@@ -6,13 +6,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-
 using WebAPI.DataAccess;
 using WebAPI.DataAccess.Infrastructure;
 using WebAPI.DataAccess.Persistence;
@@ -31,21 +29,19 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             #region Dependency Injection
-            
             services.AddControllers();
             services.AddUseCases();
-            services.AddDataAccess(Configuration);
-            
+            services.AddDataAccess();
             #endregion
 
             #region JSON Serializer
-            
+
             services.AddControllersWithViews().AddNewtonsoftJson(opts =>
             {
                 opts.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 opts.SerializerSettings.ContractResolver = new DefaultContractResolver();
             });
-            
+
             #endregion
 
             // Enable application context.
@@ -100,7 +96,7 @@ namespace WebAPI
             services.AddAutoMapper(typeof(AssemblyMappingProfile));
 
             #endregion
-            
+
             #region Static Files
 
             services.Configure<StaticFileOptions>(opts =>

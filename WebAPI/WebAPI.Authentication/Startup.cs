@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using WebAPI.Authentication.Data;
-using WebAPI.Authentication.Data.Entities;
+using WebAPI.Authentication.DataAccess;
+using WebAPI.Authentication.DataAccess.Entities;
 using WebAPI.Authentication.Infrastructure;
 
 namespace WebAPI.Authentication
@@ -26,7 +27,10 @@ namespace WebAPI.Authentication
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            #region DataBase Connection
+            var connection = Configuration["Connection:DefaultConnection"];
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connection!));
+            #endregion
 
             #region Role Identity
 
@@ -104,19 +108,18 @@ namespace WebAPI.Authentication
         /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+            
             app.UseRouting();
-
+            
+            app.UseCors("ApiCorsPolicy");
+            
             app.UseAuthentication();
-
+            
             app.UseAuthorization();
 
-            app.UseCors();
-
+            app.UseCookiePolicy();
+            
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }

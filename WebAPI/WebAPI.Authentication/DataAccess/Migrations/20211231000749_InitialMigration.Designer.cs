@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAPI.Authentication.Data;
+using WebAPI.Authentication.DataAccess;
 
 namespace WebAPI.Authentication.Data.Migrations
 {
