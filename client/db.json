@@ -1,4 +1,27 @@
 {
+   "products": [
+      {
+         "image": "Quick_Party_Snacks.jpg",
+         "name": "T-shirt 1",
+         "price": 100,
+         "article": "T1",
+         "avalible": true
+      },
+      {
+         "image": "Semi-Sweet_Chocolate_Chips.jpg",
+         "name": "T-shirt 2",
+         "price": 200,
+         "article": "T2",
+         "avalible": true
+      },
+      {
+         "image": "White_Corn_Tortilla_Chips.jpg",
+         "name": "T-shirt 3",
+         "price": 300,
+         "article": "T3",
+         "avalible": true
+      }
+   ],
    "posts": [
       {
          "id": "1",
