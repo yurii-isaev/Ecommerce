@@ -28,6 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Authentication"/>
         <Folder Include="Controllers"/>
         <Folder Include="Identity"/>
         <Folder Include="Photos"/>
