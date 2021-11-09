@@ -3,7 +3,7 @@
 			<h1>Catalog</h1>
 			<div class="v-catalog__list">
 				 <v-catalog-item
-						 v-for="product in products"
+						 v-for="product in PRODUCTS"
 						 :key="product.article"
 						 :product_data="product"
 						 @sendArticleToParent="getArticleFromChild"
@@ -13,26 +13,43 @@
 </template>
 
 <script>
+// import products from '../../db.json';
 import VCatalogItem from '@/components/v-catalog-item';
-import products from '../../db.json';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
 	 name: "v-catalog",
-	 
 	 components: {
 			VCatalogItem
 	 },
-	 
+	 props:{},
+	 data() {
+			return {
+				 // products: products.products
+			}
+	 },
+	 computed: {
+			...mapGetters([
+				 'PRODUCTS'
+			])
+	 },
 	 methods: {
 			getArticleFromChild(data) {
 				 console.log(data)
-			}
+			},
+			...mapActions([
+					'GET_PRODUCTS_FROM_API'
+			])
 	 },
-	 
-	 data() {
-			return {
-				 products: products.products
-			}
+	 mounted() {
+			this.GET_PRODUCTS_FROM_API().then((res) => {
+				 if (res.data) {
+						console.log("Load data successuly")
+				 }
+			}).catch((error) => {
+				 console.log(error);
+				 return error;
+			})
 	 }
 }
 </script>
