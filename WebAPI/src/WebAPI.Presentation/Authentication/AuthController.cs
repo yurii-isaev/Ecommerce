@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Domain.Core.Entities;
@@ -59,6 +61,37 @@ namespace WebAPI.Presentation.Authentication
                 return await Task.FromResult(
                     new ResponseModel(ResponseCode.Error, "",
                         result.Errors.Select(x => x.Description).ToArray()));
+            }
+            catch (Exception ex)
+            {
+                return await Task.FromResult(
+                    new ResponseModel(ResponseCode.Error, ex.Message, null));
+            }
+        }
+
+        /// <summary>
+        /// Get All User from database.   
+        /// </summary>
+        /// <returns>Response model</returns>
+        // [Authorize(Roles = "Admin")]
+        [HttpGet("GetAllUsers")]
+        public async Task<object> GetAllUsers()
+        {
+            try
+            {
+                var allUsersDto = new List<UserDto>();
+                var users = _userManager.Users.ToList();
+
+                foreach (var user in users)
+                {
+                    var roles = (await _userManager.GetRolesAsync(user)).ToList();
+
+                    allUsersDto.Add(
+                        new UserDto(user.FullName, user.Email, user.UserName, user.DateCreated, roles));
+                }
+                
+                return await Task.FromResult(
+                    new ResponseModel(ResponseCode.Ok, "", allUsersDto));
             }
             catch (Exception ex)
             {
