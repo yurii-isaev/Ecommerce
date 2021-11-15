@@ -1,35 +1,22 @@
 <template>
    <div class="v-main-wrapper"></div>
-   <v-catalog/>
-   <v-cart
-      v-if="CART.length"
-      :cart_data="CART"
-   />
+   <!-- Keeps the state when the URL changes-->
+   <router-view v-slot="{ Component }">
+      <keep-alive>
+         <component :is="Component" />
+      </keep-alive>
+   </router-view>
+   
 </template>
 
 <script>
-  import VCatalog from './v-catalog';
-  import VCart from './v-cart';
-  import { mapGetters } from 'vuex';
-
   export default {
      name: "v-main-wrapper",
-  
-     components: {
-        VCart,
-        VCatalog
-     },
-
+     
      data() {
         return {
            title: "Main wrapper"
         }
-     },
-  
-     computed: {
-        ...mapGetters([
-           'CART'
-        ])
      }
   }
 </script>

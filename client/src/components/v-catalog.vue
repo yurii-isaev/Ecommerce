@@ -1,6 +1,11 @@
 <template>
    <div class="v-catalog">
+      <router-link :to="{ name: 'cart' }">
+      <div class="v-catalog__link_to_cart">Cart: {{ CART.length }}</div>
+      </router-link>
+      
       <h1>Catalog</h1>
+      
       <div class="v-catalog__list">
          <v-catalog-item
             v-for="product in PRODUCTS"
@@ -13,25 +18,23 @@
 </template>
 
 <script>
-  // import products from '../../db.json';
-  import VCatalogItem from '@/components/v-catalog-item';
-  import { mapActions, mapGetters } from 'vuex';
+  import VCatalogItem from '@/components/v-catalog-item'
+  import { mapActions, mapGetters } from 'vuex'
 
   export default {
      name: "v-catalog",
+     
      components: {
         VCatalogItem
      },
-     data() {
-        return {
-           // products: products.products
-        }
-     },
+    
      computed: {
         ...mapGetters([
-           'PRODUCTS'
+           'PRODUCTS',
+           'CART'
         ])
      },
+     
      methods: {
         ...mapActions([
            'GET_PRODUCTS_FROM_API',
@@ -41,6 +44,8 @@
            this.ADD_TO_CART(data)
         },
      },
+     
+     // Load data check
      mounted() {
         this.GET_PRODUCTS_FROM_API().then((res) => {
            if (res.data) {
@@ -61,6 +66,13 @@
         flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
+     }
+     &__link_to_cart {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: $padding*2;
+        border: solid 1px;
      }
   }
 </style>

@@ -13,6 +13,7 @@
 		"json-server": "^1.0.0-alpha.23",
 		"vue": "^3.2.13",
 		"vue-loader": "^17.4.2",
+		"vue-router": "^4.3.0",
 		"vuex": "^4.0.2",
 		"webpack": "^5.90.3"
 	},
