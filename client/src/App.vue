@@ -1,15 +1,15 @@
 <template>
 	 <title>Ecommerce</title>
-	 <v-main-wrapper></v-main-wrapper>
+	 <main-wrapper></main-wrapper>
 </template>
 
 <script>
-import VMainWrapper from './components/v-main-wrapper';
+import MainWrapper from '@/components/main-wrapper';
 
 export default {
 	 name: 'App',
 	 components: {
-			VMainWrapper,
+			MainWrapper,
 	 }
 }
 </script>

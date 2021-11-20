@@ -1,16 +1,16 @@
 <template>
-   <div class="v-cart-item">
+   <div class="cart-item">
 
-      <img class="v-cart-item__image" alt="img" v-if="cart_item_data.image"
-           :src="require('../assets/images/' + cart_item_data.image)">
+      <img class="cart-item__image" alt="img" v-if="cart_item_data.image"
+           :src="require('@/assets/images/' + cart_item_data.image)">
 
-      <div class="v-cart-item__info">
+      <div class="cart-item__info">
          <p>{{ cart_item_data.name }}</p>
          <p>{{ cart_item_data.price }}</p>
          <p>{{ cart_item_data.article }}</p>
       </div>
 
-      <div class="v-cart-item__quantity">
+      <div class="cart-item__quantity">
          <p>Quantity:</p>
          <span>
              <span class="quantity__btn" @click="increment">+</span>
@@ -25,7 +25,7 @@
 
 <script>
   export default {
-     name: "v-cart-item", 
+     name: "cart-item", 
      
      props: {
         cart_item_data: {
@@ -53,7 +53,7 @@
 </script>
 
 <style lang="scss" scoped>
-  .v-cart-item {
+  .cart-item {
      display: flex;
      flex-wrap: nowrap;
      justify-content: space-between;

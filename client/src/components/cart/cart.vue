@@ -1,16 +1,16 @@
 <template>
-   <div class="v-cart"></div>
+   <div class="cart"></div>
 
    <keep-alive>
       <router-link :to="{name: 'catalog'}">
-         <div class="v-cart__back">Back to Catalog</div>
+         <div class="cart__back">Back to Catalog</div>
       </router-link>
    </keep-alive>
    
    <h1>Cart</h1>
    <p v-if="!CART.length">Cart is empty</p>
       
-   <v-cart-item 
+   <cart-item 
       v-for="(item, index) in CART"
       :key="item.article"
       :cart_item_data="item"
@@ -19,21 +19,21 @@
       @decrement="decrementItem(index)"
    />
    
-   <div class="v-cart__total">
-      <p class="v-cart__total_name">Total: </p>
+   <div class="cart__total">
+      <p class="cart__total_name">Total: </p>
       <p>{{cartTotalCart}} &#8381;</p>
    </div>
 </template>
 
 <script>
-  import VCartItem from './v-cart-item'
-  import { mapActions, mapGetters } from 'vuex'
+  import CartItem from '@/components/cart/cart-item';
+  import { mapActions, mapGetters } from 'vuex';
 
   export default {
      name: "v-cart",
      
      components: {
-        VCartItem
+        CartItem
      },
      
      props: {
@@ -53,17 +53,17 @@
         ]),
 
         incrementItem(index) {
-           this.INCREMENT_CART_ITEM(index)
+           this.INCREMENT_CART_ITEM(index);
         },
 
         decrementItem(index) {
-           this.DECREMENT_CART_ITEM(index)
+           this.DECREMENT_CART_ITEM(index);
         },
         
         deleteCartItem(index) {
            this.DELETE_FROM_CART(index);
         }
-     },
+     }, 
      
      computed: { // observer
         ...mapGetters([
@@ -71,21 +71,7 @@
         ]),
 
         cartTotalCart() {
-           let result = []
-
-           if (this.CART.length) {
-              for (let item of this.CART) {
-                 result.push(item.price * item.quantity)
-              }
-
-              result = result.reduce(function (sum, el) {
-                 return sum + el
-              }, 0)
-           } else {
-              return 0
-           }
-           
-           return result
+           return this.CART.reduce((total, item) => total + (item.price * item.quantity), 0);
         }
      }
   }
@@ -93,7 +79,7 @@
 
 
 <style lang="scss" scoped>
-  .v-cart {
+  .cart {
      margin-bottom: 100px;
      &__back {
         position: absolute;

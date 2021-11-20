@@ -1,13 +1,13 @@
 <template>
-   <div class="v-catalog">
+   <div class="catalog">
       <router-link :to="{ name: 'cart' }">
-      <div class="v-catalog__link_to_cart">Cart: {{ CART.length }}</div>
+      <div class="catalog__link_to_cart">Cart: {{ CART.length }}</div>
       </router-link>
       
       <h1>Catalog</h1>
       
-      <div class="v-catalog__list">
-         <v-catalog-item
+      <div class="catalog__list">
+         <catalog-item
             v-for="product in PRODUCTS"
             :key="product.article"
             :product_data="product"
@@ -18,14 +18,14 @@
 </template>
 
 <script>
-  import VCatalogItem from '@/components/v-catalog-item'
+  import CatalogItem from '@/components/catalog/catalog-item'
   import { mapActions, mapGetters } from 'vuex'
 
   export default {
      name: "v-catalog",
      
      components: {
-        VCatalogItem
+        CatalogItem
      },
     
      computed: {
@@ -60,7 +60,7 @@
 </script>
 
 <style lang="scss" scoped>
-  .v-catalog {
+  .catalog {
      &__list {
         display: flex;
         flex-wrap: wrap;

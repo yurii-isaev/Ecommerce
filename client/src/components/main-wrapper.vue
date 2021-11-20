@@ -1,5 +1,5 @@
 <template>
-   <div class="v-main-wrapper"></div>
+   <div class="main-wrapper"></div>
    <!-- Keeps the state when the URL changes-->
    <router-view v-slot="{ Component }">
       <keep-alive>
@@ -11,7 +11,7 @@
 
 <script>
   export default {
-     name: "v-main-wrapper",
+     name: "main-wrapper",
      
      data() {
         return {
@@ -22,7 +22,7 @@
 </script>
 
 <style lang="scss" scoped>
-  .v-main-wrapper {
+  .main-wrapper {
      display: flex;
      flex-direction: column;
      justify-content: center;
