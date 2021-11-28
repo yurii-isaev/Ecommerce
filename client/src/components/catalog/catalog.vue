@@ -1,5 +1,8 @@
 <template>
    <div class="catalog">
+
+      <notification-toast :messages="messages" />
+      
       <router-link :to="{ name: 'cart' }">
          <div class="catalog__link-to-cart">Cart: {{ CART.length }}</div>
       </router-link>
@@ -48,11 +51,13 @@
   import { mapActions, mapGetters } from 'vuex';
   import CatalogItem from '@/components/catalog/catalog-item';
   import CatalogItemSelect from '@/components/catalog/catalog-item-select';
+  import NotificationToast from '@/components/notifications/notification-toast';
 
   export default {
      name: "component-catalog",
 
      components: {
+        NotificationToast,
         CatalogItem,
         CatalogItemSelect
      },
@@ -67,7 +72,8 @@
            currentSelectedOption: 'all',
            sortedProducts: [],
            minPrice: 0,
-           maxPrice: 1000
+           maxPrice: 1000,
+           messages: []
         }
      },
 
@@ -86,10 +92,15 @@
         ...mapActions([
            'GET_PRODUCTS_FROM_API', 
            'ADD_TO_CART'
-        ]), 
-        
+        ]),
+
         addToCart(data) {
-           this.ADD_TO_CART(data);
+           this.ADD_TO_CART(data).then(() => {
+              let timeStamp = Date.now().toLocaleString();
+              this.messages.unshift({
+                 name: 'Product added to cart successfuly', icon: '', id: timeStamp
+              })
+           })
         },
 
         sortByCategories(selectedOption) {
