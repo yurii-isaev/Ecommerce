@@ -2,7 +2,7 @@
    "products": [
       {
          "image": "Quick_Party_Snacks.jpg",
-         "name": "T-shirt 1",
+         "name": "Quick Party Snacks",
          "price": 100.234234234,
          "article": "T1",
          "avalible": true,
@@ -10,7 +10,7 @@
       },
       {
          "image": "Semi-Sweet_Chocolate_Chips.jpg",
-         "name": "T-shirt 2",
+         "name": "Semi Sweet Chocolate Chips",
          "price": 200.23412341,
          "article": "T2",
          "avalible": true,
@@ -18,7 +18,7 @@
       },
       {
          "image": "White_Corn_Tortilla_Chips.jpg",
-         "name": "T-shirt 3",
+         "name": "White Corn Tortilla Chips",
          "price": 8300.2364125,
          "article": "T3",
          "avalible": true,

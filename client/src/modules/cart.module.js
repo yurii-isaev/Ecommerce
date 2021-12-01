@@ -3,7 +3,7 @@ const state = {
 };
 
 const mutations = {
-   SET_CART: (state, product) => {
+   SET_CART_VALUE: (state, product) => {
       if (state.cart.length) {
          let isProductExists = false;
          state.cart.map(function (item) {
@@ -33,24 +33,25 @@ const mutations = {
 };
 
 const actions = {
-   ADD_TO_CART({commit}, product) {
-      commit('SET_CART', product);
+   ACTION_ADD_TO_CART({commit}, product) {
+      commit('SET_CART_VALUE', product);
    },
-   DELETE_FROM_CART({commit}, index) {
+   
+   ACTION_DELETE_FROM_CART({commit}, index) {
       commit('REMOVE_FROM_CART', index);
    },
+   
    INCREMENT_CART_ITEM({commit}, index) {
       commit('INCREMENT', index);
    },
+   
    DECREMENT_CART_ITEM({commit}, index) {
       commit('DECREMENT', index);
    }
 };
 
 const getters = {
-   CART(state) {
-      return state.cart;
-   }
+   CART_STATE_VALUE: state => state.cart
 };
 
 export default {

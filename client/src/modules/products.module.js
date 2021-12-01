@@ -1,17 +1,25 @@
 import axios from 'axios';
 
 const state = {
-   products: []
+   products: [],
+   searchValue: ''
 };
 
 const mutations = {
+   SET_SEARCH_VALUE_TO_VUEX: (state, value) => {
+      state.searchValue = value;
+   },
    SET_PRODUCTS_TO_STATE: (state, products) => {
       state.products = products;
    }
 };
 
 const actions = {
-   GET_PRODUCTS_FROM_API({commit}) {
+   ACTION_SEARCH_VALUE_TO_STORE ({commit}, value) {
+      commit('SET_SEARCH_VALUE_TO_VUEX', value)
+   },
+
+   ACTION_GET_PRODUCTS_FROM_API({commit}) {
       return axios('http://localhost:3000/products', {
          method: "GET"
       }).then((products) => {
@@ -25,9 +33,8 @@ const actions = {
 };
 
 const getters = {
-   PRODUCTS(state) {
-      return state.products;
-   }
+   SEARCH_STATE_VALUE: state => state.searchValue,
+   PRODUCTS_STATE_VALUE: state => state.products,
 };
 
 export default {

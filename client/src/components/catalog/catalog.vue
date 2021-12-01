@@ -4,7 +4,7 @@
       <notification-toast :messages="messages" />
       
       <router-link :to="{ name: 'cart' }">
-         <div class="catalog__link-to-cart">Cart: {{ CART.length }}</div>
+         <div class="catalog__link-to-cart">Cart: {{ cart.length }}</div>
       </router-link>
 
       <h1>Catalog</h1>
@@ -52,7 +52,7 @@
   import CatalogItem from '../catalog/catalog-item';
   import CatalogItemSelect from '../catalog/catalog-item-select';
   import NotificationToast from '../notifications/notification-toast';
-  import { formatPrice, formatPriceWithSpaces } from '@filters/price.filter';
+  import { formatPrice, formatPriceWithSpaces } from '@/filters/price.filter';
 
   export default {
      name: "component-catalog",
@@ -80,36 +80,44 @@
 
      computed: {
         ...mapGetters([
-           'PRODUCTS',
-           'CART'
+           'PRODUCTS_STATE_VALUE',
+           'CART_STATE_VALUE',
+           'SEARCH_STATE_VALUE'
         ]),
 
+        products() {
+           return this.PRODUCTS_STATE_VALUE;
+        },
+        
+        cart() {
+           return this.CART_STATE_VALUE;
+        },
+
         filtredProducts() {
-           return this.sortedProducts.length ? this.sortedProducts : this.PRODUCTS;
+           return this.sortedProducts.length ? this.sortedProducts : this.products;
         },
      },
 
      methods: {
         ...mapActions([
-           'GET_PRODUCTS_FROM_API', 
-           'ADD_TO_CART'
+           'ACTION_GET_PRODUCTS_FROM_API', 
+           'ACTION_ADD_TO_CART'
         ]),
 
         formatPrice,
         formatPriceWithSpaces,
 
         addToCart(data) {
-           this.ADD_TO_CART(data).then(() => {
-              let timeStamp = Date.now().toLocaleString();
-              this.messages.unshift({
-                 name: 'Product added to cart successfuly', icon: '', id: timeStamp
-              })
+           this.ACTION_ADD_TO_CART(data);
+           let timeStamp = Date.now().toLocaleString();
+           this.messages.unshift({
+              name: 'Product added to cart successfuly', icon: '', id: timeStamp
            })
         },
 
         sortByCategories(selectedOption) {
-           const { minPrice, maxPrice, PRODUCTS } = this;
-           this.sortedProducts = PRODUCTS.filter(product => product.price >= minPrice && product.price <= maxPrice);
+           const { minPrice, maxPrice, products } = this;
+           this.sortedProducts = products.filter(product => product.price >= minPrice && product.price <= maxPrice);
 
            if (selectedOption) {
               this.sortedProducts = this.sortedProducts.filter(product => {
@@ -126,21 +134,31 @@
               this.minPrice = temp;
            }
            this.sortByCategories();
-        }, 
-        
-        async loadDataFromApi() {
-           try {
-              await this.GET_PRODUCTS_FROM_API();
-              this.sortByCategories();
-           } catch (error) {
-              console.error(error);
-              return error;
-           }
+        },
+
+        sortProductsBySearchValue(value) {
+           this.sortedProducts = [...this.products];
+           this.sortedProducts = value
+              ? this.products.filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
+              : this.products;
+        },
+     },
+
+     watch: {
+        SEARCH_STATE_VALUE() {
+           this.sortProductsBySearchValue(this.SEARCH_STATE_VALUE);
         }
-     }, 
+     },
      
      created() {
-        this.loadDataFromApi();
+        this.ACTION_GET_PRODUCTS_FROM_API().then((response) => {
+           if (response.data) {
+              this.sortByCategories();
+              this.sortProductsBySearchValue(this.SEARCH_STATE_VALUE);
+           }
+        }).catch((error) => {
+           console.error('Произошла ошибка при получении данных с API:', error);
+        });
      }
   }
 </script>

@@ -65,7 +65,7 @@
      
      methods: {
         ...mapActions([
-           'DELETE_FROM_CART',
+           'ACTION_DELETE_FROM_CART',
            'INCREMENT_CART_ITEM',
            'DECREMENT_CART_ITEM'
         ]),
@@ -79,7 +79,7 @@
         },
         
         deleteCartItem(index) {
-           this.DELETE_FROM_CART(index);
+           this.ACTION_DELETE_FROM_CART(index);
         },
 
         formatPrice,
@@ -106,7 +106,7 @@
         left: 0;
         padding: $padding*2 $padding*3;
         justify-content: center;
-        background: $background-yellow;
+        background: $background-black;
         color: #e0e0e0;
         font-size: 20px;
         &_name {

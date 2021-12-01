@@ -15,7 +15,7 @@
 </template>
 
 <script>
-  import { formatPrice, formatPriceWithSpaces } from '@filters/price.filter';
+  import { formatPrice, formatPriceWithSpaces } from '@/filters/price.filter';
   
   export default {
      name: "component-catalog-item", 
