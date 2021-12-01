@@ -3,7 +3,7 @@
       {
          "image": "Quick_Party_Snacks.jpg",
          "name": "T-shirt 1",
-         "price": 100,
+         "price": 100.234234234,
          "article": "T1",
          "avalible": true,
          "category": "snacks"
@@ -11,7 +11,7 @@
       {
          "image": "Semi-Sweet_Chocolate_Chips.jpg",
          "name": "T-shirt 2",
-         "price": 200,
+         "price": 200.23412341,
          "article": "T2",
          "avalible": true,
          "category": "chips"
@@ -19,7 +19,7 @@
       {
          "image": "White_Corn_Tortilla_Chips.jpg",
          "name": "T-shirt 3",
-         "price": 300,
+         "price": 8300.2364125,
          "article": "T3",
          "avalible": true,
          "category": "chips"

@@ -6,7 +6,7 @@
            v-bind:src="require('@/assets/images/' + product_data.image)">
 
       <p class="catalog-item__name">{{ product_data.name }}</p>
-      <p class="catalog-item__price">{{ product_data.price }} &#8381;</p>
+      <p class="catalog-item__price">{{ formatPriceWithSpaces(formatPrice(product_data.price)) }}</p>
 
       <button class="catalog-item__add_to_cart_btn btn"
               @click="addToCart"> Add to cart
@@ -15,27 +15,29 @@
 </template>
 
 <script>
+  import { formatPrice, formatPriceWithSpaces } from '@filters/price.filter';
+  
   export default {
-     name: "catalog-item", 
+     name: "component-catalog-item", 
      
      props: {
         product_data: {
            type: Object, 
-           default() {
-              return {}
-           }
+           default: () => {}
         }
-     },
+     }, 
      
      methods: {
         addToCart() {
            const productToAdd = Object.assign({}, this.product_data);
            productToAdd.quantity = 1;
-           
            // Send the product to the parent component via the addToCart event
            this.$emit('addToCart', productToAdd);
-        }
-     }
+           }, 
+        
+        formatPrice, 
+        formatPriceWithSpaces,
+     },
   }
 </script>
 

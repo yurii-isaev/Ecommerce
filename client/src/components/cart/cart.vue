@@ -2,16 +2,16 @@
    <div class="cart"></div>
 
    <keep-alive>
-      <router-link :to="{name: 'catalog'}">
+      <router-link :to="{ name: 'catalog' }">
          <div class="cart__back">Back to Catalog</div>
       </router-link>
    </keep-alive>
    
    <h1>Cart</h1>
-   <p v-if="!CART.length">Cart is empty</p>
+   <p v-if="cartIsEmpty">Cart is empty</p>
       
    <cart-item 
-      v-for="(item, index) in CART"
+      v-for="(item, index) in cart"
       :key="item.article"
       :cart_item_data="item"
       @deleteCartItem="deleteCartItem(index)"
@@ -21,16 +21,18 @@
    
    <div class="cart__total">
       <p class="cart__total_name">Total: </p>
-      <p>{{cartTotalCart}} &#8381;</p>
+      <p>{{ formatPriceWithSpaces(formatPrice(cartTotal)) }}</p>
+      
    </div>
 </template>
 
 <script>
-  import CartItem from '@/components/cart/cart-item';
   import { mapActions, mapGetters } from 'vuex';
-
+  import CartItem from '../cart/cart-item';
+  import { formatPrice, formatPriceWithSpaces } from '@/filters/price.filter';
+  
   export default {
-     name: "v-cart",
+     name: "component-cart",
      
      components: {
         CartItem
@@ -39,9 +41,25 @@
      props: {
         cart_data: {
            type: Array,
-           default() {
-              return []
-           }
+           default: () => []
+        }
+     },
+
+     computed: {
+        ...mapGetters([
+           'CART_STATE_VALUE' // observeble
+        ]),
+
+        cart() {
+           return this.CART_STATE_VALUE;
+        },
+
+        cartIsEmpty() {
+           return this.cart.length === 0;
+        },
+
+        cartTotal() {
+           return this.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
         }
      },
      
@@ -62,21 +80,13 @@
         
         deleteCartItem(index) {
            this.DELETE_FROM_CART(index);
-        }
-     }, 
-     
-     computed: { // observer
-        ...mapGetters([
-           'CART' // observeble
-        ]),
+        },
 
-        cartTotalCart() {
-           return this.CART.reduce((total, item) => total + (item.price * item.quantity), 0);
-        }
-     }
+        formatPrice,
+        formatPriceWithSpaces,
+     },
   }
 </script>
-
 
 <style lang="scss" scoped>
   .cart {

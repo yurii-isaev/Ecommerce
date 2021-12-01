@@ -1,12 +1,11 @@
 <template>
    <div class="cart-item">
-
       <img class="cart-item__image" alt="img" v-if="cart_item_data.image"
            :src="require('@/assets/images/' + cart_item_data.image)">
 
       <div class="cart-item__info">
          <p>{{ cart_item_data.name }}</p>
-         <p>{{ cart_item_data.price }}</p>
+         <p>{{ formatPriceWithSpaces(formatPrice(cart_item_data.price))}}</p>
          <p>{{ cart_item_data.article }}</p>
       </div>
 
@@ -18,21 +17,20 @@
             <span class="quantity__btn" @click="decrement">-</span>
          </span>
       </div>
-
       <button @click="deleteCartItem">Delete</button>
    </div>
 </template>
 
 <script>
+import { formatPrice, formatPriceWithSpaces } from '@/filters/price.filter';
+
   export default {
-     name: "cart-item", 
+     name: "component-cart-item", 
      
      props: {
         cart_item_data: {
            type: Object,
-           default() {
-              return {}
-           }
+           default: () => {}
         }
      },
 
@@ -47,7 +45,10 @@
         
         deleteCartItem() {
            this.$emit('deleteCartItem')
-        }
+        },
+
+        formatPrice,
+        formatPriceWithSpaces,
      }
   }
 </script>

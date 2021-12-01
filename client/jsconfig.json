@@ -7,6 +7,12 @@
       "paths": {
          "@/*": [
             "src/*"
+         ],
+         "@components*": [
+            "src/components/*"
+         ],
+         "@filters*": [
+            "src/filters/*"
          ]
       },
       "lib": [

@@ -17,13 +17,13 @@
          />
          <div class="catalog__filters-range-slider">
             <input
-               type="range" min="0" max="1000"
+               type="range" min="0" max="100000"
                step="10"
                v-model.number="minPrice"
                @change="setRangeSlider"
             >
             <input
-               type="range" min="0" max="1000"
+               type="range" min="0" max="100000"
                step="10"
                v-model.number="maxPrice" 
                @change="setRangeSlider"
@@ -31,8 +31,8 @@
          </div>
          
          <div class="catalog__filters-range-values">
-            <p>Min: {{ minPrice }}</p>
-            <p>Max: {{ maxPrice }}</p>
+            <p>Min: {{ formatPriceWithSpaces(formatPrice(minPrice)) }}</p>
+            <p>Max: {{ formatPriceWithSpaces(formatPrice(maxPrice)) }}</p>
          </div>
       </div>
 
@@ -49,9 +49,10 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex';
-  import CatalogItem from '@/components/catalog/catalog-item';
-  import CatalogItemSelect from '@/components/catalog/catalog-item-select';
-  import NotificationToast from '@/components/notifications/notification-toast';
+  import CatalogItem from '../catalog/catalog-item';
+  import CatalogItemSelect from '../catalog/catalog-item-select';
+  import NotificationToast from '../notifications/notification-toast';
+  import { formatPrice, formatPriceWithSpaces } from '@filters/price.filter';
 
   export default {
      name: "component-catalog",
@@ -72,7 +73,7 @@
            currentSelectedOption: 'all',
            sortedProducts: [],
            minPrice: 0,
-           maxPrice: 1000,
+           maxPrice: 100000,
            messages: []
         }
      },
@@ -93,6 +94,9 @@
            'GET_PRODUCTS_FROM_API', 
            'ADD_TO_CART'
         ]),
+
+        formatPrice,
+        formatPriceWithSpaces,
 
         addToCart(data) {
            this.ADD_TO_CART(data).then(() => {
