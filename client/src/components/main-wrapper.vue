@@ -35,6 +35,6 @@
      justify-content: center;
      //align-items: center;
      //max-width: 900px;
-     margin: 0 auto;
+     //margin: 0 auto;
   }
 </style>

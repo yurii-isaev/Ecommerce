@@ -3,9 +3,9 @@
 
       <notification-toast :messages="messages" />
       
-      <router-link :to="{ name: 'cart' }">
-         <div class="catalog__link-to-cart">Cart: {{ cart.length }}</div>
-      </router-link>
+<!--      <router-link :to="{ name: 'cart' }">-->
+<!--         <div class="catalog__link-to-cart">Cart: {{ cart.length }}</div>-->
+<!--      </router-link>-->
 
       <h1>Catalog</h1>
 

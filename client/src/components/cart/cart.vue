@@ -1,11 +1,11 @@
 <template>
    <div class="cart"></div>
 
-   <keep-alive>
-      <router-link :to="{ name: 'catalog' }">
-         <div class="cart__back">Back to Catalog</div>
-      </router-link>
-   </keep-alive>
+<!--   <keep-alive>-->
+<!--      <router-link :to="{ name: 'catalog' }">-->
+<!--         <div class="cart__back">Back to Catalog</div>-->
+<!--      </router-link>-->
+<!--   </keep-alive>-->
    
    <h1>Cart</h1>
    <p v-if="cartIsEmpty">Cart is empty</p>
@@ -22,8 +22,8 @@
    <div class="cart__total">
       <p class="cart__total_name">Total: </p>
       <p>{{ formatPriceWithSpaces(formatPrice(cartTotal)) }}</p>
-      
    </div>
+   
 </template>
 
 <script>
