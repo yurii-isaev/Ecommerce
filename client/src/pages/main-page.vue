@@ -1,5 +1,5 @@
 <template>
-   <div class='v-main-page'>
+   <div class='main-page'>
       <h1>Welcome to Online shop</h1>
       <p>
          <router-link :to="{ name: 'catalog' }">

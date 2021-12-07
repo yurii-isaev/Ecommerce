@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import Catalog from '@/components/catalog/catalog';
 import Cart from '@/components/cart/cart';
-import MainPage from '@/components/pages/main-page';
+import MainPage from '@/pages/main-page';
 
 const routes = [
    {

@@ -1,51 +1,64 @@
 <template>
-   <div class='header'>
-      <div class="header__nav-container">
-         <router-link :to="{ name: 'mainPage' }">
-            <img src="@/assets/logo/logo.png" alt="">
-         </router-link>
-         
-         <div class="header__nav-search">
-            <input type="text" v-model="searchValue">
-            <button class="header__nav-search-btn">
-               <i class="material-icons" @click="search(searchValue)">search</i>
-            </button>
-            <button class="header__nav-search-btn_clear">
-               <i class="material-icons" @click="clearSearchField">cancel</i>
-            </button>
+   <header class="header">
+      <router-link class="router-link" :to="{ name: 'mainPage' }">
+         <div class="text-section">
+            <img src="@/assets/logo/logo.png" alt="Logo" style="width:3.75rem"/>
+            <div class="text-content">
+               <h2 class="title">Vue cakes</h2>
+               <p class="description">Online store for ordering cakes</p>
+            </div>
          </div>
-            
-         <div class="header__nav-cart">
-            <li>
-               <router-link :to="{ name: 'cart' }">
-                  <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" 
-                       class="bi bi-cart-check" fill="currentColor" 
-                       xmlns="http://www.w3.org/2000/svg">
-                     <path fill-rule="evenodd" 
-                           d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm7 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                     <path fill-rule="evenodd" 
-                           d="M11.354 5.646a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L8 8.293l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                  </svg>
-                  <span class="header__nav-cart-quantity">{{ cart.length }}</span>
-               </router-link>
-            </li>
-         </div>
+      </router-link>
+
+      <div class="input-box">
+         <i class="uil uil-search"></i>
+         <input type="text" v-model="searchValue">
+         <button class="search-btn" @click="search(searchValue)">
+            <i class="material-icons">search</i>
+         </button>
+         <button class="search-btn_clear" @click="clearSearchField">
+            <i class="material-icons">cancel</i>
+         </button>
       </div>
-   </div>
+
+      <ul class="header-menu">
+         <li class="menu-item">
+            <button @click="switchLanguage('en')">
+               <img src="@/assets/graphics/vector/usa.svg" alt="United States Flag"/>
+            </button>
+         </li>
+         <li class="menu-item">
+            <router-link class="router-link" :to="{ name: 'cart' }">
+               <img src="@/assets/graphics/vector/cart.svg" alt="Cart"/>
+               <span class="cart-quantity-icon">{{ cart.length }}</span>
+            </router-link>
+         </li>
+         <li class="menu-item">
+            <router-link class="router-link" :to="{ name: 'cart' }">
+               <img src="@/assets/graphics/vector/heart.svg" alt="Favorite"/>
+               <span class="cart-quantity-icon"> 5 </span>
+            </router-link>
+         </li>
+         <li class="menu-item">
+            <router-link class="router-link" :to="{ name: 'cart' }">
+               <img src="@/assets/graphics/vector/profile.svg" alt="Favorite"/>
+            </router-link>
+         </li>
+      </ul>
+   </header>
 </template>
 
 <script>
   import { mapActions, mapGetters } from 'vuex';
 
   export default {
-     name: "layout-header",
-
-     data: () => ({ searchValue: '' }),
-
+     name: "layout-header", 
+     data: () => ({searchValue: ''}), 
+     
      computed: {
         ...mapGetters([
            'CART_STATE_VALUE',
-        ]),
+        ]), 
         
         cart() {
            return this.CART_STATE_VALUE;
@@ -55,7 +68,7 @@
      methods: {
         ...mapActions([
            'ACTION_SEARCH_VALUE_TO_STORE'
-        ]),
+        ]), 
         
         search(value) {
            this.ACTION_SEARCH_VALUE_TO_STORE(value);
@@ -76,76 +89,116 @@
 </script>
 
 <style lang="scss" scoped>
+
   .header {
      display: flex;
      justify-content: space-between;
+     border-bottom: 1px solid #CBD5E0;
+     padding: 0 1.25rem;
+     padding-top: 0.5rem;
+     padding-bottom: 0.625rem;
+  }  
+  
+  .text-section {
+     display: flex;
      align-items: center;
-     background: $background-black;
-     padding: 16px;
-     //position: fixed;
-     width: 100%;
-     top: 0;
-     left: 0;
-     height: 70px;
-     background: #131921;
-     
-     img {
-        width: 50px;
-     }
+  }  
+  
+  .title {
+     font-family: 'Tangerine', serif;
+     font-size: 48px;
+     text-shadow: 4px 4px 4px #aaa;
+  }
 
-     &__nav-container {
-        display: flex;
-        align-items: center;
-        height: 70px;
-        width: 100%;
-        justify-content: space-between;
-     }
+  .description {
+     color: #718096;
+  }
 
-     &__nav-search {
-        padding: 16px;
-        position: relative;
-        right: 200px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-     }
+  .text-content {
+     margin-left: 1rem;
+  }
 
-     &__nav-search-btn {
-        margin-left: 16px;
-        background: #e1e1e1;
-        border: none; 
-        
-        &_clear {
-           margin-left: 16px;
-           background: #e66c6c;
-           border: none;
-        }
-     }
+  .header-menu {
+    display: flex;
+     align-items: center;
+     gap: 2.5rem;
+  }
 
-     &__nav-cart li {
-        list-style: none;
-     }
+  .menu-item {
+     display: flex;
+     align-items: center;
+     gap: 0.75rem;
+     cursor: pointer;
+  }
 
-     &__nav-cart li a {
-        text-decoration: none;
-        color: #fff;
-        position: relative;
-     }
+  .header-menu li {
+     list-style: none;
+  }
 
-     &__nav-cart-quantity {
-        position: absolute;
-        top: -25px;
-        right: -15px;
-        width: 25px;
-        height: 25px;
-        border: none;
-        background: #f08804;
-        color: #fff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-     }
+  .header-menu li a {
+     text-decoration: none;
+     color: #92533a;
+     position: relative;
+  }
+
+  .input-box {
+     position: relative;
+     display: flex;
+     align-items: center;
+     height: 30px;
+     max-width: 500px; 
+     //width: 70%;
+     background: #fff;
+     margin: 20px;
+     border-radius: 6px;
+     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+     border: 2px solid #9B9B9B;
+  }  
+  
+  .input-box i {
+     margin-right: 8px;
+     background: none;
+     color: black;
+  }  
+  
+  .input-box input {
+     flex: 1;
+     border: none;
+     outline: none;
+     height: 100%;
+     padding: 0 8px;
+     font-size: 14px;
+  }  
+  
+  .search-btn, .search-btn_clear {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     width: 36px;
+     height: 90%;
+     cursor: pointer;
+     background: none;
+  }  
+  
+  .search-btn i, .search-btn_clear i {
+     font-size: 20px;
+     background: none;
+     color: #9B9B9B;
+  }  
+  
+  .cart-quantity-icon {
+     display: flex;
+     position: absolute;
+     top: -25px;
+     right: -15px;
+     width: 25px;
+     height: 25px;
+     border: none;
+     background: #f08804;
+     color: #fff;
+     border-radius: 50%;
+     align-items: center;
+     justify-content: center;
+     font-size: 13px;
   }
 </style>

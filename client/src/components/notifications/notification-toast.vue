@@ -107,9 +107,7 @@
         } 
      } 
      
-     .material-icons {
-        margin-left: 16px;
-     } 
+    
   }  
   
   .transition-animate { 
