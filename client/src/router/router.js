@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import Catalog from '@/components/catalog/catalog';
 import Cart from '@/components/cart/cart';
+import Favorits from '@/components/favorits/favorits-list';
 import MainPage from '@/pages/main-page';
 
 const routes = [
@@ -19,6 +20,11 @@ const routes = [
       name: 'cart',
       component: Cart,
       props: true
+   },
+   {
+      path: '/favorits',
+      name: 'favorits-list',
+      component: Favorits,
    }
 ];
 

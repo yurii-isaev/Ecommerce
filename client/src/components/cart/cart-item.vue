@@ -17,7 +17,7 @@
             <span class="quantity__btn" @click="decrement">-</span>
          </span>
       </div>
-      <button @click="deleteCartItem">Delete</button>
+      <button @click="removeFromCart">Delete</button>
    </div>
 </template>
 
@@ -25,7 +25,7 @@
 import { formatPrice, formatPriceWithSpaces } from '@/filters/price.filter';
 
   export default {
-     name: "component-cart-item", 
+     name: "component-cart-item",
      
      props: {
         cart_item_data: {
@@ -42,9 +42,9 @@ import { formatPrice, formatPriceWithSpaces } from '@/filters/price.filter';
         decrement() {
            this.$emit('decrement')
         },
-        
-        deleteCartItem() {
-           this.$emit('deleteCartItem')
+
+        removeFromCart() {
+           this.$emit('removeFromCart')
         },
 
         formatPrice,

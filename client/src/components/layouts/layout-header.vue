@@ -29,20 +29,20 @@
          </li>
          <li class="menu-item">
             <router-link class="router-link" :to="{ name: 'cart' }">
-               <img src="@/assets/graphics/vector/cart.svg" alt="Cart"/>
-               <span class="cart-quantity-icon">{{ cart.length }}</span>
+               <img src="@/assets/graphics/vector/cart.svg" alt="cart"/>
+               <span class="cart-quantity-icon"> {{ cart.length }} </span>
             </router-link>
          </li>
          <li class="menu-item">
-            <router-link class="router-link" :to="{ name: 'cart' }">
-               <img src="@/assets/graphics/vector/heart.svg" alt="Favorite"/>
-               <span class="cart-quantity-icon"> 5 </span>
+            <router-link class="router-link" :to="{ name: 'favorits-list' }">
+               <img src="@/assets/graphics/vector/heart.svg" alt="favorits"/>
+               <span class="cart-quantity-icon"> {{ favorits.length }} </span>
             </router-link>
          </li>
          <li class="menu-item">
-            <router-link class="router-link" :to="{ name: 'cart' }">
-               <img src="@/assets/graphics/vector/profile.svg" alt="Favorite"/>
-            </router-link>
+           
+               <img src="@/assets/graphics/vector/profile.svg" alt="profile"/>
+           
          </li>
       </ul>
    </header>
@@ -58,10 +58,15 @@
      computed: {
         ...mapGetters([
            'CART_STATE_VALUE',
-        ]), 
-        
+           'FAVORITS_STATE_VALUE'
+        ]),
+
         cart() {
            return this.CART_STATE_VALUE;
+        },
+
+        favorits() {
+           return this.FAVORITS_STATE_VALUE;
         },
      },
      

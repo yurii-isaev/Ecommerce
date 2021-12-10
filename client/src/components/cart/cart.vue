@@ -14,7 +14,7 @@
       v-for="(item, index) in cart"
       :key="item.article"
       :cart_item_data="item"
-      @deleteCartItem="deleteCartItem(index)"
+      @removeFromCart="removeFromCart(index)"
       @increment="incrementItem(index)"
       @decrement="decrementItem(index)"
    />
@@ -77,8 +77,8 @@
         decrementItem(index) {
            this.DECREMENT_CART_ITEM(index);
         },
-        
-        deleteCartItem(index) {
+
+        removeFromCart(index) {
            this.ACTION_DELETE_FROM_CART(index);
         },
 

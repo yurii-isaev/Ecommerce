@@ -1,28 +1,82 @@
 {
    "products": [
       {
-         "image": "Quick_Party_Snacks.jpg",
-         "name": "Quick Party Snacks",
-         "price": 100.234234234,
-         "article": "T1",
+         "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba0",
+         "article": "000523",
+         "image": "three_chocolate_cake.jpg",
+         "image_slice": "three_chocolate_cake_slice.jpg",
+         "name": "Three Chocolate Cake",
          "avalible": true,
-         "category": "snacks"
+         "category": "cake",
+         "filling": "chocolate",
+         "weight": 1400,
+         "tier": 1,
+         "price": 100.234234234
       },
       {
-         "image": "Semi-Sweet_Chocolate_Chips.jpg",
-         "name": "Semi Sweet Chocolate Chips",
-         "price": 200.23412341,
-         "article": "T2",
+         "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba1",
+         "article": "000405",
+         "image": "tired_pear_cake.jpg",
+         "image_slice": "tired_pear_cake_slice.jpg",
+         "name": "Tired Pear Cake",
          "avalible": true,
-         "category": "chips"
+         "category": "cake",
+         "filling": "fruits",
+         "weight": 1400,
+         "tier": 1,
+         "price": 200.23412341
       },
       {
-         "image": "White_Corn_Tortilla_Chips.jpg",
-         "name": "White Corn Tortilla Chips",
-         "price": 8300.2364125,
-         "article": "T3",
+         "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba2",
+         "article": "001507",
+         "image": "wild_berries_cake.jpg",
+         "image_slice": "wild_berries_cake_slice.jpg",
+         "name": "Wild Berries Cake",
          "avalible": true,
-         "category": "chips"
+         "category": "cake",
+         "filling": "fruits and berries",
+         "weight": 1400,
+         "tier": 1,
+         "price": 8300.2364125
+      },
+      {
+         "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba3",
+         "article": "000972",
+         "image": "raffaello_cake.jpg",
+         "image_slice": "raffaello_cake_slice.jpg",
+         "name": "Raffaello Cake",
+         "avalible": true,
+         "category": "cake",
+         "filling": "coconut chips",
+         "weight": 1400,
+         "tier": 1,
+         "price": 2090
+      },
+      {
+         "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba4",
+         "article": "0001475",
+         "image": "lavender-blueberry_cake.jpg",
+         "image_slice": "lavender-blueberry_cake_slice.jpg",
+         "name": "Lavender-blueberry Cake",
+         "avalible": true,
+         "category": "cake",
+         "filling": "fruits",
+         "weight": 1400,
+         "tier": 1,
+         "price": 3000
+      },
+      {
+         "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba5",
+         "article": "0001436",
+         "image": "snickers_cake.jpg",
+         "image_slice": "snickers_cake_slice.jpg",
+         "name": "Snickers Cake",
+         "avalible": true,
+         "category": "cake",
+         "filling": "nuts and nougat",
+         "weight": 1400,
+         "tier": 1,
+         "price": 3000
       }
    ],
    "posts": [

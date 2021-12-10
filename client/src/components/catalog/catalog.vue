@@ -11,7 +11,7 @@
 
       <div class="catalog__filters">
          <catalog-item-select
-            :selected="currentSelectedOption"
+            :selected="currentSelectedOption" 
             :options="categories"
             @selectOption="sortByCategories"
          />
@@ -39,9 +39,11 @@
       <div class="catalog__list">
          <catalog-item
             v-for="product in filtredProducts"
-            :key="product.article"
-            :product_data="product"
+            :key="product.id"
+            :product_props="product"
             @addToCart="addToCart"
+            @addToFavorite="addToFavorite"
+            :isFavorite="product.isFavorite"
          />
       </div>
    </div>
@@ -78,11 +80,24 @@
         }
      },
 
+     // props: {
+     //    items: Array,
+     //    isFavorites: Boolean
+     // },
+
+     props: {
+        catalog_props: {
+           type: Array,
+           default: () => []
+        }
+     },
+
      computed: {
         ...mapGetters([
            'PRODUCTS_STATE_VALUE',
            'CART_STATE_VALUE',
-           'SEARCH_STATE_VALUE'
+           'SEARCH_STATE_VALUE',
+           'FAVORITS_STATE_VALUE'
         ]),
 
         products() {
@@ -101,7 +116,8 @@
      methods: {
         ...mapActions([
            'ACTION_GET_PRODUCTS_FROM_API', 
-           'ACTION_ADD_TO_CART'
+           'ACTION_ADD_TO_CART',
+           'ACTION_ADD_TO_FAVORITS'
         ]),
 
         formatPrice,
@@ -113,6 +129,10 @@
            this.messages.unshift({
               name: 'Product added to cart successfuly', icon: '', id: timeStamp
            })
+        },
+
+        addToFavorite(object) {
+           this.ACTION_ADD_TO_FAVORITS(object);
         },
 
         sortByCategories(selectedOption) {
