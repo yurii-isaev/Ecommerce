@@ -92,9 +92,9 @@
      list-style: none;
   }  
   
-  img {
-     vertical-align: top;
-  }  
+  /*img {*/
+  /*   vertical-align: top;*/
+  /*}  */
   
   h1, h2, h3, h4, h5, h6 {
      font-size: inherit;
@@ -112,7 +112,7 @@
   }  
   
   .material-icons {
-     margin-left: 16px;
+     /*margin-left: 16px;*/
      font-size: 25px;
      color: #9B9B9B;
   }

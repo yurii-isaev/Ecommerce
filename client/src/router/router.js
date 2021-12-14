@@ -3,6 +3,7 @@ import Catalog from '@/components/catalog/catalog';
 import Cart from '@/components/cart/cart';
 import Favorits from '@/components/favorits/favorits-list';
 import MainPage from '@/pages/main-page';
+import CartItemDetails from '@/components/cart/cart-item-details';
 
 const routes = [
    {
@@ -20,6 +21,12 @@ const routes = [
       name: 'cart',
       component: Cart,
       props: true
+   },
+   {
+      path: '/cart/item/:id',
+      name: 'cart-item-details',
+      component: CartItemDetails,
+      props: true 
    },
    {
       path: '/favorits',

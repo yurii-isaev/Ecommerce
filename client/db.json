@@ -50,7 +50,7 @@
          "filling": "coconut chips",
          "weight": 1400,
          "tier": 1,
-         "price": 2090
+         "price": 300
       },
       {
          "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba4",
@@ -63,7 +63,7 @@
          "filling": "fruits",
          "weight": 1400,
          "tier": 1,
-         "price": 3000
+         "price": 300
       },
       {
          "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba5",
@@ -76,7 +76,7 @@
          "filling": "nuts and nougat",
          "weight": 1400,
          "tier": 1,
-         "price": 3000
+         "price": 300
       }
    ],
    "posts": [
