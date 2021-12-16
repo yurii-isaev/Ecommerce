@@ -40,40 +40,158 @@
             </router-link>
          </li>
          <li class="menu-item">
-           
+            <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#authModal">
                <img src="@/assets/graphics/vector/profile.svg" alt="profile"/>
-           
+            </button>
          </li>
       </ul>
+      
+      <!-- Login Form Modal -->
+      <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" id="authModalLabel">Login/Signup</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <!-- <div class="modal-body">-->
+               <div class="container">
+                  <input type="checkbox" id="check">
+                  <div class="login form">
+                     <header>Login</header>
+                     
+                     <Form @submit="onSubmit" :validation-schema="schema" v-slot="{ errors }">
+                        <div class="form-row">
+                           <div class="form-group col">
+                              <label>Email</label>
+                              <Field name="email" type="text" class="form-control" :class="{ 'is-invalid': errors.email }" />
+                              <div class="invalid-feedback">{{ errors.email }}</div>
+                           </div>
+                        </div>
+                        <div class="form-row">
+                           <div class="form-group col">
+                              <label>Password</label>
+                              <Field name="password" type="password" class="form-control" :class="{ 'is-invalid': errors.password }" />
+                              <div class="invalid-feedback">{{ errors.password }}</div>
+                           </div>
+                        </div>
+                        <div class="form-group">
+                           <button type="submit" class="btn btn-primary" style="margin:10px">Register</button>
+                           <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                     </Form>
+
+                     <div class="signup">
+                        <span class="signup">Don't have an account?
+                           <label for="check">Signup</label>
+                        </span>
+                     </div>
+                  </div>
+                  <div class="registration form">
+                     <header>Signup</header>
+                     <form action="#">
+                        <input class="form-control"
+                               v-model="usename"
+                               type="text"
+                               placeholder="usename"
+                               autocomplete="usename"
+                        >
+                        <input class="form-control"
+                               v-model="email"
+                               type="email"
+                               placeholder="email"
+                               autocomplete="usename"
+                        >
+                        <input class="form-control"
+                               v-model="current_password"
+                               type="password"
+                               autocomplete="current-password"
+                               placeholder="password"
+                        >
+                        <input class="form-control"
+                               v-model="confirm_password"
+                               type="password"
+                               autocomplete="current-password"
+                               placeholder="confirm password"
+                        >
+                        <input type="button" class="button" value="Signup">
+                     </form>
+                     <div class="signup">
+                        <span class="signup">Already have an account?
+                           <label for="check">Login</label>
+                        </span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
    </header>
 </template>
 
 <script>
+  import { Form, Field } from 'vee-validate';
   import { mapActions, mapGetters } from 'vuex';
-
+  import * as Yup from 'yup';
+  
   export default {
      name: "layout-header", 
-     data: () => ({searchValue: ''}), 
+     
+     components: {
+        Form, 
+        Field,
+     }, 
+     
+     data() {
+        const schema = Yup.object().shape({
+           title: Yup.string().required('Title is required'), 
+           firstName: Yup.string().required('First Name is required'), 
+           lastName: Yup.string().required('Last name is required'),
+           
+           dob: Yup.string()
+              .required('Date of Birth is required')
+              .matches(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/, 'Date of Birth must be a valid date in the format YYYY-MM-DD'),
+           
+           email: Yup.string()
+              .required('Email is required')
+              .email('Email is invalid'),
+           
+           password: Yup.string()
+              .min(6, 'Password must be at least 6 characters')
+              .required('Password is required'),
+           
+           confirmPassword: Yup.string()
+              .oneOf([Yup.ref('password'), null], 'Passwords must match')
+              .required('Confirm Password is required'),
+           
+           acceptTerms: Yup.string().required('Accept Ts & Cs is required')
+        });
+        return {
+           schema, 
+           searchValue: '', 
+           login_password: '', 
+           usename: '', 
+           email: '', 
+           current_password: '', 
+           confirm_password: '', 
+           attemptSubmit: false,
+        }
+     }, 
      
      computed: {
-        ...mapGetters([
-           'CART_STATE_VALUE',
-           'FAVORITS_STATE_VALUE'
-        ]),
-
+        ...mapGetters(['CART_STATE_VALUE', 'FAVORITS_STATE_VALUE']), 
+        
         cart() {
            return this.CART_STATE_VALUE;
-        },
-
+        }, 
+        
         favorits() {
            return this.FAVORITS_STATE_VALUE;
         },
-     },
+     }, 
      
      methods: {
-        ...mapActions([
-           'ACTION_SEARCH_VALUE_TO_STORE'
-        ]), 
+        ...mapActions(['ACTION_SEARCH_VALUE_TO_STORE']), 
         
         search(value) {
            this.ACTION_SEARCH_VALUE_TO_STORE(value);
@@ -88,12 +206,117 @@
            if (this.$route.path !== '/catalog') {
               this.$router.push('/catalog');
            }
+        }, 
+        
+        onSubmit(values) {
+           alert('SUCCESS!! :-)\n\n' + JSON.stringify(values, null, 4));
         }
      }
   }
 </script>
 
 <style lang="scss" scoped>
+
+  .form-group {
+     margin-bottom: 10px;
+  }
+  
+  .error-message {
+     color: red;
+  }
+
+  .container {
+     top: 50%;
+     left: 50%;
+     max-width: 600px;
+     width: 100%;
+     background: #fff;
+     border-radius: 7px;
+     box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+     /*position: absolute;*/
+     /*transform: translate(-50%,-50%);*/
+  }  
+  
+  .container .registration {
+     display: none;
+  }  
+  
+  #check:checked ~ .registration {
+     display: block;
+  }  
+  
+  #check:checked ~ .login {
+     display: none;
+  }  
+  
+  #check {
+     display: none;
+  }  
+  
+  .container .form {
+     padding: 1rem;
+  }  
+  
+  .form header {
+     font-size: 2rem;
+     font-weight: 500;
+     text-align: center;
+     margin-bottom: 1.5rem;
+  }  
+  
+  .form input {
+     height: 45px;
+     width: 100%;
+     padding: 0 15px;
+     font-size: 17px;
+     //margin-bottom: 1.3rem;
+     border: 1px solid #ddd;
+     border-radius: 6px;
+     outline: none;
+  }  
+  
+  .form input:focus{
+     box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+  }  
+  
+  .form a {
+     font-size: 16px;
+     color: #009579;
+     text-decoration: none;
+  }  
+  
+  .form a:hover {
+     text-decoration: underline;
+  }  
+  
+  .form input.button {
+     color: #fff;
+     background: #009579;
+     font-size: 1.2rem;
+     font-weight: 500;
+     letter-spacing: 1px;
+     margin-top: 1.7rem;
+     cursor: pointer;
+     transition: 0.4s;
+  }
+
+  .form input.button:hover {
+     background: #006653;
+  }
+
+  .signup {
+     font-size: 17px;
+     text-align: center;
+  }
+
+  .signup label {
+     color: #009579;
+     cursor: pointer;
+  }  
+  
+  .signup label:hover {
+     text-decoration: underline;
+  }
 
   .header {
      display: flex;

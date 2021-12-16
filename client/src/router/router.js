@@ -6,7 +6,12 @@ import MainPage from '@/pages/main-page';
 import CartItemDetails from '@/components/cart/cart-item-details';
 
 const routes = [
-   {
+   // {
+   //    component: () => import('@/pages/auth-page'),
+   //    path: '/auth',
+   //    name: 'auth-page',
+   // },
+    {
       path: '/',
       name: 'mainPage',
       component: MainPage
