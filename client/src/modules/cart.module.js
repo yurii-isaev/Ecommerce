@@ -1,62 +1,66 @@
-const state = {
-   cart: []
-};
+const CartModule = {
+   state: {
+      cart: [],
+      selectedItem: null
+   },
 
-const mutations = {
-   SET_CART_VALUE: (state, product) => {
-      if (state.cart.length) {
-         let isProductExists = false;
-         state.cart.map(function (item) {
-            if (item.article === product.article) {
-               isProductExists = true;
-               item.quantity++;
+   mutations: {
+      SET_CART_VALUE: (state, product) => {
+         if (state.cart.length) {
+            let isProductExists = false;
+            state.cart.map(function (item) {
+               if (item.article === product.article) {
+                  isProductExists = true;
+                  item.quantity++;
+               }
+            });
+            if (!isProductExists) {
+               state.cart.push(product);
             }
-         });
-         if (!isProductExists) {
+         } else {
             state.cart.push(product);
          }
-      } else {
-         state.cart.push(product);
+      },
+      REMOVE_FROM_CART: (state, index) => {
+         state.cart.splice(index, 1);
+      },
+      INCREMENT: (state, index) => {
+         state.cart[index].quantity++;
+      },
+      DECREMENT: (state, index) => {
+         if (state.cart[index].quantity > 1) {
+            state.cart[index].quantity--;
+         }
       }
    },
-   REMOVE_FROM_CART: (state, index) => {
-      state.cart.splice(index, 1);
-   },
-   INCREMENT: (state, index) => {
-      state.cart[index].quantity++;
-   },
-   DECREMENT: (state, index) => {
-      if (state.cart[index].quantity > 1) {
-         state.cart[index].quantity--;
+   actions: {
+      ACTION_ADD_TO_CART({commit}, product) {
+         commit('SET_CART_VALUE', product);
+      },
+
+      ACTION_DELETE_FROM_CART({commit}, index) {
+         commit('REMOVE_FROM_CART', index);
+      },
+
+      INCREMENT_CART_ITEM({commit}, index) {
+         commit('INCREMENT', index);
+      },
+
+      DECREMENT_CART_ITEM({commit}, index) {
+         commit('DECREMENT', index);
       }
+   },
+   getters: {
+      CART_STATE_VALUE: state => state.cart,
+      CART_ITEM_ID: (state) => (id) => {
+         return state.cart.find(item => item.id === id);
+      },
+   },
+
+   install: (app) => {
+      app.provide('cart', CartModule.state);
+      app.provide('getters', CartModule.getters);
    }
 };
 
-const actions = {
-   ACTION_ADD_TO_CART({commit}, product) {
-      commit('SET_CART_VALUE', product);
-   },
-   
-   ACTION_DELETE_FROM_CART({commit}, index) {
-      commit('REMOVE_FROM_CART', index);
-   },
-   
-   INCREMENT_CART_ITEM({commit}, index) {
-      commit('INCREMENT', index);
-   },
-   
-   DECREMENT_CART_ITEM({commit}, index) {
-      commit('DECREMENT', index);
-   }
-};
-
-const getters = {
-   CART_STATE_VALUE: state => state.cart
-};
-
-export default {
-   state,
-   mutations,
-   actions,
-   getters
-};
+export default CartModule;

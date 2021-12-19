@@ -60,24 +60,29 @@
                   <div class="login form">
                      <header>Login</header>
                      
-                     <Form @submit="onSubmit" :validation-schema="schema" v-slot="{ errors }">
+                     <Form @submit="onSubmit" :validation-schema="schemaLogin" v-slot="{ errors }">
                         <div class="form-row">
                            <div class="form-group col">
                               <label>Email</label>
-                              <Field name="email" type="text" class="form-control" :class="{ 'is-invalid': errors.email }" />
+                              <Field class="form-control"
+                                     name="email" type="text"
+                                     :class="{ 'is-invalid': errors.email }"
+                              />
                               <div class="invalid-feedback">{{ errors.email }}</div>
                            </div>
                         </div>
                         <div class="form-row">
                            <div class="form-group col">
                               <label>Password</label>
-                              <Field name="password" type="password" class="form-control" :class="{ 'is-invalid': errors.password }" />
+                              <Field class="form-control"
+                                     name="password" type="password"
+                                     :class="{ 'is-invalid': errors.password }"
+                              />
                               <div class="invalid-feedback">{{ errors.password }}</div>
                            </div>
                         </div>
                         <div class="form-group">
-                           <button type="submit" class="btn btn-primary" style="margin:10px">Register</button>
-                           <button type="reset" class="btn btn-secondary">Reset</button>
+                           <button type="submit" class="btn btn-primary">Login</button>
                         </div>
                      </Form>
 
@@ -89,33 +94,65 @@
                   </div>
                   <div class="registration form">
                      <header>Signup</header>
-                     <form action="#">
-                        <input class="form-control"
-                               v-model="usename"
-                               type="text"
-                               placeholder="usename"
-                               autocomplete="usename"
-                        >
-                        <input class="form-control"
-                               v-model="email"
-                               type="email"
-                               placeholder="email"
-                               autocomplete="usename"
-                        >
-                        <input class="form-control"
-                               v-model="current_password"
-                               type="password"
-                               autocomplete="current-password"
-                               placeholder="password"
-                        >
-                        <input class="form-control"
-                               v-model="confirm_password"
-                               type="password"
-                               autocomplete="current-password"
-                               placeholder="confirm password"
-                        >
-                        <input type="button" class="button" value="Signup">
-                     </form>
+                     <Form @submit="onSubmit" :validation-schema="schemaRegistration" v-slot="{ errors }">
+                        <div class="form-row">
+                           <div class="form-group col">
+                              <label>Usename</label>
+                              <Field class="form-control" 
+                                     name="username" type="text" 
+                                     :class="{ 'is-invalid': errors.username }"
+                              />
+                              <div class="invalid-feedback">{{ errors.username }}</div>
+                           </div>
+                        </div>
+
+                        <div class="form-row">
+                           <div class="form-group col">
+                              <label>Email</label>
+                              <Field class="form-control" 
+                                     name="email" type="email" 
+                                     :class="{ 'is-invalid': errors.email }"
+                              />
+                              <div class="invalid-feedback">{{ errors.email }}</div>
+                           </div>
+                        </div>
+
+                        <div class="form-row">
+                           <div class="form-group col">
+                              <label>Password</label>
+                              <Field class="form-control"
+                                     name="password" type="password"
+                                     :class="{ 'is-invalid': errors.password }"
+                              />
+                              <div class="invalid-feedback">{{ errors.password }}</div>
+                           </div>
+                        </div>
+
+                        <div class="form-row">
+                           <div class="form-group col">
+                              <label>Confirm Password</label>
+                              <Field class="form-control"
+                                     name="confirmPassword" type="password"
+                                     :class="{ 'is-invalid': errors.confirmPassword }"
+                              />
+                              <div class="invalid-feedback">{{ errors.confirmPassword }}</div>
+                           </div>
+                        </div>
+                        
+                        <div class="form-group form-check">
+                           <Field class="form-check-input" id="acceptTerms" 
+                                  name="acceptTerms" type="checkbox"
+                                  value="true" 
+                                  :class="{ 'is-invalid': errors.acceptTerms }"
+                           />
+                           <label for="acceptTerms" class="form-check-label">Accept Terms & Conditions</label>
+                           <div class="invalid-feedback">{{ errors.acceptTerms }}</div>
+                        </div>
+                        
+                        <div class="form-group">
+                           <button type="submit" class="btn btn-primary">Register</button>
+                        </div>
+                     </Form>
                      <div class="signup">
                         <span class="signup">Already have an account?
                            <label for="check">Login</label>
@@ -131,96 +168,68 @@
 
 <script>
   import { Form, Field } from 'vee-validate';
-  import { mapActions, mapGetters } from 'vuex';
-  import * as Yup from 'yup';
+  import { inject } from 'vue';
+  import validationLoginSchema from '@/schemas/validationLoginSchema';
+  import validationRegistrationSchema from '@/schemas/validationRegistrationSchema';
   
   export default {
      name: "layout-header", 
      
-     components: {
-        Form, 
-        Field,
-     }, 
+     components: { Form, Field }, 
      
      data() {
-        const schema = Yup.object().shape({
-           title: Yup.string().required('Title is required'), 
-           firstName: Yup.string().required('First Name is required'), 
-           lastName: Yup.string().required('Last name is required'),
-           
-           dob: Yup.string()
-              .required('Date of Birth is required')
-              .matches(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/, 'Date of Birth must be a valid date in the format YYYY-MM-DD'),
-           
-           email: Yup.string()
-              .required('Email is required')
-              .email('Email is invalid'),
-           
-           password: Yup.string()
-              .min(6, 'Password must be at least 6 characters')
-              .required('Password is required'),
-           
-           confirmPassword: Yup.string()
-              .oneOf([Yup.ref('password'), null], 'Passwords must match')
-              .required('Confirm Password is required'),
-           
-           acceptTerms: Yup.string().required('Accept Ts & Cs is required')
-        });
         return {
-           schema, 
-           searchValue: '', 
-           login_password: '', 
-           usename: '', 
-           email: '', 
-           current_password: '', 
-           confirm_password: '', 
-           attemptSubmit: false,
+           searchValue: '',
+           schemaLogin: validationLoginSchema,
+           schemaRegistration: validationRegistrationSchema
         }
-     }, 
-     
-     computed: {
-        ...mapGetters(['CART_STATE_VALUE', 'FAVORITS_STATE_VALUE']), 
-        
-        cart() {
-           return this.CART_STATE_VALUE;
-        }, 
-        
-        favorits() {
-           return this.FAVORITS_STATE_VALUE;
-        },
-     }, 
-     
+     },
+
+     setup() {
+        const { cart } = inject('cart');
+        const { favorits } = inject('favorits');
+        return { cart, favorits }
+     },
+
      methods: {
-        ...mapActions(['ACTION_SEARCH_VALUE_TO_STORE']), 
-        
         search(value) {
-           this.ACTION_SEARCH_VALUE_TO_STORE(value);
+           this.$store.dispatch('ACTION_SEARCH_VALUE_TO_STORE', value);
            if (this.$route.path !== '/catalog') {
               this.$router.push('/catalog');
            }
-        }, 
-        
+        },
+
         clearSearchField() {
            this.searchValue = '';
-           this.ACTION_SEARCH_VALUE_TO_STORE();
+           this.$store.dispatch('ACTION_SEARCH_VALUE_TO_STORE');
            if (this.$route.path !== '/catalog') {
               this.$router.push('/catalog');
            }
-        }, 
-        
+        },
+
         onSubmit(values) {
-           alert('SUCCESS!! :-)\n\n' + JSON.stringify(values, null, 4));
+           alert('SUCCESS \n\n' + JSON.stringify(values, null, 4));
         }
      }
   }
 </script>
 
 <style lang="scss" scoped>
-
   .form-group {
+     margin-top: 1rem;
+     text-align: left;
+  }  
+  
+  .form-group label {
+     display: inline-block;
+     margin-bottom: 0.5rem;
+     font-weight: bold;
+  }
+
+  .btn {
      margin-bottom: 10px;
   }
-  
+
   .error-message {
      color: red;
   }
@@ -264,16 +273,16 @@
      margin-bottom: 1.5rem;
   }  
   
-  .form input {
-     height: 45px;
-     width: 100%;
-     padding: 0 15px;
-     font-size: 17px;
-     //margin-bottom: 1.3rem;
-     border: 1px solid #ddd;
-     border-radius: 6px;
-     outline: none;
-  }  
+  //.form input {
+  //   height: 45px;
+  //   width: 100%;
+  //   padding: 0 15px;
+  //   font-size: 17px;
+  //   //margin-bottom: 1.3rem;
+  //   border: 1px solid #ddd;
+  //   border-radius: 6px;
+  //   outline: none;
+  //}  
   
   .form input:focus{
      box-shadow: 0 1px 0 rgba(0,0,0,0.2);
@@ -310,7 +319,7 @@
   }
 
   .signup label {
-     color: #009579;
+     color: #2ea03c;
      cursor: pointer;
   }  
   

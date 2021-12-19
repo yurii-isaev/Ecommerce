@@ -1,45 +1,46 @@
 import axios from 'axios';
 
-const state = {
-   products: [],
-   searchValue: ''
-};
-
-const mutations = {
-   SET_SEARCH_VALUE_TO_VUEX: (state, value) => {
-      state.searchValue = value;
+const ProductModule = {
+   state: {
+      products: [],
+      searchValue: ''
    },
-   SET_PRODUCTS_TO_STATE: (state, products) => {
-      state.products = products;
+
+   mutations: {
+      SET_SEARCH_VALUE_TO_VUEX: (state, value) => {
+         state.searchValue = value;
+      },
+      SET_PRODUCTS_TO_STATE: (state, products) => {
+         state.products = products;
+      }
+   },
+
+   actions: {
+      ACTION_SEARCH_VALUE_TO_STORE({commit}, value) {
+         commit('SET_SEARCH_VALUE_TO_VUEX', value)
+      },
+
+      ACTION_GET_PRODUCTS_FROM_API({commit}) {
+         return axios('http://localhost:3000/products', {
+            method: "GET"
+         }).then((products) => {
+            commit('SET_PRODUCTS_TO_STATE', products.data)
+            return products;
+         }).catch((error) => {
+            console.error(error);
+            return error;
+         })
+      }
+   },
+
+   getters: {
+      SEARCH_STATE_VALUE: state => state.searchValue,
+      PRODUCTS_STATE_VALUE: state => state.products,
+   },
+
+   install: (app) => {
+      app.provide('products', ProductModule.state);
    }
 };
 
-const actions = {
-   ACTION_SEARCH_VALUE_TO_STORE ({commit}, value) {
-      commit('SET_SEARCH_VALUE_TO_VUEX', value)
-   },
-
-   ACTION_GET_PRODUCTS_FROM_API({commit}) {
-      return axios('http://localhost:3000/products', {
-         method: "GET"
-      }).then((products) => {
-         commit('SET_PRODUCTS_TO_STATE', products.data)
-         return products;
-      }).catch((error) => {
-         console.error(error);
-         return error;
-      })
-   }
-};
-
-const getters = {
-   SEARCH_STATE_VALUE: state => state.searchValue,
-   PRODUCTS_STATE_VALUE: state => state.products,
-};
-
-export default {
-   state,
-   mutations,
-   actions,
-   getters
-};
+export default ProductModule;
