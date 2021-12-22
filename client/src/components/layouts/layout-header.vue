@@ -76,6 +76,7 @@
                               <label>Password</label>
                               <Field class="form-control"
                                      name="password" type="password"
+                                     autocomplete="on"
                                      :class="{ 'is-invalid': errors.password }"
                               />
                               <div class="invalid-feedback">{{ errors.password }}</div>
@@ -122,6 +123,7 @@
                               <label>Password</label>
                               <Field class="form-control"
                                      name="password" type="password"
+                                     autocomplete="on"
                                      :class="{ 'is-invalid': errors.password }"
                               />
                               <div class="invalid-feedback">{{ errors.password }}</div>
@@ -132,6 +134,7 @@
                            <div class="form-group col">
                               <label>Confirm Password</label>
                               <Field class="form-control"
+                                     autocomplete="on"
                                      name="confirmPassword" type="password"
                                      :class="{ 'is-invalid': errors.confirmPassword }"
                               />
@@ -168,7 +171,7 @@
 
 <script>
   import { Form, Field } from 'vee-validate';
-  import { inject } from 'vue';
+  import { mapGetters } from 'vuex';
   import validationLoginSchema from '@/schemas/validationLoginSchema';
   import validationRegistrationSchema from '@/schemas/validationRegistrationSchema';
   
@@ -185,10 +188,16 @@
         }
      },
 
-     setup() {
-        const { cart } = inject('cart');
-        const { favorits } = inject('favorits');
-        return { cart, favorits }
+     computed: {
+        ...mapGetters(['CART_STATE', 'FAVORITS_STATE']),
+
+        cart() {
+           return this.CART_STATE;
+        },
+
+        favorits() {
+           return this.FAVORITS_STATE;
+        },
      },
 
      methods: {

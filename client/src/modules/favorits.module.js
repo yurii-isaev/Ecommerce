@@ -21,12 +21,12 @@ const FavoritsModule = {
       },
    },
    actions: {
-      ACTION_ADD_TO_FAVORITS({commit}, product) {
+      ADD_TO_FAVORITS({commit}, product) {
          commit('SET_FAVORITS_VALUE', product);
       },
    },
    getters: {
-      FAVORITS_STATE_VALUE: state => state.favorits,
+      FAVORITS_STATE: state => state.favorits,
    },
    
    // Provide the status of your favorite products

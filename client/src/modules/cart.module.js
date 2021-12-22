@@ -34,11 +34,11 @@ const CartModule = {
       }
    },
    actions: {
-      ACTION_ADD_TO_CART({commit}, product) {
+      ADD_TO_CART({commit}, product) {
          commit('SET_CART_VALUE', product);
       },
 
-      ACTION_DELETE_FROM_CART({commit}, index) {
+      DELETE_FROM_CART({commit}, index) {
          commit('REMOVE_FROM_CART', index);
       },
 
@@ -51,7 +51,7 @@ const CartModule = {
       }
    },
    getters: {
-      CART_STATE_VALUE: state => state.cart,
+      CART_STATE: state => state.cart,
       CART_ITEM_ID: (state) => (id) => {
          return state.cart.find(item => item.id === id);
       },

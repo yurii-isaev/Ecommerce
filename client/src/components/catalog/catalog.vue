@@ -1,50 +1,45 @@
 <template>
    <div class="catalog">
-
       <notification-toast :messages="messages" />
       
-<!--      <router-link :to="{ name: 'cart' }">-->
-<!--         <div class="catalog__link-to-cart">Cart: {{ cart.length }}</div>-->
-<!--      </router-link>-->
-
-      <h1>Catalog</h1>
-
-      <div class="catalog__filters">
+      <div class="catalog-filters">
          <catalog-item-select
             :selected="currentSelectedOption" 
-            :options="categories"
+            :options="categories" 
             @selectOption="sortByCategories"
          />
-         <div class="catalog__filters-range-slider">
+         
+         <div class="catalog-filters-range-slider">
             <input
-               type="range" min="0" max="100000"
+               type="range" min="0" max="10000"
                step="10"
                v-model.number="minPrice"
                @change="setRangeSlider"
             >
             <input
-               type="range" min="0" max="100000"
+               type="range" min="0" max="10000"
                step="10"
                v-model.number="maxPrice" 
                @change="setRangeSlider"
             >
          </div>
          
-         <div class="catalog__filters-range-values">
-            <p>Min: {{ formatPriceWithSpaces(formatPrice(minPrice)) }}</p>
-            <p>Max: {{ formatPriceWithSpaces(formatPrice(maxPrice)) }}</p>
+         <div class="catalog-filters-range-values">
+            <p>Min: {{ formattedMinPrice }}</p>
+            <p>Max: {{ formattedMaxPrice }}</p>
          </div>
       </div>
 
-      <div class="catalog__list">
+      <div class="catalog-list">
          <catalog-item
-            v-for="product in filtredProducts"
-            :key="product.id"
-            :product_props="product"
-            @addToCart="addToCart"
-            @addToFavorite="addToFavorite"
+            v-for="product in filtredProducts" 
+            :key="product.id" 
+            :product_props="product" 
+            @addToCart="addToCart" 
+            @addToFavorite="addToFavorite" 
             :isFavorite="product.isFavorite"
          />
+       
       </div>
    </div>
 </template>
@@ -54,16 +49,11 @@
   import CatalogItem from '../catalog/catalog-item';
   import CatalogItemSelect from '../catalog/catalog-item-select';
   import NotificationToast from '../notifications/notification-toast';
-  import { formatPrice, formatPriceWithSpaces } from '@/filters/price.filter';
 
   export default {
      name: "component-catalog",
 
-     components: {
-        NotificationToast,
-        CatalogItem,
-        CatalogItemSelect
-     },
+     components: { NotificationToast, CatalogItem, CatalogItemSelect },
 
      data() {
         return {
@@ -74,16 +64,12 @@
            ],
            currentSelectedOption: 'all',
            sortedProducts: [],
+           messages: [],
+           
            minPrice: 0,
-           maxPrice: 100000,
-           messages: []
+           maxPrice: 10000,
         }
      },
-
-     // props: {
-     //    items: Array,
-     //    isFavorites: Boolean
-     // },
 
      props: {
         catalog_props: {
@@ -93,38 +79,34 @@
      },
 
      computed: {
-        ...mapGetters([
-           'PRODUCTS_STATE_VALUE',
-           'CART_STATE_VALUE',
-           'SEARCH_STATE_VALUE',
-           'FAVORITS_STATE_VALUE'
-        ]),
+        ...mapGetters(['PRODUCTS_STATE', 'CART_STATE', 'SEARCH_STATE', 'FAVORITS_STATE']),
 
         products() {
-           return this.PRODUCTS_STATE_VALUE;
+           return this.PRODUCTS_STATE;
         },
         
         cart() {
-           return this.CART_STATE_VALUE;
+           return this.CART_STATE;
         },
 
         filtredProducts() {
            return this.sortedProducts.length ? this.sortedProducts : this.products;
         },
+
+        formattedMinPrice() {
+           return this.$formatPrice(this.minPrice);
+        },
+        
+        formattedMaxPrice() {
+           return this.$formatPrice(this.maxPrice);
+        },
      },
 
      methods: {
-        ...mapActions([
-           'ACTION_GET_PRODUCTS_FROM_API', 
-           'ACTION_ADD_TO_CART',
-           'ACTION_ADD_TO_FAVORITS'
-        ]),
-
-        formatPrice,
-        formatPriceWithSpaces,
+        ...mapActions(['GET_PRODUCTS_FROM_API', 'ADD_TO_CART', 'ADD_TO_FAVORITS']),
 
         addToCart(data) {
-           this.ACTION_ADD_TO_CART(data);
+           this.ADD_TO_CART(data);
            let timeStamp = Date.now().toLocaleString();
            this.messages.unshift({
               name: 'Product added to cart successfuly', icon: '', id: timeStamp
@@ -132,12 +114,12 @@
         },
 
         addToFavorite(object) {
-           this.ACTION_ADD_TO_FAVORITS(object);
+           this.ADD_TO_FAVORITS(object);
         },
 
         sortByCategories(selectedOption) {
            const { minPrice, maxPrice, products } = this;
-           this.sortedProducts = products.filter(product => product.price >= minPrice && product.price <= maxPrice);
+           this.sortedProducts = products.filter(p => p.price >= minPrice && p.price <= maxPrice);
 
            if (selectedOption) {
               this.sortedProducts = this.sortedProducts.filter(product => {
@@ -171,86 +153,92 @@
      },
      
      created() {
-        this.ACTION_GET_PRODUCTS_FROM_API().then((response) => {
+        this.GET_PRODUCTS_FROM_API().then((response) => {
            if (response.data) {
               this.sortByCategories();
               this.sortProductsBySearchValue(this.SEARCH_STATE_VALUE);
            }
         }).catch((error) => {
-           console.error('Произошла ошибка при получении данных с API:', error);
+           console.error('An error occurred while retrieving data from the API:', error);
         });
      }
   }
 </script>
 
-<style lang="scss" scoped>
-
-  $padding: 10px;  
+<style scoped>
+  .catalog-list {
+     display: flex;
+     flex-wrap: wrap;
+     justify-content: center;
+     gap: 40px;
+  }
   
-  .catalog { 
-     &__list {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-evenly;
-        align-items: center;
-     } 
-     
-     &__link-to-cart {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        padding: $padding * 2;
-        border: 1px solid #aeaeae;
-        background: #ffffff;
-     } 
-     
-     &__filters { 
-        &-range-slider { 
-           input[type=range] {
-              position: absolute;
-              left: 65%;
-              top: 180px;
-           } 
-        } 
-        
-        &-range-values { 
-           p {
-              margin: 5px 0;
-           } 
-        } 
-     } 
+  @media screen and (max-width: 1200px) {  
+     .catalog-item {
+        flex: 0 0 calc(50% - 80px);
+     }  
+  }
+  
+  .catalog-filters {
+     display: flex;
+     flex-wrap: nowrap;
+     justify-content: space-around;
+     align-items: center;
+     box-shadow: 0 0 8px 0 #e0e0e0;
+     padding: 20px;
+     margin-bottom: 20px;
+ 
+  }
+
+/*.catalog-link-to-cart {*/
+/*   position: fixed;*/
+/*   top: 10px;*/
+/*   right: 10px;*/
+/*   padding: var(--padding) * 2;*/
+/*   border: 1px solid #aeaeae;*/
+/*   background: #ffffff;*/
+/*}*/
+
+  .catalog-filters-range-slider input[type=range] {
+     /*position: absolute;*/
+     left: 65%;
+     top: 180px;
+  }  
+  
+  .catalog-filters-range-values p {
+     margin: 5px 0;
   }  
   
   input[type=range] {
-     -webkit-appearance: none; 
-     
-     &::-webkit-slider-runnable-track {
-        width: 300px;
-        height: 5px;
-        background: #ddd;
-        border: none;
-        border-radius: 3px;
-     } 
-     
-     &::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        border: 1.5px solid #C1C1C1;
-        height: 16px;
-        width: 16px;
-        border-radius: 50%;
-        background: #EDEDED;
-     } 
-     
-     &:focus {
-        outline: none;
-     } 
-     
-     &::-webkit-slider-runnable-track {
-        width: 100%;
-        height: 5px;
-        box-shadow: 1px 1px 1px #C6C6C6, 0 0 1px #787878;
-        border-radius: 2px;
-        border: 0.2px solid #787878;
-     } 
+     -webkit-appearance: none;
+  }  
+  
+  input[type=range]::-webkit-slider-runnable-track {
+     width: 300px;
+     height: 5px;
+     background: #ddd;
+     border: none;
+     border-radius: 3px;
+  }  
+  
+  input[type=range]::-webkit-slider-thumb {
+     -webkit-appearance: none;
+     border: 1.5px solid #C1C1C1;
+     height: 16px;
+     width: 16px;
+     border-radius: 50%;
+     background: #EDEDED;
+  }  
+  
+  input[type=range]:focus {
+     outline: none;
+  }  
+  
+  input[type=range]::-webkit-slider-runnable-track {
+     width: 100%;
+     height: 5px;
+     box-shadow: 1px 1px 1px #C6C6C6, 0 0 1px #787878;
+     border-radius: 2px;
+     border: 0.2px solid #787878;
   }
 </style>

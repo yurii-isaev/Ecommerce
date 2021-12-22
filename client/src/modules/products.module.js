@@ -16,11 +16,11 @@ const ProductModule = {
    },
 
    actions: {
-      ACTION_SEARCH_VALUE_TO_STORE({commit}, value) {
+      SEARCH_VALUE_TO_STORE({commit}, value) {
          commit('SET_SEARCH_VALUE_TO_VUEX', value)
       },
 
-      ACTION_GET_PRODUCTS_FROM_API({commit}) {
+      GET_PRODUCTS_FROM_API({commit}) {
          return axios('http://localhost:3000/products', {
             method: "GET"
          }).then((products) => {
@@ -34,8 +34,8 @@ const ProductModule = {
    },
 
    getters: {
-      SEARCH_STATE_VALUE: state => state.searchValue,
-      PRODUCTS_STATE_VALUE: state => state.products,
+      SEARCH_STATE: state => state.searchValue,
+      PRODUCTS_STATE: state => state.products,
    },
 
    install: (app) => {

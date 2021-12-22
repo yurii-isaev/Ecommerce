@@ -115,8 +115,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex';
-  import { formatPrice, formatPriceWithSpaces } from '@/filters/price.filter';
+  import { mapActions, mapGetters } from 'vuex';
 
   export default {
 
@@ -170,19 +169,19 @@ import {mapActions, mapGetters} from 'vuex';
         },
 
         formattedPrice() {
-           return this.formatPriceWithSpaces(this.formatPrice(this.cartItem.price));
+           return this.$formatPrice(this.cartItem.price);
         },
 
         formattedCustomPrice() {
-           return this.formatPriceWithSpaces(this.formatPrice(this.price));
+           return this.$formatPrice(this.price);
         }
      }, 
      
      methods: {
-        ...mapActions(['ACTION_ADD_TO_ORDERS']),
+        ...mapActions(['ADD_TO_ORDERS']),
 
         addToOrders() {
-           this.ACTION_ADD_TO_ORDERS({
+           this.ADD_TO_ORDERS({
               id:       this.cartItem.id,
               article:  this.cartItem.article,
               image:    this.cartItem.image,
@@ -220,9 +219,6 @@ import {mapActions, mapGetters} from 'vuex';
               console.error("Cart data is missing or incomplete");
            }
         },
-
-        formatPrice,
-        formatPriceWithSpaces,
      },
 
      mounted() {

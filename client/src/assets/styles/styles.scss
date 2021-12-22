@@ -1,9 +1,19 @@
 @import "variables.scss";
 
-.btn {
+.v-btn {
 	padding: $padding $padding*2;
 	background: $background-black;
 	color: #e0e0e0;
 	border: 0;
 	border-radius: $radius;
+}
+
+.btn {
+	//padding: 10px 20px;
+	font-size: 16px;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: all 0.3s;
 }

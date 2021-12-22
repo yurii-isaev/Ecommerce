@@ -1,30 +1,27 @@
 <template>
    <div class="product-card">
-
       <img class="favorite-icon" 
            alt="favorit"
            :src="!product_props.isFavorite
            ? require('@/assets/graphics/vector/like-1.svg') 
-           : require('@/assets/graphics/vector/like-1.svg')"
-           
+           : require('@/assets/graphics/vector/like-2.svg')"
            @click="addToFavorite"
-      /> 
+      />
       
       <img class="product-image"
            alt="img"
-           :src="require('@/assets/images/' + product_props.image)">
+           :src="require('@/assets/images/' + product_props.image)"
+      />
 
-      <p class="product-title">{{ product_props.name }}</p>
-      <p class="product-details">{{ formatPriceWithSpaces(formatPrice(product_props.price)) }}</p>
+      <p class="product-title"><strong> {{ product_props.name }} </strong></p>
 
-      <button class="catalog-item__add_to_cart_btn btn"
-              @click="addToCart"> Add to cart
-      </button>
+      <p class="product-details">{{ formattedPrice() }} </p>
+
+      <button class="btn btn-success" @click="addToCart"> Add to cart </button>
    </div>
 </template>
 
 <script>
-  import { formatPrice, formatPriceWithSpaces } from '@/filters/price.filter';
   
   export default {
      name: "component-catalog-item", 
@@ -51,8 +48,9 @@
            this.$emit('addToFavorite', object);
         },
         
-        formatPrice, 
-        formatPriceWithSpaces,
+        formattedPrice() {
+           return this.$formatPrice(this.product_props.price);
+        },
      },
   }
 </script>
@@ -112,7 +110,7 @@
   .product-details {
      display: flex;
      justify-content: space-between;
-     margin-top: 15px;
+     margin: 15px;
   }
 
   .price-label {

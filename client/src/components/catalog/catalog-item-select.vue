@@ -1,6 +1,7 @@
 <template>
    <div class="catalog-item-select">
-      <p class="catalog-item-select__title" @click="isOptionsVisible = !isOptionsVisible">
+      <p class="catalog-item-select__title"
+         @click="isOptionsVisible = !isOptionsVisible">
          {{ selected }}
       </p>
       <div class="catalog-item-select__options" v-if="isOptionsVisible">
