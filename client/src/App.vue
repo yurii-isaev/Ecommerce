@@ -116,4 +116,13 @@
      font-size: 25px;
      color: #9B9B9B;
   }
+
+  .container {
+     display: flex;
+     flex-wrap: wrap;
+     justify-content: space-evenly;
+     align-items: center;
+     margin-top: 20px; 
+     margin-bottom: 20px;
+  }
 </style>

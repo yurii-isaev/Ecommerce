@@ -59,7 +59,6 @@ const CartModule = {
 
    install: (app) => {
       app.provide('cart', CartModule.state);
-      app.provide('getters', CartModule.getters);
    }
 };
 

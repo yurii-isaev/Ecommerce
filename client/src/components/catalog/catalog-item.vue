@@ -5,9 +5,8 @@
            :src="!product_props.isFavorite
            ? require('@/assets/graphics/vector/like-1.svg') 
            : require('@/assets/graphics/vector/like-2.svg')"
-           @click="addToFavorite"
+           @click="addOrDeleteToFavorite"
       />
-      
       <img class="product-image"
            alt="img"
            :src="require('@/assets/images/' + product_props.image)"
@@ -28,10 +27,9 @@
      
      props: {
         product_props: {
-           type:       Object,
+           type: Object,
            isFavorite: Boolean,
-           isAdded:    Boolean,
-           default:    () => {}
+           default: () => {}
         }
      }, 
      
@@ -42,10 +40,8 @@
            this.$emit('addToCart', object);
         },
 
-        addToFavorite() {
-           const object = Object.assign({}, this.product_props);
-           object.isFavorite = true;
-           this.$emit('addToFavorite', object);
+        addOrDeleteToFavorite() {
+           this.$emit('addOrDeleteToFavorite', this.product_props);
         },
         
         formattedPrice() {
@@ -56,17 +52,6 @@
 </script>
 
 <style lang="scss" scoped>
-  //.catalog-item {
-  //   flex-basis: 25%;
-  //   box-shadow: 0 0 8px 0 #e0e0e0;
-  //   padding: $padding*2;
-  //   margin-bottom: $margin*2;
-  //   &__image {
-  //      width: 100px;
-  //   }
-  //}
-
-
   .product-card {
      position: relative;
      background-color: #fff;

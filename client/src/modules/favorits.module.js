@@ -19,17 +19,23 @@ const FavoritsModule = {
             state.favorits.push(product);
          }
       },
+      DELETE_FAVORITS_VALUE: (state, favoritId) => {
+         state.favorits = state.favorits.filter(i => i.id !== favoritId);
+      }
    },
    actions: {
       ADD_TO_FAVORITS({commit}, product) {
          commit('SET_FAVORITS_VALUE', product);
+      },
+      DELETE_FROM_FAVORITS({commit}, favoritId) {
+         commit('DELETE_FAVORITS_VALUE', favoritId);
       },
    },
    getters: {
       FAVORITS_STATE: state => state.favorits,
    },
    
-   // Provide the status of your favorite products
+   // Provide the status of your favorite products for inject
    install: (app) => {
       app.provide('favorits', FavoritsModule.state);
    }

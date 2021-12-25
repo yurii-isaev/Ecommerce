@@ -1,22 +1,21 @@
 <template>
-   <div class="cart"></div>
    
-   <p v-if="cartIsEmpty" style="margin:15px">Cart is empty</p>
+   <p v-if="cartIsEmpty" style="margin:35px">Cart is empty</p>
+   
+   <cart-item 
+         v-for="(item, index) in cart" 
+         :key="item.article" 
+         :cart_item_data="item" 
+         @removeFromCart="removeFromCart(index)" 
+         @increment="incrementItem(index)" 
+         @decrement="decrementItem(index)"
+      />
       
-   <cart-item
-      v-for="(item, index) in cart" 
-      :key="item.article" 
-      :cart_item_data="item" 
-      @removeFromCart="removeFromCart(index)" 
-      @increment="incrementItem(index)" 
-      @decrement="decrementItem(index)"
-   />
-   
-   <div class="cart__total">
-      <p class="cart__total_name">Total: </p>
-      <p>{{ formattedTotal }}</p>
-   </div>
-   
+      <div class="cart__total">
+         <p class="cart__total_name">Total: </p>
+         <p>{{ formattedTotal }}</p>
+      </div>
+
 </template>
 
 <script>

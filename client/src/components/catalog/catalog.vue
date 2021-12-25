@@ -35,11 +35,10 @@
             v-for="product in filtredProducts" 
             :key="product.id" 
             :product_props="product" 
-            @addToCart="addToCart" 
-            @addToFavorite="addToFavorite" 
             :isFavorite="product.isFavorite"
+            @addToCart="addToCart" 
+            @addOrDeleteToFavorite="addOrDeleteToFavorite" 
          />
-       
       </div>
    </div>
 </template>
@@ -103,20 +102,38 @@
      },
 
      methods: {
-        ...mapActions(['GET_PRODUCTS_FROM_API', 'ADD_TO_CART', 'ADD_TO_FAVORITS']),
+        ...mapActions(['GET_PRODUCTS_FROM_API', 'ADD_TO_CART', 'ADD_TO_FAVORITS', 'DELETE_FROM_FAVORITS']),
 
-        addToCart(data) {
-           this.ADD_TO_CART(data);
+        addToCart(product) {
+           this.ADD_TO_CART(product);
            let timeStamp = Date.now().toLocaleString();
            this.messages.unshift({
-              name: 'Product added to cart successfuly', icon: '', id: timeStamp
+              name: 'Product added to cart', icon: '', id: timeStamp
            })
         },
 
-        addToFavorite(object) {
-           this.ADD_TO_FAVORITS(object);
+        addOrDeleteToFavorite: async function(product) {
+           if (!product.isFavorite) {
+              product.isFavorite = true;
+              try {
+                 await this.ADD_TO_FAVORITS(product);
+                 // console.log("Item added to favorites:", item);
+              } catch (error) {
+                 // console.error("Error adding item to favorites:", error);
+                 product.isFavorite = false;
+              }
+           } else {
+              product.isFavorite = false;
+              try {
+                 await this.DELETE_FROM_FAVORITS(product.id);
+                 // console.log("Item removed from favorites:", item);
+              } catch (error) {
+                 // console.error("Error removing item from favorites:", error);
+                 product.isFavorite = true;
+              }
+           }
         },
-
+        
         sortByCategories(selectedOption) {
            const { minPrice, maxPrice, products } = this;
            this.sortedProducts = products.filter(p => p.price >= minPrice && p.price <= maxPrice);
