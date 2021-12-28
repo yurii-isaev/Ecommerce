@@ -1,3 +1,5 @@
+using System;
+using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -9,118 +11,116 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using WebAPI.Authentication.DataAccess;
-using WebAPI.Authentication.DataAccess.Entities;
+using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.Infrastructure;
+using WebAPI.Authentication.UseCases.Contracts;
+using WebAPI.Authentication.UseCases.Services;
 
 namespace WebAPI.Authentication
 {
-    public class Startup
+  public class Startup
+  {
+    private IConfiguration Configuration { get; }
+    public Startup(IConfiguration config) => Configuration = config;
+
+    public void ConfigureServices(IServiceCollection services)
     {
-        private IConfiguration Configuration { get; }
+      #region DataBase Connection
 
-        public Startup(IConfiguration config) => Configuration = config;
+      var connectionString = Configuration.GetConnectionString("DefaultConnection");
+      services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(connectionString ?? throw new InvalidOperationException()));
 
-        /// <summary>
-        /// This method gets called by the runtime.
-        /// Use this method to add services to the container.
-        /// </summary>
-        /// <param name="services"></param>
-        public void ConfigureServices(IServiceCollection services)
+      #endregion
+
+      #region Role Identity
+
+      services.AddIdentity<User, IdentityRole>(options =>
         {
-            #region DataBase Connection
-            var connection = Configuration["Connection:DefaultConnection"];
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connection!));
-            #endregion
+          options.Password.RequireDigit = true;
+          options.Password.RequiredLength = 5;
+          options.Password.RequireUppercase = true;
+          options.Lockout.MaxFailedAccessAttempts = 6;
+          options.User.RequireUniqueEmail = true;
+          options.SignIn.RequireConfirmedAccount = true;
+          options.SignIn.RequireConfirmedEmail = false;
+        })
+        .AddRoles<IdentityRole>()
+        .AddRoleManager<RoleManager<IdentityRole>>()
+        .AddSignInManager<SignInManager<User>>()
+        .AddEntityFrameworkStores<AppDbContext>();
 
-            #region Role Identity
+      #endregion
 
-            services.AddIdentity<User, IdentityRole>(options =>
-                {
-                    options.Password.RequireDigit = true;
-                    options.Password.RequiredLength = 5;
-                    options.Password.RequireUppercase = true;
-                    options.Lockout.MaxFailedAccessAttempts = 6;
-                    options.User.RequireUniqueEmail = true;
-                    options.SignIn.RequireConfirmedAccount = true;
-                    options.SignIn.RequireConfirmedEmail = false;
-                })
-                .AddRoles<IdentityRole>()
-                .AddRoleManager<RoleManager<IdentityRole>>()
-                .AddSignInManager<SignInManager<User>>()
-                .AddEntityFrameworkStores<AppDbContext>();
+      #region Authentication JWT
 
-            #endregion
-
-            #region Authentication JWT
-
-            services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
-
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
-                    var issuer = Configuration["JwtConfig:Issuer"];
-                    var audience = Configuration["JwtConfig:Audience"];
-
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = true,
-                        ValidIssuer = issuer,
-                        ValidateAudience = true,
-                        ValidAudience = audience,
-                        RequireExpirationTime = true,
-                    };
-                    options.SaveToken = true;
-                    options.RequireHttpsMetadata = true;
-                });
-
-            // services.AddDefaultIdentity<IdentityUser>(opts => 
-            //         opts.SignIn.RequireConfirmedAccount = true)
-            //     .AddEntityFrameworkStores<AppDbContext>();
-
-            #endregion
-
-            #region CORS
-
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(builder =>
-                {
-                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                });
-            });
-
-            #endregion
-        }
-
-        /// <summary>
-        /// This method gets called by the runtime.
-        /// Use this method to configure the HTTP request pipeline.
-        /// </summary>
-        /// <param name="app"></param>
-        /// <param name="env"></param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+      services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
+      services.AddAuthentication(options =>
         {
-            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
-            
-            app.UseRouting();
-            
-            app.UseCors("ApiCorsPolicy");
-            
-            app.UseAuthentication();
-            
-            app.UseAuthorization();
+          options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+          options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+          options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+          var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"] ??
+                                            throw new InvalidOperationException());
+          var issuer = Configuration["JwtConfig:Issuer"];
+          var audience = Configuration["JwtConfig:Audience"];
 
-            app.UseCookiePolicy();
-            
-            app.UseEndpoints(endpoints => endpoints.MapControllers());
-        }
+          options.TokenValidationParameters = new TokenValidationParameters()
+          {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = true,
+            ValidIssuer = issuer,
+            ValidateAudience = true,
+            ValidAudience = audience,
+            RequireExpirationTime = true,
+          };
+          options.SaveToken = true;
+          options.RequireHttpsMetadata = true;
+        });
+
+      // services.AddDefaultIdentity<IdentityUser>(opts => 
+      //         opts.SignIn.RequireConfirmedAccount = true)
+      //     .AddEntityFrameworkStores<AppDbContext>();
+
+      #endregion
+
+      #region CORS
+
+      services.AddCors(options => options
+        .AddDefaultPolicy(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader())
+      );
+
+      #endregion
+
+      #region Dependency Injection
+
+      services.AddHttpContextAccessor().AddSingleton<IHttpService, HttpService>();
+      services.AddControllers();
+      services.AddAuthorization();
+
+      #endregion
+
+      #region Assembly
+
+      services.AddAutoMapper(Assembly.GetExecutingAssembly());
+      services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(Startup).Assembly));
+
+      #endregion
     }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+      if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+      app.UseRouting();
+      app.UseCors("ApiCorsPolicy");
+      app.UseAuthentication();
+      app.UseAuthorization();
+      app.UseCookiePolicy();
+      app.UseEndpoints(endpoints => endpoints.MapControllers());
+    }
+  }
 }

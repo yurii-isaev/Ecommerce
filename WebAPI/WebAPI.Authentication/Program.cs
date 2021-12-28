@@ -7,47 +7,48 @@ using WebAPI.Authentication.Infrastructure;
 
 namespace WebAPI.Authentication
 {
-    public class Program
+  public class Program
+  {
+    /// <summary>
+    /// Program initialize.
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
+    public static void Main(string[] args)
     {
-        /// <summary>
-        /// Program initialize.
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public static void Main(string[] args)
-        {
-            try
-            {
-                #region Authentication server initialize
+      try
+      {
+        #region Authentication server initialize
 
-                var host = CreateHostBuilder(args).Build();
-                using var scope = host.Services
-                    .GetRequiredService<IServiceScopeFactory>()
-                    .CreateScope();
+        var host = CreateHostBuilder(args).Build();
+        using var scope = host.Services
+          .GetRequiredService<IServiceScopeFactory>()
+          .CreateScope();
 
 #pragma warning disable 4014
-                RoleManager.Initialize(scope.ServiceProvider);
+        RoleManager.Initialize(scope.ServiceProvider);
 #pragma warning restore 4014
 
-                #endregion
+        #endregion
 
-                host.Run();
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine("{0} Exception caught.", exception);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Create web host.
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns>web host</returns>
-        private static IHostBuilder CreateHostBuilder(string[] args) => Host
-            .CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
-            .ConfigureAppConfiguration(config => config.AddJsonFile("appsettings.json", false, true));
+        host.Run();
+      }
+      catch (Exception exception)
+      {
+        Console.WriteLine("{0} Exception caught.", exception);
+        throw;
+      }
     }
+
+    /// <summary>
+    /// Create web host.
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns>web host</returns>
+    private static IHostBuilder CreateHostBuilder(string[] args) => Host
+      .CreateDefaultBuilder(args)
+      .UseDefaultServiceProvider(opts => opts.ValidateScopes = false) // needed for mediatr DI.
+      .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
+      .ConfigureAppConfiguration(config => config.AddJsonFile("appsettings.json", false, true));
+  }
 }

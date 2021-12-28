@@ -17,6 +17,6 @@ namespace WebAPI.Authentication.UseCases.Dto
         public string UserName { get; set; }
         public DateTime DateCreated { get; set; }
         public string Role { get; set; }
-        public string Token { get; set; }
+        public string? Token { get; set; }
     }
 }

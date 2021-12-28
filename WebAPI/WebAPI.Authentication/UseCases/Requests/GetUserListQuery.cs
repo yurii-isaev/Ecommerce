@@ -5,48 +5,48 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using WebAPI.Authentication.DataAccess.Entities;
+using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.UseCases.Dto;
 
 namespace WebAPI.Authentication.UseCases.Requests
 {
-    /// <summary>
-    /// Sets a property of the request object.
-    /// </summary>
-    public class GetUserListQuery : IRequest<IEnumerable>
-    {}
+  /// <summary>
+  /// Sets a property of the request object.
+  /// </summary>
+  public class GetUserListQuery : IRequest<IEnumerable>
+  {
+  }
+
+  /// <summary>
+  /// Implements a request handler for a list of registered users.
+  /// </summary>
+  public class GetUserListQueryHandler : IRequestHandler<GetUserListQuery, IEnumerable>
+  {
+    readonly UserManager<User> _userManager;
+
+    public GetUserListQueryHandler(UserManager<User> manager) => _userManager = manager;
 
     /// <summary>
-    /// Implements a request handler for a list of registered users.
+    /// Handles a request.
     /// </summary>
-    public class GetUserListQueryHandler : IRequestHandler<GetUserListQuery, IEnumerable>
+    /// <param name="request">The request.</param>
+    /// <param name="token">Cancellation token.</param>
+    /// <returns>Returns registration user list.</returns>
+    public async Task<IEnumerable> Handle(GetUserListQuery request, CancellationToken token)
     {
-        private readonly UserManager<User> _userManager;
+      var profiles = new List<ProfileDto>();
+      var users = _userManager.Users;
 
-        public GetUserListQueryHandler(UserManager<User> manager) => _userManager = manager;
+      foreach (var user in users)
+      {
+        var roles = await _userManager.GetRolesAsync(user);
 
-        /// <summary>
-        /// Handles a request.
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <param name="token">Cancellation token.</param>
-        /// <returns>Returns registration user list.</returns>
-        public async Task<IEnumerable> Handle(GetUserListQuery request, CancellationToken token)
-        {
-            var profiles = new List<ProfileDto>();
-            var users = _userManager.Users;
+        profiles.Add(new ProfileDto(
+          user.FullName!, user.Email, user.UserName, user.DateCreated, roles.FirstOrDefault()!)
+        );
+      }
 
-            foreach (var user in users)
-            {
-                var roles = await _userManager.GetRolesAsync(user);
-
-                profiles.Add(new ProfileDto(
-                    user.FullName, user.Email, user.UserName, user.DateCreated,
-                    roles.FirstOrDefault())
-                );
-            }
-
-            return await Task.FromResult(profiles);
-        }
+      return await Task.FromResult(profiles);
     }
+  }
 }
