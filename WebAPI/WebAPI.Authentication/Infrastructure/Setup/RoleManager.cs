@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using WebAPI.Authentication.Domain.Entities;
 
-namespace WebAPI.Authentication.Infrastructure
+namespace WebAPI.Authentication.Infrastructure.Setup
 {
   public static class RoleManager
   {

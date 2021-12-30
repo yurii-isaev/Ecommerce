@@ -1,6 +1,6 @@
 namespace WebAPI.Authentication.UseCases.Types;
 
-public static class MessageTypes
+public static class Messages
 {
   public const string CreatedSuccessfull = "Created successfully.";
   public const string CreatedFailed = "Created failed.";

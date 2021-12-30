@@ -48,9 +48,27 @@ namespace WebAPI.Authentication.Controllers
     /// <response code="200">Success.</response>
     [HttpPost("RegisterUser")]
     [AllowAnonymous]
-    public async Task<ActionResult<ResponseModel>> RegisterUser([FromBody] RegisterUserDto registerUser)
+    public async Task<ActionResult<Response>> RegisterUser([FromBody] RegisterUserDto registerUser)
     {
-      var request = new RegisterUserCommand() {RegisterUserDto = registerUser};
+      var request = new RegisterUserCommand() { RegisterUserDto = registerUser };
+      return Ok(await Mediator.Send(request));
+    }
+    
+    /// <summary>
+    /// Sign in App.  
+    /// </summary>
+    /// /// <remarks>
+    /// Sample request:
+    /// POST /auth/SignIn.
+    /// </remarks>
+    /// <param name="login">LoginDto.</param>
+    /// <returns>Response model.</returns>
+    // [AllowAnonymous]
+    [HttpPost("SignIn")]
+    [AllowAnonymous]
+    public async Task<ActionResult<Response>> SignIn([FromBody] LoginDto login)
+    {
+      var request = new SignInCommand() { LoginDto = login };
       return Ok(await Mediator.Send(request));
     }
   }

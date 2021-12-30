@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WebAPI.Authentication.Infrastructure;
+using WebAPI.Authentication.Infrastructure.Setup;
 
 namespace WebAPI.Authentication
 {
