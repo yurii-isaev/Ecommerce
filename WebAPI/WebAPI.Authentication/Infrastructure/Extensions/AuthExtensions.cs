@@ -14,7 +14,7 @@ namespace WebAPI.Authentication.Infrastructure.Extensions
     {
       var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
 
-      services.AddAuthentication(options =>
+      services.AddAuthentication(options => 
         {
           options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
           options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -45,8 +45,11 @@ namespace WebAPI.Authentication.Infrastructure.Extensions
 
       services.AddAuthorization(options =>
       {
-        options.AddPolicy("AdminPolicy",
-          policy => policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme));
+        options.AddPolicy("AdminPolicy", policy =>
+        {
+          policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+          policy.RequireRole("Admin");
+        });
       });
     }
   }

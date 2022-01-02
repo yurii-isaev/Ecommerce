@@ -1,24 +1,17 @@
 ﻿using System.Collections;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using WebAPI.Authentication.UseCases.Dto;
-using WebAPI.Authentication.UseCases.Requests;
+using WebAPI.Authentication.UseCases.Requests.Commands;
+using WebAPI.Authentication.UseCases.Requests.Queries;
 
 namespace WebAPI.Authentication.Controllers
 {
   [ApiController]
   [Route("api/[controller]")]
-  public class AuthController : ControllerBase
+  public class AuthController : BaseController
   {
-    private IMediator _mediator = null!;
-
-    protected IMediator Mediator => _mediator ??= HttpContext
-      .RequestServices
-      .GetRequiredService<IMediator>();
-
     /// <summary>
     /// Get all user from database.   
     /// </summary>
@@ -50,10 +43,10 @@ namespace WebAPI.Authentication.Controllers
     [AllowAnonymous]
     public async Task<ActionResult<Response>> RegisterUser([FromBody] RegisterUserDto registerUser)
     {
-      var request = new RegisterUserCommand() { RegisterUserDto = registerUser };
+      var request = new RegisterUserCommand() {RegisterUserDto = registerUser};
       return Ok(await Mediator.Send(request));
     }
-    
+
     /// <summary>
     /// Sign in App.  
     /// </summary>
@@ -68,7 +61,7 @@ namespace WebAPI.Authentication.Controllers
     [AllowAnonymous]
     public async Task<ActionResult<Response>> SignIn([FromBody] LoginDto login)
     {
-      var request = new SignInCommand() { LoginDto = login };
+      var request = new SignInCommand() {LoginDto = login};
       return Ok(await Mediator.Send(request));
     }
   }

@@ -10,9 +10,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WebAPI.Authentication.DataAccess;
+using WebAPI.Authentication.DataAccess.Repositories;
 using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.Infrastructure.Extensions;
 using WebAPI.Authentication.Infrastructure.Options;
+using WebAPI.Authentication.UseCases.Contracts;
 
 namespace WebAPI.Authentication
 {
@@ -66,6 +68,7 @@ namespace WebAPI.Authentication
       #region Dependency Injection
       // services.AddHttpContextAccessor().AddSingleton<IHttpService, HttpService>();
       services.AddControllers();
+      services.AddTransient<IProductRepository, ProductRepository>();
       #endregion
 
       #region Assembly
