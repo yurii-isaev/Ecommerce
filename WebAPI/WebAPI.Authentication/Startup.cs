@@ -31,6 +31,12 @@ namespace WebAPI.Authentication
       services.AddDbContext<AppDbContext>(op =>
         op.UseSqlServer(connectionString ?? throw new InvalidOperationException()));
       #endregion
+      
+      #region Dependency Injection
+      // services.AddHttpContextAccessor().AddSingleton<IHttpService, HttpService>();
+      services.AddControllers();
+      services.AddTransient<IProductRepository>(_ => new ProductRepository(connectionString!));
+      #endregion
 
       #region Role Identity
       services.AddIdentity<User, IdentityRole>(options =>
@@ -60,15 +66,13 @@ namespace WebAPI.Authentication
       #endregion
 
       #region CORS
-      services.AddCors(options => options
-        .AddDefaultPolicy(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader())
-      );
-      #endregion
-
-      #region Dependency Injection
-      // services.AddHttpContextAccessor().AddSingleton<IHttpService, HttpService>();
-      services.AddControllers();
-      services.AddTransient<IProductRepository, ProductRepository>();
+      services.AddCors(options =>
+      {
+        options.AddPolicy("ApiCorsPolicy", builder =>
+        {
+          builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        });
+      });
       #endregion
 
       #region Assembly
