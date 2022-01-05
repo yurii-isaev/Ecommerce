@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -18,34 +17,34 @@ namespace WebAPI.Authentication.DataAccess.Repositories
       _connection = connectionString;
     }
 
-    public List<Product> GetAllProducts()
+    public Task<IEnumerable<Product>> GetProductList()
     {
       using (IDbConnection db = new SqlConnection(_connection))
       {
         string query = "SELECT * FROM Products";
-        return db.Query<Product>(query).AsList();
+        return Task.FromResult<IEnumerable<Product>>(db.Query<Product>(query).AsList());
       }
     }
 
 
-    public async Task CreateProductAsync(Product product)
-    {
-      throw new NotImplementedException();
-    }
-
-    public async Task<IEnumerable<Product>> GetProductList()
-    {
-      throw new NotImplementedException();
-    }
-
-    public async Task<Product> GetProductAsync(Guid productId)
-    {
-      throw new NotImplementedException();
-    }
-
-    public async Task DeleteProductAsync(Guid productId)
-    {
-      throw new NotImplementedException();
-    }
+    // public async Task CreateProductAsync(Product product)
+    // {
+    //   throw new NotImplementedException();
+    // }
+    //
+    // public async Task<IEnumerable<Product>> GetProductList()
+    // {
+    //   throw new NotImplementedException();
+    // }
+    //
+    // public async Task<Product> GetProductAsync(Guid productId)
+    // {
+    //   throw new NotImplementedException();
+    // }
+    //
+    // public async Task DeleteProductAsync(Guid productId)
+    // {
+    //   throw new NotImplementedException();
+    // }
   }
 }

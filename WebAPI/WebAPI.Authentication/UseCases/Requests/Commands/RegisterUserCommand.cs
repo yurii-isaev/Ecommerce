@@ -41,7 +41,7 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
       try
       {
         var user = _mapper.Map<User>(request.RegisterUserDto);
-        user.DateCreated = DateTime.Now;
+        user.CreatedAt = DateTime.Now;
         var result = await _userManager.CreateAsync(user, request.RegisterUserDto!.Password);
 
         if (result.Succeeded)

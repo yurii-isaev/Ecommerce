@@ -70,7 +70,7 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
 
             // Creating an object with a token and user data
             var user = new ProfileDto(
-              appUser.FullName!, appUser.Email, appUser.UserName, appUser.DateCreated, role.ElementAt(0));
+              appUser.FullName!, appUser.Email, appUser.UserName, appUser.CreatedAt, role.ElementAt(0));
 
             var jwtProvider = new JwtProvider(_jwtOptions, _userManager);
             user.Token = await jwtProvider.GenerateToken(appUser);
@@ -78,10 +78,10 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
             // Adding data to browser cookies
             httpContext!.Response.Cookies.Append("user-cookies", user.Token);
 
-            return await Task.FromResult(new Response(ResponseCode.Ok, Messages.TokenGenerated, user));
+            return await Task.FromResult(new Response(ResponseCode.Ok, true, Messages.TokenGenerated, user));
           }
 
-          return await Task.FromResult(new Response(ResponseCode.Error, Messages.InvalidEmailOrPassword, ""));
+          return await Task.FromResult(new Response(ResponseCode.Error, false, Messages.InvalidEmailOrPassword, ""));
         }
         else
         {

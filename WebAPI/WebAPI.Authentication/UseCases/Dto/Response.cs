@@ -10,18 +10,18 @@ public class Response
   public Response()
   {}
 
-  public Response(ResponseCode сode, string responseMessage, object dataSet)
+  public Response(ResponseCode сode, string message, object dataSet)
   {
     Code = сode;
-    Message = responseMessage;
+    Message = message;
     DataSet = dataSet;
   }
 
-  public Response(ResponseCode сode, bool isValid, string responseMessage, object dataSet)
+  public Response(ResponseCode сode, bool isValid, string message, object dataSet)
   {
     Code = сode;
     IsValid = isValid;
-    Message = responseMessage;
+    Message = message;
     DataSet = dataSet;
   }
 }
@@ -32,4 +32,3 @@ public enum ResponseCode
   Ok = 200,
   Error = 500
 }
-

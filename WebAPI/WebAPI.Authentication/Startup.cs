@@ -28,8 +28,14 @@ namespace WebAPI.Authentication
     {
       #region DataBase Connection
       var connectionString = Configuration.GetConnectionString("DefaultConnection");
-      services.AddDbContext<AppDbContext>(op =>
+      services.AddDbContext<AuthDbContext>(op =>
         op.UseSqlServer(connectionString ?? throw new InvalidOperationException()));
+      #endregion
+      
+      #region Dependency Injection
+      // services.AddHttpContextAccessor().AddSingleton<IHttpService, HttpService>();
+      services.AddControllers();
+      services.AddTransient<IProductRepository>(_ => new ProductRepository(connectionString!));
       #endregion
 
       #region Role Identity
@@ -46,7 +52,7 @@ namespace WebAPI.Authentication
         .AddRoles<IdentityRole>()
         .AddRoleManager<RoleManager<IdentityRole>>()
         .AddSignInManager<SignInManager<User>>()
-        .AddEntityFrameworkStores<AppDbContext>();
+        .AddEntityFrameworkStores<AuthDbContext>();
       #endregion
 
       #region Authentication JWT
@@ -60,15 +66,13 @@ namespace WebAPI.Authentication
       #endregion
 
       #region CORS
-      services.AddCors(options => options
-        .AddDefaultPolicy(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader())
-      );
-      #endregion
-
-      #region Dependency Injection
-      // services.AddHttpContextAccessor().AddSingleton<IHttpService, HttpService>();
-      services.AddControllers();
-      services.AddTransient<IProductRepository, ProductRepository>();
+      services.AddCors(options =>
+      {
+        options.AddPolicy("ApiCorsPolicy", builder =>
+        {
+          builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        });
+      });
       #endregion
 
       #region Assembly

@@ -43,14 +43,14 @@ namespace WebAPI.Authentication.Infrastructure.Extensions
           };
         });
 
-      services.AddAuthorization(options =>
-      {
-        options.AddPolicy("AdminPolicy", policy =>
-        {
-          policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-          policy.RequireRole("Admin");
-        });
-      });
+      // services.AddAuthorization(options =>
+      // {
+      //   options.AddPolicy("AdminPolicy", policy =>
+      //   {
+      //     policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+      //     policy.RequireRole("Admin");
+      //   });
+      // });
     }
   }
 }

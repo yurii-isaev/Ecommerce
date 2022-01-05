@@ -29,16 +29,7 @@ namespace WebAPI.Authentication.Controllers
       return Ok(await Mediator.Send(request));
     }
 
-    /// <summary>
-    /// Register new user.
-    /// </summary>
-    /// <remarks>
-    /// Sample request:
-    /// POST /auth/RegisterUser.
-    /// </remarks>
-    /// <param name="registerUser">RegisterUserDto.</param>
-    /// <returns>Response model.</returns>
-    /// <response code="200">Success.</response>
+
     [HttpPost("RegisterUser")]
     [AllowAnonymous]
     public async Task<ActionResult<Response>> RegisterUser([FromBody] RegisterUserDto registerUser)

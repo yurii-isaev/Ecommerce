@@ -1,7 +1,9 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.UseCases.Contracts;
 
 namespace WebAPI.Authentication.UseCases.Requests.Queries
@@ -26,10 +28,8 @@ namespace WebAPI.Authentication.UseCases.Requests.Queries
     /// <returns>Returns employee list.</returns>
     public async Task<IEnumerable> Handle(GetProductsListQuery request, CancellationToken token)
     {
-      return new[]
-      {
-        await Task.FromResult(_repository.GetProductList())
-      };
+      IEnumerable<Product> productList = await _repository.GetProductList();
+      return productList;
     }
   }
 }

@@ -8,9 +8,7 @@ namespace WebAPI.Authentication.Controllers
   [Route("api/[controller]/[action]")]
   public abstract class BaseController : ControllerBase
   {
-    private IMediator _mediator = null!;
-
-    protected IMediator Mediator => _mediator ??= HttpContext
+    protected IMediator Mediator => HttpContext
       .RequestServices
       .GetRequiredService<IMediator>();
   }
