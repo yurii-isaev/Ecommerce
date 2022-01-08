@@ -16,9 +16,7 @@
   export default {
      name: "main-wrapper",
 
-     components: {
-        LayoutHeader
-     },
+     components: { LayoutHeader },
 
      data: () => ({title: "Main wrapper"})
   }
