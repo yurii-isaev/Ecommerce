@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WebAPI.Authentication.UseCases.Dto;
+namespace WebAPI.Authentication.UseCases.Tranfers;
 
 public class AccountDto
 {

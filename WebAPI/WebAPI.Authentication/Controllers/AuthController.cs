@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Authentication.UseCases.Dto;
 using WebAPI.Authentication.UseCases.Requests.Commands;
 using WebAPI.Authentication.UseCases.Requests.Queries;
+using WebAPI.Authentication.UseCases.Tranfers;
 
 namespace WebAPI.Authentication.Controllers
 {
@@ -29,12 +29,15 @@ namespace WebAPI.Authentication.Controllers
       return Ok(await Mediator.Send(request));
     }
 
-
+    /// <remarks>
+    /// Request example:
+    /// GET http://localhost:5000/api/auth/RegisterUser
+    /// </remarks>
     [HttpPost("RegisterUser")]
     [AllowAnonymous]
-    public async Task<ActionResult<Response>> RegisterUser([FromBody] RegisterUserDto registerUser)
+    public async Task<ActionResult<Response>> RegisterUser([FromBody] RegisterUserDto userData)
     {
-      var request = new RegisterUserCommand() {RegisterUserDto = registerUser};
+      var request = new RegisterUserCommand() {RegisterUserDto = userData};
       return Ok(await Mediator.Send(request));
     }
 

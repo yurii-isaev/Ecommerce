@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.Infrastructure.Options;
@@ -13,10 +14,10 @@ namespace WebAPI.Authentication.Infrastructure.Providers;
 
 public class JwtProvider
 {
-  readonly JwtOptions _jwtOptions;
+  readonly IOptions<JwtOptions> _jwtOptions;
   readonly UserManager<User> _userManager;
 
-  public JwtProvider(JwtOptions jwtOptions, UserManager<User> userManager)
+  public JwtProvider(IOptions<JwtOptions> jwtOptions, UserManager<User> userManager)
   {
     _jwtOptions = jwtOptions;
     _userManager = userManager;
@@ -34,12 +35,12 @@ public class JwtProvider
       throw new ArgumentException("User properties are null or empty");
     }
 
-    if (_jwtOptions == null)
+    if (_jwtOptions.Value == null)
     {
       throw new ArgumentException("JWT options are not set");
     }
 
-    if (string.IsNullOrEmpty(_jwtOptions.Secret))
+    if (string.IsNullOrEmpty(_jwtOptions.Value.Secret))
     {
       throw new ArgumentException("JWT Secret is not set");
     }
@@ -69,14 +70,14 @@ public class JwtProvider
     }
 
     var jwtTokenHandler = new JwtSecurityTokenHandler();
-    var key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
+    var key = Encoding.ASCII.GetBytes(_jwtOptions.Value.Secret);
 
     var tokenDescriptor = new SecurityTokenDescriptor
     {
       Subject = new ClaimsIdentity(claims),
-      Expires = DateTime.UtcNow.AddHours(_jwtOptions.TokenLifeTime),
-      Audience = _jwtOptions.Audience,
-      Issuer = _jwtOptions.Issuer,
+      Expires = DateTime.UtcNow.AddHours(_jwtOptions.Value.TokenLifeTime),
+      Audience = _jwtOptions.Value.Audience,
+      Issuer = _jwtOptions.Value.Issuer,
       SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
     };
 

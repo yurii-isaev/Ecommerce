@@ -1,4 +1,4 @@
-namespace WebAPI.Authentication.UseCases.Dto;
+namespace WebAPI.Authentication.UseCases.Tranfers;
 
 public class Response
 {
@@ -12,20 +12,19 @@ public class Response
 
   public Response(ResponseCode сode, string message, object dataSet)
   {
-    Code = сode;
+    Code    = сode;
     Message = message;
     DataSet = dataSet;
   }
 
   public Response(ResponseCode сode, bool isValid, string message, object dataSet)
   {
-    Code = сode;
+    Code    = сode;
     IsValid = isValid;
     Message = message;
     DataSet = dataSet;
   }
 }
-
 
 public enum ResponseCode
 {

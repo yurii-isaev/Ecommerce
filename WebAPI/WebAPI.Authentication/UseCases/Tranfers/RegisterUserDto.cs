@@ -1,7 +1,7 @@
 using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.UseCases.Mapping;
 
-namespace WebAPI.Authentication.UseCases.Dto;
+namespace WebAPI.Authentication.UseCases.Tranfers;
 
 public class RegisterUserDto : IMapFrom<User>
 {

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.Infrastructure.Options;
 using WebAPI.Authentication.Infrastructure.Providers;
-using WebAPI.Authentication.UseCases.Dto;
+using WebAPI.Authentication.UseCases.Tranfers;
 using WebAPI.Authentication.UseCases.Types;
 
 namespace WebAPI.Authentication.UseCases.Requests.Commands
@@ -24,22 +24,22 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
 
   public class SignInCommandHandler : IRequestHandler<SignInCommand, Response>
   {
+    readonly IHttpContextAccessor _httpContextAccessor;
+    readonly IOptions<JwtOptions> _jwtOptions;
     readonly UserManager<User> _userManager;
     readonly SignInManager<User> _signInManager;
-    readonly JwtOptions _jwtOptions;
-    readonly IHttpContextAccessor _httpContextAccessor;
 
     public SignInCommandHandler
     (
-      UserManager<User> userManager,
-      SignInManager<User> signInManager,
+      IHttpContextAccessor httpContextAccessor,
       IOptions<JwtOptions> jwtOptions,
-      IHttpContextAccessor httpContextAccessor
+      SignInManager<User> signInManager,
+      UserManager<User> userManager
     )
     {
       _userManager = userManager;
       _signInManager = signInManager;
-      _jwtOptions = jwtOptions.Value;
+      _jwtOptions = jwtOptions;
       _httpContextAccessor = httpContextAccessor;
     }
 
@@ -48,7 +48,7 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
     /// </summary>
     /// <param name="request">The request.</param>
     /// <param name="token">Cancellation token.</param>
-    /// <returns>Returns ResponseModel.</returns>
+    /// <returns>Returns response model.</returns>
     public async Task<Response> Handle(SignInCommand request, CancellationToken token)
     {
       var httpContext = _httpContextAccessor.HttpContext;
@@ -65,20 +65,21 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
 
           if (result.IsNotAllowed)
           {
-            var appUser = await _userManager.FindByEmailAsync(request.LoginDto.Email);
-            var role = await _userManager.GetRolesAsync(appUser);
+            var user = await _userManager.FindByEmailAsync(request.LoginDto.Email);
+            var rolesList = await _userManager.GetRolesAsync(user);
 
             // Creating an object with a token and user data
-            var user = new ProfileDto(
-              appUser.FullName!, appUser.Email, appUser.UserName, appUser.CreatedAt, role.ElementAt(0));
-
+            var profile = new ProfileDto(
+              new Guid(user.Id), user.UserName, user.CreatedAt, user.Email, rolesList.ElementAt(0)
+            );
+            //
             var jwtProvider = new JwtProvider(_jwtOptions, _userManager);
-            user.Token = await jwtProvider.GenerateToken(appUser);
+            var jwt = await jwtProvider.GenerateToken(user);
 
             // Adding data to browser cookies
-            httpContext!.Response.Cookies.Append("user-cookies", user.Token);
+            httpContext!.Response.Cookies.Append("user-cookies", jwt);
 
-            return await Task.FromResult(new Response(ResponseCode.Ok, true, Messages.TokenGenerated, user));
+            return await Task.FromResult(new Response(ResponseCode.Ok, true, Messages.TokenGenerated, profile));
           }
 
           return await Task.FromResult(new Response(ResponseCode.Error, false, Messages.InvalidEmailOrPassword, ""));

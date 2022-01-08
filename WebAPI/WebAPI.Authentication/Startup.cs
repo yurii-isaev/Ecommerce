@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using WebAPI.Authentication.DataAccess;
 using WebAPI.Authentication.DataAccess.Repositories;
 using WebAPI.Authentication.Domain.Entities;
@@ -27,15 +28,15 @@ namespace WebAPI.Authentication
     public void ConfigureServices(IServiceCollection services)
     {
       #region DataBase Connection
-      var connectionString = Configuration.GetConnectionString("DefaultConnection");
-      services.AddDbContext<AuthDbContext>(op =>
-        op.UseSqlServer(connectionString ?? throw new InvalidOperationException()));
+      var connection = Configuration.GetConnectionString("DefaultConnection");
+      services.AddDbContext<AuthDbContext>(op => op.UseSqlServer(connection ?? throw new InvalidOperationException()));
       #endregion
       
       #region Dependency Injection
-      // services.AddHttpContextAccessor().AddSingleton<IHttpService, HttpService>();
+      // services.AddScoped<IOptions<JwtOptions>, JwtOptions>();
+      services.AddHttpContextAccessor();
       services.AddControllers();
-      services.AddTransient<IProductRepository>(_ => new ProductRepository(connectionString!));
+      services.AddTransient<IProductRepository>(_ => new ProductRepository(connection!));
       #endregion
 
       #region Role Identity

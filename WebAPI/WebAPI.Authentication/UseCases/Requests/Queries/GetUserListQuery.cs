@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using WebAPI.Authentication.Domain.Entities;
-using WebAPI.Authentication.UseCases.Dto;
+using WebAPI.Authentication.UseCases.Tranfers;
 
 namespace WebAPI.Authentication.UseCases.Requests.Queries
 {
@@ -39,9 +40,10 @@ namespace WebAPI.Authentication.UseCases.Requests.Queries
       foreach (var user in users)
       {
         var roles = await _userManager.GetRolesAsync(user);
-
+        
         profiles.Add(new ProfileDto(
-          user.FullName!, user.Email, user.UserName, user.CreatedAt, roles.FirstOrDefault()!));
+          new Guid(user.Id), user.UserName, user.CreatedAt, user.Email, roles.FirstOrDefault()!)
+        );
       }
 
       return await Task.FromResult(profiles);
