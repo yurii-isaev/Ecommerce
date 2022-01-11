@@ -48,17 +48,17 @@ namespace WebAPI.Authentication.Infrastructure.Setup
     {
       // Create users.
       var manager = provider.GetRequiredService<UserManager<User>>();
-      var empResult = await manager.CreateAsync((User) DefaultUsers.Сustomer, "User123!");
+      var empResult = await manager.CreateAsync((User) DefaultUsers.Customer, "User123!");
       var managerResult = await manager.CreateAsync((User) DefaultUsers.Manager, "User123!");
       var adminResult = await manager.CreateAsync((User) DefaultUsers.Administrator, "User123!");
 
       // Create user roles based on email confirmation.
       if (empResult.Succeeded || managerResult.Succeeded || adminResult.Succeeded)
       {
-        var empUser = await manager.FindByEmailAsync(DefaultUsers.Сustomer.Email);
+        var empUser = await manager.FindByEmailAsync(DefaultUsers.Customer.Email);
         var managerUser = await manager.FindByEmailAsync(DefaultUsers.Manager.Email);
         var adminUser = await manager.FindByEmailAsync(DefaultUsers.Administrator.Email);
-        await manager.AddToRoleAsync(empUser, RoleNames.Сustomer);
+        await manager.AddToRoleAsync(empUser, RoleNames.Customer);
         await manager.AddToRoleAsync(managerUser, RoleNames.Manager);
         await manager.AddToRoleAsync(adminUser, RoleNames.Administrator);
       }

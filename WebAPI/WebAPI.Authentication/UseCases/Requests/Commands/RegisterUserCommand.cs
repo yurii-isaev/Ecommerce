@@ -10,7 +10,9 @@ using Microsoft.Extensions.Options;
 using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.Infrastructure.Options;
 using WebAPI.Authentication.Infrastructure.Providers;
+using WebAPI.Authentication.Infrastructure.Setup;
 using WebAPI.Authentication.UseCases.Tranfers;
+using WebAPI.Authentication.UseCases.Tranfers.Output;
 using WebAPI.Authentication.UseCases.Types;
 
 namespace WebAPI.Authentication.UseCases.Requests.Commands
@@ -18,12 +20,12 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
   /// <summary>
   /// Sets a property of the request object.
   /// </summary>
-  public class RegisterUserCommand : IRequest<Response>
+  public class RegisterUserCommand : IRequest<ServerResponse>
   {
     public RegisterUserDto? RegisterUserDto { get; set; }
   }
 
-  public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Response>
+  public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, ServerResponse>
   {
     readonly IOptions<JwtOptions> _jwtOptions;
     readonly IHttpContextAccessor _httpContextAccessor;
@@ -50,7 +52,7 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
     /// <param name="request">The request.</param>
     /// <param name="token">Cancellation token.</param>
     /// <returns>Returns response model.</returns>
-    public async Task<Response> Handle(RegisterUserCommand request, CancellationToken token)
+    public async Task<ServerResponse> Handle(RegisterUserCommand request, CancellationToken token)
     {
       var httpContext = _httpContextAccessor.HttpContext;
 
@@ -63,7 +65,7 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
         if (result.Succeeded)
         {
           var tempUser = await _userManager.FindByEmailAsync(request.RegisterUserDto.Email);
-          await _userManager.AddToRoleAsync(tempUser, RoleNameTypes.AllRoles.ElementAt(0));
+          await _userManager.AddToRoleAsync(tempUser, RoleNames.AllRoles.ElementAt(0));
 
           // Get a user roles
           var rolesList = await _userManager.GetRolesAsync(user);
@@ -77,19 +79,26 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
           var jwt = await jwtProvider.GenerateToken(user);
 
           // Adding data to browser cookies
-          httpContext!.Response.Cookies.Append("user-cookies", jwt);
+          // httpContext!.Response.Cookies.Append("user-cookies", jwt);
+          
+          httpContext!.Response.Cookies.Append("user-cookies", jwt, new CookieOptions
+          {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None
+          });
 
-          return await Task.FromResult(new Response(ResponseCode.Ok, true, Messages.RegistrationSuccess, profile));
+          return await Task.FromResult(new ServerResponse(ResponseCode.Ok, true, Messages.RegistrationSuccess, profile));
         }
 
-        return await Task.FromResult(new Response(ResponseCode.Ok, Messages.RegistrationFailed,
+        return await Task.FromResult(new ServerResponse(ResponseCode.Ok, Messages.RegistrationFailed,
             result.Errors.Select(e => e.Description).ToArray()
           )
         );
       }
       catch (Exception ex)
       {
-        return await Task.FromResult(new Response(ResponseCode.Error, ex.Message, ""));
+        return await Task.FromResult(new ServerResponse(ResponseCode.Error, ex.Message, ""));
       }
     }
   }

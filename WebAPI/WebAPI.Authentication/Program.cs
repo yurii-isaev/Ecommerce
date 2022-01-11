@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using WebAPI.Authentication.Infrastructure.Logging;
 using WebAPI.Authentication.Infrastructure.Setup;
 
 namespace WebAPI.Authentication
@@ -16,27 +18,31 @@ namespace WebAPI.Authentication
     /// <returns></returns>
     public static void Main(string[] args)
     {
+      // Выбор настройкм логирования
+      LogSet.MinimumLevelSetup();
+
       try
       {
-        #region Authentication server initialize
-
+        Log.Warning("Authentication server run");
         var host = CreateHostBuilder(args).Build();
-        using var scope = host.Services
-          .GetRequiredService<IServiceScopeFactory>()
-          .CreateScope();
+        using var scope = host.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
-#pragma warning disable 4014
+        #pragma warning disable 4014
         RoleManager.Initialize(scope.ServiceProvider);
-#pragma warning restore 4014
-
-        #endregion
+        #pragma warning restore 4014
+        
+        Log.Warning("RoleManager initialize");
 
         host.Run();
       }
       catch (Exception exception)
       {
-        Console.WriteLine("{0} Exception caught.", exception);
+        Log.Fatal(exception, "Authentication server failed");
         throw;
+      }
+      finally
+      {
+        Log.CloseAndFlush();
       }
     }
 
@@ -48,7 +54,8 @@ namespace WebAPI.Authentication
     private static IHostBuilder CreateHostBuilder(string[] args) => Host
       .CreateDefaultBuilder(args)
       .UseDefaultServiceProvider(opts => opts.ValidateScopes = false) // needed for mediatr DI.
-      .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
-      .ConfigureAppConfiguration(config => config.AddJsonFile("appsettings.json", false, true));
+      .ConfigureWebHostDefaults(builder => builder.UseStartup<Startup>())
+      .ConfigureAppConfiguration(config => config.AddJsonFile("appsettings.json", false, true))
+      .UseSerilog();
   }
 }

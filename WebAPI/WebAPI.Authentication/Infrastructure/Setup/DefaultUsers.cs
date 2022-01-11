@@ -5,9 +5,9 @@ namespace WebAPI.Authentication.Infrastructure.Setup
 {
   public static class DefaultUsers
   {
-    public static readonly IdentityUser Сustomer = new IdentityUser
+    public static readonly IdentityUser Customer = new IdentityUser
     {
-      UserName = "Сustomer",
+      UserName = "Customer",
       Email = "Сustomere@test.ru",
       EmailConfirmed = true
     };
@@ -30,7 +30,7 @@ namespace WebAPI.Authentication.Infrastructure.Setup
     {
       get
       {
-        yield return Сustomer;
+        yield return Customer;
         yield return Manager;
         yield return Administrator;
       }

@@ -57,16 +57,17 @@ public class JwtProvider
       throw new Exception("User roles not found");
     }
 
-    var claims = new List<Claim>()
+    var jwtClaimsList = new List<Claim>()
     {
       new Claim(JwtRegisteredClaimNames.NameId, user.Id),
+      new Claim(ClaimTypes.Name, user.UserName),
       new Claim(JwtRegisteredClaimNames.Email, user.Email),
       new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
     foreach (var role in userRoles)
     {
-      claims.Add(new Claim(ClaimTypes.Role, role));
+      jwtClaimsList.Add(new Claim(ClaimTypes.Role, role));
     }
 
     var jwtTokenHandler = new JwtSecurityTokenHandler();
@@ -74,7 +75,7 @@ public class JwtProvider
 
     var tokenDescriptor = new SecurityTokenDescriptor
     {
-      Subject = new ClaimsIdentity(claims),
+      Subject = new ClaimsIdentity(jwtClaimsList),
       Expires = DateTime.UtcNow.AddHours(_jwtOptions.Value.TokenLifeTime),
       Audience = _jwtOptions.Value.Audience,
       Issuer = _jwtOptions.Value.Issuer,

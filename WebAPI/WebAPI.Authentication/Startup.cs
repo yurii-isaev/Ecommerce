@@ -1,15 +1,14 @@
 using System;
 using System.Reflection;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
+using Serilog;
 using WebAPI.Authentication.DataAccess;
 using WebAPI.Authentication.DataAccess.Repositories;
 using WebAPI.Authentication.Domain.Entities;
@@ -33,9 +32,10 @@ namespace WebAPI.Authentication
       #endregion
       
       #region Dependency Injection
-      // services.AddScoped<IOptions<JwtOptions>, JwtOptions>();
+      //services.AddScoped<IOptions<JwtOptions>, JwtOptions>();
       services.AddHttpContextAccessor();
       services.AddControllers();
+      services.AddSingleton<IMediator, Mediator>();
       services.AddTransient<IProductRepository>(_ => new ProductRepository(connection!));
       #endregion
 
@@ -65,14 +65,18 @@ namespace WebAPI.Authentication
         .Configure<JwtOptions>(Configuration.GetSection("JwtOptions"))
         .Configure<EmailOptions>(Configuration.GetSection("EmailOptions"));
       #endregion
-
+      
       #region CORS
       services.AddCors(options =>
       {
-        options.AddPolicy("ApiCorsPolicy", builder =>
-        {
-          builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-        });
+        options.AddPolicy("AllowSpecificOrigin",
+          builder =>
+          {
+            builder.WithOrigins("http://localhost:8080") // Указываем конкретный источник
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials(); // Разрешаем куки
+          });
       });
       #endregion
 
@@ -84,19 +88,32 @@ namespace WebAPI.Authentication
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-      if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
-      app.UseRouting();
-      app.UseCors("ApiCorsPolicy");
-      app.UseCookiePolicy(new CookiePolicyOptions
+      if (env.IsDevelopment())
       {
-        MinimumSameSitePolicy = SameSiteMode.Strict,
-        HttpOnly = HttpOnlyPolicy.Always,
-        Secure = CookieSecurePolicy.Always
-      });
+        app.UseDeveloperExceptionPage();
+      }
+
+      // обязателен для правильной работы маршрутизации запросов в вашем ASP.NET Core приложении
+      app.UseRouting();
+
+      // Middleware для логирования информации о запросах
+      app.UseSerilogRequestLogging();
+
+      // Проверка политики файлов cookie
+      app.UseCookiePolicy();
+
+      // Обработка аутентификации и авторизации
       app.UseAuthentication();
       app.UseAuthorization();
-      app.UseCookiePolicy();
-      app.UseEndpoints(endpoints => endpoints.MapControllers());
+
+      // Обработка CORS
+      app.UseCors("AllowSpecificOrigin");
+
+      // Завершение конфигурации маршрутов
+      app.UseEndpoints(endpoints =>
+      {
+        endpoints.MapControllers();
+      });
     }
   }
 }

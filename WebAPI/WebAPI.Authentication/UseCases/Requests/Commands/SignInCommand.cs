@@ -10,6 +10,7 @@ using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.Infrastructure.Options;
 using WebAPI.Authentication.Infrastructure.Providers;
 using WebAPI.Authentication.UseCases.Tranfers;
+using WebAPI.Authentication.UseCases.Tranfers.Output;
 using WebAPI.Authentication.UseCases.Types;
 
 namespace WebAPI.Authentication.UseCases.Requests.Commands
@@ -17,12 +18,12 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
   /// <summary>
   /// Sets a property of the request object.
   /// </summary>
-  public class SignInCommand : IRequest<Response>
+  public class SignInCommand : IRequest<ServerResponse>
   {
     public LoginDto? LoginDto { get; set; }
   }
 
-  public class SignInCommandHandler : IRequestHandler<SignInCommand, Response>
+  public class SignInCommandHandler : IRequestHandler<SignInCommand, ServerResponse>
   {
     readonly IHttpContextAccessor _httpContextAccessor;
     readonly IOptions<JwtOptions> _jwtOptions;
@@ -49,7 +50,7 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
     /// <param name="request">The request.</param>
     /// <param name="token">Cancellation token.</param>
     /// <returns>Returns response model.</returns>
-    public async Task<Response> Handle(SignInCommand request, CancellationToken token)
+    public async Task<ServerResponse> Handle(SignInCommand request, CancellationToken token)
     {
       var httpContext = _httpContextAccessor.HttpContext;
 
@@ -79,10 +80,10 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
             // Adding data to browser cookies
             httpContext!.Response.Cookies.Append("user-cookies", jwt);
 
-            return await Task.FromResult(new Response(ResponseCode.Ok, true, Messages.TokenGenerated, profile));
+            return await Task.FromResult(new ServerResponse(ResponseCode.Ok, true, Messages.TokenGenerated, profile));
           }
 
-          return await Task.FromResult(new Response(ResponseCode.Error, false, Messages.InvalidEmailOrPassword, ""));
+          return await Task.FromResult(new ServerResponse(ResponseCode.Error, false, Messages.InvalidEmailOrPassword, ""));
         }
         else
         {
@@ -91,7 +92,7 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
       }
       catch (Exception ex)
       {
-        return await Task.FromResult(new Response(ResponseCode.Error, ex.Message, Messages.UserNotExist));
+        return await Task.FromResult(new ServerResponse(ResponseCode.Error, ex.Message, Messages.UserNotExist));
       }
     }
   }

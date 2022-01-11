@@ -30,7 +30,7 @@ namespace WebAPI.Authentication.Infrastructure.Extensions
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions!.Secret!))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions!.Secret!)),
           };
 
           options.Events = new JwtBearerEvents

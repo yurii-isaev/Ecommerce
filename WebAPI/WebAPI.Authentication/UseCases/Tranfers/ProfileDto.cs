@@ -6,16 +6,19 @@ namespace WebAPI.Authentication.UseCases.Tranfers
   {
     public Guid Id { get; set; }
     
-    public string Email { get; set; }
-    
-    public string UserName { get; set; }
-    
+    public string Email { get; set; } = null!;
+
+    public string UserName { get; set; } = null!;
+
     public DateTime DateCreated { get; set; }
     
-    public string Role { get; set; }
-    
+    public string Role { get; set; } = null!;
+
     // public string? Token { get; set; }
     // public string FullName { get; set; }
+
+    public ProfileDto()
+    {}
 
     public ProfileDto(Guid id, string userName, DateTime dateCreated, string email, string role)
     {
