@@ -21,7 +21,7 @@ const ProductModule = {
       },
 
       GET_PRODUCTS_FROM_API({commit}) {
-         return axios('http://localhost:5000/api/store/all-products', {
+         return axios('http://localhost:5000/api/store/GetAllProducts', {
             method: "GET"
          }).then((products) => {
             commit('SET_PRODUCTS_TO_STATE', products.data)
