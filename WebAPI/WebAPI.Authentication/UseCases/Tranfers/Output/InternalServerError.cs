@@ -3,21 +3,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Authentication.UseCases.Tranfers.Output;
 
-public class InternalServerErrorResponse : ActionResult
+public class InternalServerError : ServerResponse
 {
-  public string Message { get; set; }
+  public new string Message { get; set; }
 
-  public InternalServerErrorResponse(string message)
+  public InternalServerError(string message)
   {
     Message = message;
   }
 
-  public override void ExecuteResult(ActionContext context)
+  public void ExecuteResult(ActionContext context)
   {
     var objectResult = new ObjectResult(new
     {
       Code = StatusCodes.Status500InternalServerError,
-      IsValid = false,
+      Success = false,
       Message
     })
     {

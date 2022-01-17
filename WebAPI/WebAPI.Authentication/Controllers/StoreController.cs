@@ -16,7 +16,7 @@ namespace WebAPI.Authentication.Controllers
     [
       // Authorize(Roles = "Customer"),
       // ProducesResponseType(StatusCodes.Status401Unauthorized)
-      HttpGet("all-products"),
+      HttpGet("GetAllProducts"),
       ProducesResponseType(StatusCodes.Status200OK),
       ProducesResponseType(StatusCodes.Status500InternalServerError),
     ]

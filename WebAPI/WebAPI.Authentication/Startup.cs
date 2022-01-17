@@ -72,10 +72,15 @@ namespace WebAPI.Authentication
         options.AddPolicy("AllowSpecificOrigin",
           builder =>
           {
-            builder.WithOrigins("http://localhost:8080") // Указываем конкретный источник
+            builder
+              // Specify a specific source.
+              .WithOrigins("http://localhost:8080") 
+              // Allows the use of any HTTP methods in requests to your server.
               .AllowAnyMethod()
+              // Allows any HTTP headers in requests to be sent to your server.
               .AllowAnyHeader()
-              .AllowCredentials(); // Разрешаем куки
+              // Allows the transfer of credentials (e.g. cookies).
+              .AllowCredentials(); 
           });
       });
       #endregion
@@ -93,23 +98,23 @@ namespace WebAPI.Authentication
         app.UseDeveloperExceptionPage();
       }
 
-      // обязателен для правильной работы маршрутизации запросов в вашем ASP.NET Core приложении
+      // Required for request routing to work properly.
       app.UseRouting();
 
-      // Middleware для логирования информации о запросах
+      // Middleware for logging information about requests.
       app.UseSerilogRequestLogging();
 
-      // Проверка политики файлов cookie
+      // Checking the Cookie files policy.
       app.UseCookiePolicy();
 
-      // Обработка аутентификации и авторизации
+      // Authentication and Authorization processing.
       app.UseAuthentication();
       app.UseAuthorization();
 
-      // Обработка CORS
+      // CORS processing.
       app.UseCors("AllowSpecificOrigin");
 
-      // Завершение конфигурации маршрутов
+      // Completing Route Configuration.
       app.UseEndpoints(endpoints =>
       {
         endpoints.MapControllers();

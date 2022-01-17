@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Collections;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Authentication.UseCases.Requests.Commands;
 using WebAPI.Authentication.UseCases.Requests.Queries;
@@ -14,19 +11,13 @@ using WebAPI.Authentication.UseCases.Tranfers.Output;
 namespace WebAPI.Authentication.Controllers
 {
   [ApiController]
-  [Route("api/[controller]")]
+  [Route("api/[controller]")] // http://localhost:5000/api
   public class AuthController : BaseController
   {
-    /// <summary>
-    /// Get all user from database.   
-    /// </summary>
     /// <remarks>
     /// Sample request:
-    /// POST /auth/GetAllUsers.
+    /// GET  ../auth/GetAllUsers.
     /// </remarks>
-    /// <returns>User list.</returns>
-    /// <response code="200">Success.</response>
-    // [Authorize(Roles = "Admin")]
     [HttpGet("GetAllUsers")]
     public async Task<ActionResult<IEnumerable>> GetUserList()
     {
@@ -35,8 +26,8 @@ namespace WebAPI.Authentication.Controllers
     }
 
     /// <remarks>
-    /// Request example:
-    /// GET http://localhost:5000/api/auth/RegisterUser
+    /// Sample request:
+    /// POST  ../auth/RegisterUser.
     /// </remarks>
     [HttpPost("RegisterUser")]
     [AllowAnonymous]
@@ -47,86 +38,40 @@ namespace WebAPI.Authentication.Controllers
     }
 
     /// <remarks>
-    /// Request example:
-    /// GET http://localhost:5000/api/auth/CheckAuthentication
+    /// Sample request:
+    /// GET  ../auth/CheckAuthentication.
     /// </remarks>
-    [HttpGet]
     [Authorize(Roles = "Customer")]
-    [Route("CheckAuthentication")]
-    public IActionResult CheckAuthentication()
+    [HttpGet("GetAuthProfile")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetAuthProfile()
     {
-      try
-      {
-        // Проверяем, аутентифицирован ли пользователь
-        if (User.Identity is ClaimsIdentity claimsIdentity && User.Identity.IsAuthenticated)
-        {
-          // Создаем список необходимых утверждений
-          var requiredClaims = new List<(string Type, string Value)>
-          {
-            (ClaimTypes.NameIdentifier, claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value)!,
-            (ClaimTypes.Name, claimsIdentity.FindFirst(ClaimTypes.Name)?.Value)!,
-            (ClaimTypes.Email, claimsIdentity.FindFirst(ClaimTypes.Email)?.Value)!,
-            ("jti", claimsIdentity.FindFirst("jti")?.Value)!,
-            (ClaimTypes.Role, claimsIdentity.FindFirst(ClaimTypes.Role)?.Value)!
-          };
-
-          // Проверяем, что все утверждения присутствуют и не пустые
-          if (requiredClaims.All(c => !string.IsNullOrEmpty(c.Value)))
-          {
-            // Извлекаем значения утверждений
-            var userId = requiredClaims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var userName = requiredClaims.First(c => c.Type == ClaimTypes.Name).Value;
-            var userEmail = requiredClaims.First(c => c.Type == ClaimTypes.Email).Value;
-            var userRole = requiredClaims.First(c => c.Type == ClaimTypes.Role).Value;
-
-            // Формируем объект профиля для ответа
-            var profile = new ProfileDto
-            {
-              Id = Guid.Parse(userId),
-              UserName = userName,
-              Email = userEmail,
-              Role = userRole
-            };
-
-            // Возвращаем успешный ответ с профилем пользователя
-            return Ok(new ServerResponse
-            {
-              Code = ResponseCode.Ok,
-              IsValid = true,
-              Message = "User is authenticated",
-              DataSet = new {profile}
-            });
-          }
-        }
-
-        return Unauthorized(new ServerResponse
-        {
-          Code = ResponseCode.Unauthorized,
-          IsValid = false,
-          Message = "User is not authenticated or invalid authentication data"
-        });
-      }
-      catch (Exception ex)
-      {
-        return new InternalServerErrorResponse("Internal server error: " + ex.Message);
-      }
+      var request = new GetAuthProfileQuery(HttpContext);
+      return Ok(await Mediator.Send(request));
     }
 
-    /// <summary>
-    /// Sign in App.  
-    /// </summary>
-    /// /// <remarks>
+    /// <remarks>
     /// Sample request:
-    /// POST /auth/SignIn.
+    /// POST  ../auth/SignIn.
     /// </remarks>
-    /// <param name="login">LoginDto.</param>
-    /// <returns>Response model.</returns>
-    // [AllowAnonymous]
     [HttpPost("SignIn")]
     [AllowAnonymous]
     public async Task<ActionResult<ServerResponse>> SignIn([FromBody] LoginDto login)
     {
       var request = new SignInCommand() {LoginDto = login};
+      return Ok(await Mediator.Send(request));
+    }
+
+    /// <remarks>
+    /// Request example:
+    /// POST  ../auth/Logout.
+    /// </remarks>
+    [HttpPost("Logout")]
+    [Authorize(Roles = "Customer")]
+    public async Task<IActionResult> Logout()
+    {
+      var request = new LogoutUserCommand(HttpContext);
       return Ok(await Mediator.Send(request));
     }
   }
