@@ -8,8 +8,8 @@ const UserModule = {
 
   mutations: {
     SET_USER_DATA(state, profile) {
-      console.warn(state);
-      console.warn(profile);
+      // console.warn(state);
+      // console.warn(profile);
       if (profile) {
         state.user = {
           id: profile.id,
@@ -29,7 +29,7 @@ const UserModule = {
       //   console.warn("User is null");
       // }
     },
-    LOGOUT(state) {
+    SET_USER_LOGOUT(state) {
       state.user = null;
       state.isAuthenticated = false;
     }
@@ -42,7 +42,7 @@ const UserModule = {
           UserName: formValues.username,
           Email: formValues.email,
           Password: formValues.password,
-          AcceptTerms: !!formValues.acceptTerms,
+          AcceptTerms: !!formValues.acceptTerms, // converting a variable value to a boolean data type
         };
 
         const response = await axios.post('http://localhost:5000/api/auth/RegisterUser', userData, {
@@ -50,16 +50,16 @@ const UserModule = {
           withCredentials: true 
         });
 
-        if (response.data.isValid) {
-          await console.log('Registration successful:', response.data);
+        if (response.data.success) {
+          // await console.log('Registration successful:', response.data);
           commit('SET_USER_DATA', response.data.dataSet);
         } else {
-          console.error('Registration failed:', response.data.message);
-          commit('LOGOUT');
+          // console.error('Registration failed:', response.data.message);
+          commit('SET_USER_LOGOUT');
         }
       } catch (error) {
-        console.error('Error during registration:', error);
-        commit('LOGOUT');
+        // console.error('Error during registration:', error);
+        commit('SET_USER_LOGOUT');
       }
     },
 
@@ -73,12 +73,13 @@ const UserModule = {
         if (response.data.success) {
           // Successfully log out, delete cookies on the client side.
           document.cookie = "user-cookies=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          commit('LOGOUT');
+          await commit('SET_USER_LOGOUT');
+          await console.log('The user has successfully logged out');
         } else {
-          console.error('Error during logout:', response.data.message);
+          // console.error('Error during logout:', response.data.message);
         }
       } catch (error) {
-        console.error('Error during logout:', error);
+        // console.error('Error during logout:', error);
       }
     },
     
@@ -89,11 +90,11 @@ const UserModule = {
           withCredentials: true
         });
 
-        if (response.data.isValid) {
+        if (response.data.success) {
           commit('SET_USER_DATA', response.data.dataSet.profile);
         } else {
           console.error('Authentication check failed:', response.data.message);
-          commit('LOGOUT');
+          commit('SET_USER_LOGOUT');
         }
       } catch (error) {
         // console.error('Error during authentication check:', error);

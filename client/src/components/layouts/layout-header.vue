@@ -51,7 +51,7 @@
 
 <script>
   import { mapGetters } from 'vuex';
-  import AuthModal from '@/components/user/auth-modal';
+  import AuthModal from '@/components/auth/auth-modal';
 
   export default {
 
