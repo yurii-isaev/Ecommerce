@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using WebAPI.Authentication.UseCases.Tranfers.Output;
+using WebAPI.Authentication.UseCases.Types;
 
 namespace WebAPI.Authentication.UseCases.Requests.Commands;
 
@@ -20,10 +21,8 @@ public class LogoutUserCommand: IRequest<ServerResponse>
 
 public class LogoutUserCommandHandler : IRequestHandler<LogoutUserCommand, ServerResponse>
 {
-  /// <summary>
-  /// Handles a request.
-  /// </summary>
-  /// <returns>Returns Action Result.</returns>
+  /// <summary> Handles a request.</summary>
+  /// <returns>Returns Server Response.</returns>
   public async Task<ServerResponse> Handle(LogoutUserCommand request, CancellationToken token)
   {
     var httpContext = request.HttpContext;
@@ -39,13 +38,13 @@ public class LogoutUserCommandHandler : IRequestHandler<LogoutUserCommand, Serve
         Expires = DateTime.UtcNow.AddDays(-1) 
       };
         
-      // Applying the cookie setting
-      httpContext.Response.Cookies.Append("user-cookies", "", cookieOptions);
+      // Applying the cookie setting.
+      httpContext.Response.Cookies.Append(Messages.JwtCookiesKey, "", cookieOptions);
         
       // Return a success flag.
       return await Task.FromResult(new ServerResponse
       {
-        Code = ResponseCode.Ok,
+        Code = 200,
         Success = true,
         Message = "You've successfully logged out",
         DataSet = null

@@ -35,4 +35,9 @@ public static class Messages
 
   public const string UserNotExist = "The user doesn't exist.";
   public const string NamePhotoDefault = "anonymous.png";
+  
+  public const string MailCollectLink = "The link to collect the password was sent to the mail";
+  public const string SendMessageFailed = "Failed to send a message to this address";
+  
+  public const string JwtCookiesKey = "jwt-cookies";
 }

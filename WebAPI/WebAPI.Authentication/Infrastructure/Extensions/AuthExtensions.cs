@@ -5,12 +5,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using WebAPI.Authentication.Infrastructure.Options;
+using WebAPI.Authentication.UseCases.Types;
 
 namespace WebAPI.Authentication.Infrastructure.Extensions
 {
   public static class AuthExtensions
   {
-    public static void AddApiAuthentication(this IServiceCollection services, IConfiguration configuration)
+    public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
       var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
 
@@ -37,7 +38,7 @@ namespace WebAPI.Authentication.Infrastructure.Extensions
           {
             OnMessageReceived = context =>
             {
-              context.Token = context.Request.Cookies["user-cookies"];
+              context.Token = context.Request.Cookies[Messages.JwtCookiesKey];
               return Task.CompletedTask;
             }
           };

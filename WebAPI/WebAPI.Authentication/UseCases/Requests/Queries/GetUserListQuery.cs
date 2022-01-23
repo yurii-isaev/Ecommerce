@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,10 +39,7 @@ namespace WebAPI.Authentication.UseCases.Requests.Queries
       foreach (var user in users)
       {
         var roles = await _userManager.GetRolesAsync(user);
-        
-        profiles.Add(new ProfileDto(
-          new Guid(user.Id), user.UserName, user.CreatedAt, user.Email, roles.FirstOrDefault()!)
-        );
+        profiles.Add(new ProfileDto(user.Id, user.UserName, user.CreatedAt, user.Email, roles.FirstOrDefault()!));
       }
 
       return await Task.FromResult(profiles);

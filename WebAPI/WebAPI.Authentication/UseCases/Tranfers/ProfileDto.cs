@@ -4,8 +4,8 @@ namespace WebAPI.Authentication.UseCases.Tranfers
 {
   public class ProfileDto
   {
-    public Guid Id { get; set; }
-    
+    public string Id { get; set; } = null!;
+
     public string Email { get; set; } = null!;
 
     public string UserName { get; set; } = null!;
@@ -20,7 +20,7 @@ namespace WebAPI.Authentication.UseCases.Tranfers
     public ProfileDto()
     {}
 
-    public ProfileDto(Guid id, string userName, DateTime dateCreated, string email, string role)
+    public ProfileDto(string id, string userName, DateTime dateCreated, string email, string role)
     {
       Id = id;
       UserName = userName;

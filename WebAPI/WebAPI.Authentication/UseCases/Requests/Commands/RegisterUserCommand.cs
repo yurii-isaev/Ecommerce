@@ -12,14 +12,12 @@ using WebAPI.Authentication.Infrastructure.Options;
 using WebAPI.Authentication.Infrastructure.Providers;
 using WebAPI.Authentication.Infrastructure.Setup;
 using WebAPI.Authentication.UseCases.Tranfers;
+using WebAPI.Authentication.UseCases.Tranfers.Input;
 using WebAPI.Authentication.UseCases.Tranfers.Output;
 using WebAPI.Authentication.UseCases.Types;
 
 namespace WebAPI.Authentication.UseCases.Requests.Commands
 {
-  /// <summary>
-  /// Sets a property of the request object.
-  /// </summary>
   public class RegisterUserCommand : IRequest<ServerResponse>
   {
     public RegisterUserDto? RegisterUserDto { get; set; }
@@ -51,7 +49,7 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
     /// </summary>
     /// <param name="request">The request.</param>
     /// <param name="token">Cancellation token.</param>
-    /// <returns>Returns response model.</returns>
+    /// <returns>Server Response.</returns>
     public async Task<ServerResponse> Handle(RegisterUserCommand request, CancellationToken token)
     {
       var httpContext = _httpContextAccessor.HttpContext;
@@ -59,7 +57,6 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
       try
       {
         var user = _mapper.Map<User>(request.RegisterUserDto);
-        // user.CreatedAt = DateTime.Now;
         var result = await _userManager.CreateAsync(user, request.RegisterUserDto!.Password);
 
         if (result.Succeeded)
@@ -70,35 +67,31 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
           // Get a user roles
           var rolesList = await _userManager.GetRolesAsync(user);
 
-          // Creating an object with a token and user data
-          var profile = new ProfileDto(
-            new Guid(user.Id), user.UserName, user.CreatedAt, user.Email, rolesList.ElementAt(0)
-          );
+          // Creating an object with a token and user data.
+          var profile = new ProfileDto(user.Id, user.UserName, user.CreatedAt, user.Email, rolesList.ElementAt(0));
 
           var jwtProvider = new JwtProvider(_jwtOptions, _userManager);
           var jwt = await jwtProvider.GenerateToken(user);
 
           // Adding data to browser cookies
-          // httpContext!.Response.Cookies.Append("user-cookies", jwt);
-          
-          httpContext!.Response.Cookies.Append("user-cookies", jwt, new CookieOptions
+          httpContext!.Response.Cookies.Append(Messages.JwtCookiesKey, jwt, new CookieOptions
           {
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None
           });
 
-          return await Task.FromResult(new ServerResponse(ResponseCode.Ok, true, Messages.RegistrationSuccess, profile));
+          return await Task.FromResult(new ServerResponse(200, true, Messages.RegistrationSuccess, profile));
         }
 
-        return await Task.FromResult(new ServerResponse(ResponseCode.Ok, Messages.RegistrationFailed,
+        return await Task.FromResult(new ServerResponse(200, Messages.RegistrationFailed,
             result.Errors.Select(e => e.Description).ToArray()
           )
         );
       }
       catch (Exception ex)
       {
-        return await Task.FromResult(new ServerResponse(ResponseCode.Error, ex.Message, ""));
+        return await Task.FromResult(new ServerResponse(500, ex.Message, ""));
       }
     }
   }

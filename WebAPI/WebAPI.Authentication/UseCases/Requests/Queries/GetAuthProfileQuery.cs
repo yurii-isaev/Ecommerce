@@ -60,7 +60,7 @@ public class GetAuthProfileQueryHandler : IRequestHandler<GetAuthProfileQuery, S
           // Form a profile object for the response.
           var profile = new ProfileDto
           {
-            Id = Guid.Parse(userId),
+            Id = userId,
             UserName = userName,
             Email = userEmail,
             Role = userRole
@@ -69,7 +69,7 @@ public class GetAuthProfileQueryHandler : IRequestHandler<GetAuthProfileQuery, S
           // Return a successful response with the user's profile.
           return await Task.FromResult(new ServerResponse
           {
-            Code = ResponseCode.Ok,
+            Code = 200,
             Success = true,
             Message = "User is authenticated",
             DataSet = new {profile}

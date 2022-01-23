@@ -15,6 +15,7 @@ using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.Infrastructure.Extensions;
 using WebAPI.Authentication.Infrastructure.Options;
 using WebAPI.Authentication.UseCases.Contracts;
+using WebAPI.Authentication.UseCases.Services;
 
 namespace WebAPI.Authentication
 {
@@ -36,6 +37,7 @@ namespace WebAPI.Authentication
       services.AddHttpContextAccessor();
       services.AddControllers();
       services.AddSingleton<IMediator, Mediator>();
+      services.AddTransient<IEmailService, EmailService>();
       services.AddTransient<IProductRepository>(_ => new ProductRepository(connection!));
       #endregion
 
@@ -53,17 +55,17 @@ namespace WebAPI.Authentication
         .AddRoles<IdentityRole>()
         .AddRoleManager<RoleManager<IdentityRole>>()
         .AddSignInManager<SignInManager<User>>()
-        .AddEntityFrameworkStores<AuthDbContext>();
+        .AddEntityFrameworkStores<AuthDbContext>()
+        .AddDefaultTokenProviders(); // Configure default token support
       #endregion
 
-      #region Authentication JWT
-      services.AddApiAuthentication(Configuration);
+      #region Authentication
+      services.AddJwtAuthentication(Configuration);
       #endregion
 
       #region Configuration Options
-      services
-        .Configure<JwtOptions>(Configuration.GetSection("JwtOptions"))
-        .Configure<EmailOptions>(Configuration.GetSection("EmailOptions"));
+      services.Configure<JwtOptions>(Configuration.GetSection("JwtOptions"))
+              .Configure<EmailOptions>(Configuration.GetSection("EmailOptions"));
       #endregion
       
       #region CORS

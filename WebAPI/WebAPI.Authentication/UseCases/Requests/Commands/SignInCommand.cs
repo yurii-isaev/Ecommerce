@@ -10,6 +10,7 @@ using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.Infrastructure.Options;
 using WebAPI.Authentication.Infrastructure.Providers;
 using WebAPI.Authentication.UseCases.Tranfers;
+using WebAPI.Authentication.UseCases.Tranfers.Input;
 using WebAPI.Authentication.UseCases.Tranfers.Output;
 using WebAPI.Authentication.UseCases.Types;
 
@@ -44,46 +45,46 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
       _httpContextAccessor = httpContextAccessor;
     }
 
-    /// <summary>
-    /// Handles a request.
-    /// </summary>
+    /// <summary> Handles a request. </summary>
     /// <param name="request">The request.</param>
     /// <param name="token">Cancellation token.</param>
-    /// <returns>Returns response model.</returns>
+    /// <returns>Server Response.</returns>
     public async Task<ServerResponse> Handle(SignInCommand request, CancellationToken token)
     {
       var httpContext = _httpContextAccessor.HttpContext;
 
       try
       {
-        var userByEmail = await _userManager.FindByEmailAsync(request.LoginDto!.Email);
+        var user = await _userManager.FindByEmailAsync(request.LoginDto!.Email);
 
-        if (userByEmail != null)
+        if (user != null)
         {
-          var result = await _signInManager.PasswordSignInAsync(
-            userByEmail.UserName, request.LoginDto.Password, true, false
-          );
+          var result = await _signInManager.PasswordSignInAsync(user.UserName, request.LoginDto.Password, true, false);
 
           if (result.IsNotAllowed)
           {
-            var user = await _userManager.FindByEmailAsync(request.LoginDto.Email);
-            var rolesList = await _userManager.GetRolesAsync(user);
+            // var user = await _userManager.FindByEmailAsync(request.LoginDto.Email);
+            var roles = await _userManager.GetRolesAsync(user);
 
-            // Creating an object with a token and user data
-            var profile = new ProfileDto(
-              new Guid(user.Id), user.UserName, user.CreatedAt, user.Email, rolesList.ElementAt(0)
-            );
-            //
+            // Creating an object with a token and user data.
+            var profile = new ProfileDto(user.Id, user.UserName, user.CreatedAt, user.Email, roles.ElementAt(0));
+            
+            // Generate jwt by provider.
             var jwtProvider = new JwtProvider(_jwtOptions, _userManager);
             var jwt = await jwtProvider.GenerateToken(user);
 
             // Adding data to browser cookies
-            httpContext!.Response.Cookies.Append("user-cookies", jwt);
+            httpContext!.Response.Cookies.Append(Messages.JwtCookiesKey, jwt, new CookieOptions
+            {
+              HttpOnly = true,
+              Secure = true,
+              SameSite = SameSiteMode.None
+            });
 
-            return await Task.FromResult(new ServerResponse(ResponseCode.Ok, true, Messages.TokenGenerated, profile));
+            return await Task.FromResult(new ServerResponse(200, true, Messages.TokenGenerated, profile));
           }
 
-          return await Task.FromResult(new ServerResponse(ResponseCode.Error, false, Messages.InvalidEmailOrPassword, ""));
+          return await Task.FromResult(new ServerResponse(500, false, Messages.InvalidEmailOrPassword, ""));
         }
         else
         {
@@ -92,7 +93,7 @@ namespace WebAPI.Authentication.UseCases.Requests.Commands
       }
       catch (Exception ex)
       {
-        return await Task.FromResult(new ServerResponse(ResponseCode.Error, ex.Message, Messages.UserNotExist));
+        return await Task.FromResult(new ServerResponse(500, ex.Message, Messages.UserNotExist));
       }
     }
   }

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WebAPI.Authentication.UseCases.Tranfers;
+namespace WebAPI.Authentication.UseCases.Tranfers.Input;
 
 public class LoginDto
 {
@@ -9,7 +9,6 @@ public class LoginDto
    [Required, EmailAddress]
    public string? Email { get; set; }
 
-   [Required]
-   [DataType(DataType.Password)]
+   [Required, DataType(DataType.Password)]
    public string? Password { get; set; }
 }

@@ -1,11 +1,10 @@
 ﻿using System.Collections;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Authentication.UseCases.Requests.Commands;
 using WebAPI.Authentication.UseCases.Requests.Queries;
-using WebAPI.Authentication.UseCases.Tranfers;
+using WebAPI.Authentication.UseCases.Tranfers.Input;
 using WebAPI.Authentication.UseCases.Tranfers.Output;
 
 namespace WebAPI.Authentication.Controllers
@@ -16,7 +15,7 @@ namespace WebAPI.Authentication.Controllers
   {
     /// <remarks>
     /// Sample request:
-    /// GET  ../auth/GetAllUsers.
+    /// GET -> ../auth/GetAllUsers.
     /// </remarks>
     [HttpGet("GetAllUsers")]
     public async Task<ActionResult<IEnumerable>> GetUserList()
@@ -27,24 +26,22 @@ namespace WebAPI.Authentication.Controllers
 
     /// <remarks>
     /// Sample request:
-    /// POST  ../auth/RegisterUser.
+    /// POST -> ../auth/RegisterUser.
     /// </remarks>
-    [HttpPost("RegisterUser")]
     [AllowAnonymous]
-    public async Task<ActionResult<ServerResponse>> RegisterUser([FromBody] RegisterUserDto userData)
+    [HttpPost("SignUp")]
+    public async Task<ActionResult<ServerResponse>> SignUp([FromBody] RegisterUserDto registerData)
     {
-      var request = new RegisterUserCommand() {RegisterUserDto = userData};
+      var request = new RegisterUserCommand() {RegisterUserDto = registerData};
       return Ok(await Mediator.Send(request));
     }
 
     /// <remarks>
     /// Sample request:
-    /// GET  ../auth/CheckAuthentication.
+    /// GET -> ../auth/GetAuthProfile.
     /// </remarks>
     [Authorize(Roles = "Customer")]
     [HttpGet("GetAuthProfile")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetAuthProfile()
     {
       var request = new GetAuthProfileQuery(HttpContext);
@@ -53,10 +50,10 @@ namespace WebAPI.Authentication.Controllers
 
     /// <remarks>
     /// Sample request:
-    /// POST  ../auth/SignIn.
+    /// POST -> ../auth/SignIn.
     /// </remarks>
-    [HttpPost("SignIn")]
     [AllowAnonymous]
+    [HttpPost("SignIn")]
     public async Task<ActionResult<ServerResponse>> SignIn([FromBody] LoginDto login)
     {
       var request = new SignInCommand() {LoginDto = login};
@@ -65,13 +62,25 @@ namespace WebAPI.Authentication.Controllers
 
     /// <remarks>
     /// Request example:
-    /// POST  ../auth/Logout.
+    /// POST -> ../auth/Logout.
     /// </remarks>
-    [HttpPost("Logout")]
     [Authorize(Roles = "Customer")]
+    [HttpPost("Logout")]
     public async Task<IActionResult> Logout()
     {
       var request = new LogoutUserCommand(HttpContext);
+      return Ok(await Mediator.Send(request));
+    }
+
+    /// <remarks>
+    /// Sample request:
+    /// POST -> ..http://localhost:5000/api/auth/ForgotPassword.
+    /// </remarks>
+    [AllowAnonymous]
+    [HttpPost("ForgotPassword")]
+    public async Task<IActionResult> ForgotPassword([FromBody] AccountDto account)
+    {
+      var request = new ForgotPasswordCommand() {AccountDto = account};
       return Ok(await Mediator.Send(request));
     }
   }
