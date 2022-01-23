@@ -30,7 +30,7 @@
             <header>Login</header>
             <!-- ------------------------------------------>
             <!-- Login Form Component -->
-            <LoginForm/>
+            <LoginForm @auth="handleAuthentication" />
             <!-- ------------------------------------------>
             <div class="signup">
               <span class="signup">Don't have an account?
@@ -42,7 +42,7 @@
             <header>Signup</header>
             <!-- ------------------------------------------>
             <!-- Signup Form Component -->
-            <SignupForm/>
+            <SignupForm @auth="handleAuthentication" />
             <!-- ------------------------------------------>
           </div>
         </div>
@@ -75,10 +75,23 @@
 
   export default {
     components: { LoginForm, SignupForm },
-    computed: { ...mapGetters(['USER_STATE', 'IS_AUTHENTICATED']) }, 
+  
+    data() {
+      return {
+        loggedIn: false,
+        username: '',
+      };
+    },
+    
+    computed: { ...mapGetters(['USER_STATE', 'IS_AUTHENTICATED']) },
     
     methods: {
-      ...mapActions(['LOGOUT', 'CHECK_AUTHENTICATION']), 
+      ...mapActions(['LOGOUT', 'CHECK_AUTHENTICATION']),
+  
+      handleAuthentication(authData) {
+        this.username = authData.username;
+        this.loggedIn = authData.loggedIn;
+      },
       
       async logout() {
         await this.LOGOUT();

@@ -8,8 +8,6 @@ const UserModule = {
 
   mutations: {
     SET_USER_DATA(state, profile) {
-      // console.warn(state);
-      // console.warn(profile);
       if (profile) {
         state.user = {
           id: profile.id,
@@ -23,13 +21,8 @@ const UserModule = {
         state.user = null;
         state.isAuthenticated = false;
       }
-      // if (state.user) {
-      //   console.warn(state.user.userName);
-      // } else {
-      //   console.warn("User is null");
-      // }
     },
-    SET_USER_LOGOUT(state) {
+    UPDATE_USER_DATA(state) {
       state.user = null;
       state.isAuthenticated = false;
     }
@@ -45,25 +38,50 @@ const UserModule = {
           AcceptTerms: !!formValues.acceptTerms, // converting a variable value to a boolean data type
         };
 
-        const response = await axios.post('http://localhost:5000/api/auth/RegisterUser', userData, {
+        const response = await axios.post('http://localhost:5000/api/auth/SignUp', userData, {
           // Pass the withCredentials flag to send cookies.
           withCredentials: true 
         });
 
         if (response.data.success) {
-          // await console.log('Registration successful:', response.data);
+          console.log('Registration successful');
           commit('SET_USER_DATA', response.data.dataSet);
         } else {
           // console.error('Registration failed:', response.data.message);
-          commit('SET_USER_LOGOUT');
+          commit('UPDATE_USER_DATA');
         }
       } catch (error) {
         // console.error('Error during registration:', error);
-        commit('SET_USER_LOGOUT');
+        commit('UPDATE_USER_DATA');
       }
     },
 
-    async LOGOUT({ commit }) {
+    async POST_USER_LOGIN_TO_API({commit}, formValues) {
+      try {
+        const userData = {
+          Email: formValues.email,
+          Password: formValues.password,
+        };
+
+        const response = await axios.post('http://localhost:5000/api/auth/SignIn', userData, {
+          // Pass the withCredentials flag to send cookies.
+          withCredentials: true
+        });
+
+        if (response.data.success) {
+          console.log('Sign In successful');
+          commit('SET_USER_DATA', response.data.dataSet);
+        } else {
+          // console.error('Registration failed:', response.data.message);
+          commit('UPDATE_USER_DATA');
+        }
+      } catch (error) {
+        // console.error('Error during registration:', error);
+        commit('UPDATE_USER_DATA');
+      }
+    },
+
+    async LOGOUT({commit}) {
       try {
         const response = await axios.post('http://localhost:5000/api/auth/Logout', null, {
           // Pass the withCredentials flag to send cookies.
@@ -72,9 +90,9 @@ const UserModule = {
 
         if (response.data.success) {
           // Successfully log out, delete cookies on the client side.
-          document.cookie = "user-cookies=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          await commit('SET_USER_LOGOUT');
-          await console.log('The user has successfully logged out');
+          document.cookie = "jwt-cookies=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          await commit('UPDATE_USER_DATA');
+          await console.log('The user logged out');
         } else {
           // console.error('Error during logout:', response.data.message);
         }
@@ -83,10 +101,9 @@ const UserModule = {
       }
     },
     
-
     async CHECK_AUTHENTICATION({commit}) {
       try {
-        const response = await axios.get('http://localhost:5000/api/auth/CheckAuthentication', {
+        const response = await axios.get('http://localhost:5000/api/auth/GetAuthProfile', {
           withCredentials: true
         });
 
@@ -94,11 +111,11 @@ const UserModule = {
           commit('SET_USER_DATA', response.data.dataSet.profile);
         } else {
           console.error('Authentication check failed:', response.data.message);
-          commit('SET_USER_LOGOUT');
+          commit('UPDATE_USER_DATA');
         }
       } catch (error) {
-        // console.error('Error during authentication check:', error);
-        // commit('LOGOUT');
+        console.error('Error during authentication check:', error);
+        // commit('UPDATE_USER_DATA');
       }
     }
   },

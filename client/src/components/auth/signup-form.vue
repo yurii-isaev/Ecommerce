@@ -69,6 +69,7 @@
 
   export default {
     components: { Form, Field },
+    emits: ['auth'],
   
     data() {
       return {
@@ -81,34 +82,23 @@
     computed: { ...mapGetters(['USER_STATE', 'IS_AUTHENTICATED']) }, 
     
     methods: {
-      ...mapActions(['POST_USER_REGISTER_TO_API', 'LOGOUT', 'CHECK_AUTHENTICATION']),
+      ...mapActions(['POST_USER_REGISTER_TO_API' ]),
       
       async onSignupSubmit(formValues) {
         try {
           await this.POST_USER_REGISTER_TO_API(formValues);
-          await this.CHECK_AUTHENTICATION();
           this.loggedIn = this.IS_AUTHENTICATED;
           if (this.loggedIn) {
             this.username = this.USER_STATE.userName;
+            const authData = {
+              username: this.username,
+              loggedIn: this.loggedIn
+            };
+            this.$emit('auth', authData);
           }
         } catch (error) {
           console.error('An error occurred:', error);
         }
-      }, 
-      
-      async logout() {
-        await this.LOGOUT();
-        // await this.CHECK_AUTHENTICATION();
-        this.loggedIn = this.IS_AUTHENTICATED;
-        this.username = '';
-      }
-    }, 
-    
-    async mounted() {
-      await this.CHECK_AUTHENTICATION();
-      this.loggedIn = this.IS_AUTHENTICATED;
-      if (this.loggedIn && this.USER_STATE && this.USER_STATE.userName) {
-        this.username = this.USER_STATE.userName;
       }
     }
   }
