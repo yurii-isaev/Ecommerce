@@ -1,5 +1,5 @@
 <template>
-  <!--	header-->
+  <!-- Header-->
   <li class="menu-item">
     <button v-if="!loggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
       <img src="@/assets/graphics/vector/profile.svg" alt="profile"/>
@@ -20,30 +20,37 @@
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="authModalLabel">Login/Signup</h5>
+          <h5 class="modal-title" id="authModalLabel">Log in to the system</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <!-- <div class="modal-body">-->
         <div class="container">
-          <input type="checkbox" id="check">
-          <div class="login form">
-            <header>Login</header>
-            <!-- ------------------------------------------>
-            <!-- Login Form Component -->
-            <LoginForm @auth="handleAuthentication" />
-            <!-- ------------------------------------------>
-            <div class="signup">
-              <span class="signup">Don't have an account?
-                <label for="check">Signup</label>
-              </span>
+          <!-- <input type="checkbox" id="check">-->
+          
+          <!-- Login Form Component -->
+          <div v-if="currentForm === 'login'" class="login form">
+            <div class="login form">
+              <header>Login</header>
+              <LoginForm
+                  @auth="handleAuthentication"
+                  @forgot-password="switchToForgotPasswordForm"
+                  @signup="switchToSignupForm"/>
             </div>
           </div>
-          <div class="registration form">
-            <header>Signup</header>
-            <!-- ------------------------------------------>
-            <!-- Signup Form Component -->
-            <SignupForm @auth="handleAuthentication" />
-            <!-- ------------------------------------------>
+          <!-- Signup Form Component -->
+          <div v-if="currentForm === 'signup'" class="signup form">
+            <div class="signup form">
+              <header>Signup</header>
+              <SignupForm
+                  @auth="handleAuthentication"
+                  @login="switchToLoginForm"/>
+              </div>
+          </div>
+          <!-- Signup Form Component -->
+          <div v-if="currentForm === 'forgotPassword'" class="forgot-password form">
+            <div class="forgotPassword form">
+              <ForgotPasswordForm @login="switchToLoginForm"/>
+            </div>
           </div>
         </div>
       </div>
@@ -72,14 +79,16 @@
   import { mapActions, mapGetters } from 'vuex';
   import LoginForm from '@/components/auth/login-form';
   import SignupForm from '@/components/auth/signup-form';
+  import ForgotPasswordForm from '@/components/auth/forgot-password-form';
 
   export default {
-    components: { LoginForm, SignupForm },
+    components: { LoginForm, SignupForm, ForgotPasswordForm },
   
     data() {
       return {
         loggedIn: false,
         username: '',
+        currentForm: 'login',
       };
     },
     
@@ -87,6 +96,18 @@
     
     methods: {
       ...mapActions(['LOGOUT', 'CHECK_AUTHENTICATION']),
+  
+      switchToForgotPasswordForm() {
+        this.currentForm = 'forgotPassword';
+      },
+  
+      switchToSignupForm() {
+        this.currentForm = 'signup';
+      },
+  
+      switchToLoginForm() {
+        this.currentForm = 'login';
+      },
   
       handleAuthentication(authData) {
         this.username = authData.username;
@@ -134,6 +155,8 @@
     background: #fff;
     border-radius: 7px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    padding-right: 0;
+    padding-left: 0;
     /*position: absolute;*/
     /*transform: translate(-50%,-50%);*/
   }
@@ -171,7 +194,7 @@
 
   .form a {
     font-size: 16px;
-    color: #009579;
+    color: #3173cb;
     text-decoration: none;
   }
 
@@ -194,17 +217,17 @@
     background: #006653;
   }
 
-  .signup {
-    font-size: 17px;
+  span {
+    font-size: 16px;
     text-align: center;
   }
 
-  .signup label {
-    color: #2ea03c;
+  span label {
+    color: #3173cb;
     cursor: pointer;
   }
 
-  .signup label:hover {
+  span label:hover {
     text-decoration: underline;
   }
 </style>

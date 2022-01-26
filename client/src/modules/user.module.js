@@ -4,6 +4,7 @@ const UserModule = {
   state: {
     user: null,
     isAuthenticated: false,
+    message: null,
   },
 
   mutations: {
@@ -25,6 +26,9 @@ const UserModule = {
     UPDATE_USER_DATA(state) {
       state.user = null;
       state.isAuthenticated = false;
+    },
+    SET_AUTH_MESSAGE(state, serverMessage) {
+      state.message = serverMessage;
     }
   },
 
@@ -114,8 +118,23 @@ const UserModule = {
           commit('UPDATE_USER_DATA');
         }
       } catch (error) {
-        console.error('Error during authentication check:', error);
+        // console.error('Error during authentication check:', error);
         // commit('UPDATE_USER_DATA');
+      }
+    },
+
+    async SEND_FORGOT_PASSWORD_EMAIL({commit}, data) {
+      try {
+        const response = await axios.post('http://localhost:5000/api/auth/ForgotPassword', data);
+
+        if (response.data.success) {
+          await commit('SET_AUTH_MESSAGE', response.data.message);
+          console.log('send email successful');
+        } else {
+          // console.error('Registration failed:', response.data.message);
+        }
+      } catch (error) {
+        // console.error('Error during authentication check:', error);
       }
     }
   },
@@ -123,6 +142,7 @@ const UserModule = {
   getters: {
     USER_STATE: state => state.user,
     IS_AUTHENTICATED: state => state.isAuthenticated,
+    GET_AUTH_RESPONSE: state => state.message,
   }
 }
 

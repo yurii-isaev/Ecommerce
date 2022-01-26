@@ -24,23 +24,37 @@
     <div class="form-group">
       <button type="submit" class="btn btn-primary">Login</button>
     </div>
+    <br> 
+    <div class="nav-links">
+      <div class="signup">
+        <span class="signup">Don't have an account?
+          <a href="#" @click="emitSignup">Signup</a>
+        </span>
+      </div>
+      <br>
+      <div class="forgot-password">
+        <span class="forgot-password">Forgot password?
+          <a href="#" @click="emitForgotPassword">Reset Password</a>
+        </span>
+      </div>
+    </div>
   </Form>
 </template>
 
 <script>
   import { Field, Form } from 'vee-validate';
   import { mapActions, mapGetters } from 'vuex';
-  import validationLoginSchema from '@/schemas/validationLoginSchema';
+  import LoginSchema from "@/validation/loginSchema";
 
   export default {
-    components: { Form, Field },
-    emits: ['auth'],
+    components: { Form, Field},
+    emits: ['auth', 'forgot-password', 'signup'],
   
     data() {
       return {
         loggedIn: false,
         username: '',
-        schema: validationLoginSchema,
+        schema: LoginSchema,
       };
     },
   
@@ -48,6 +62,16 @@
   
     methods: {
       ...mapActions(['POST_USER_LOGIN_TO_API' ]),
+  
+      emitForgotPassword(event) {
+        event.preventDefault();
+        this.$emit('forgot-password'); // Излучаем событие для родительского компонента
+      },
+  
+      emitSignup(event) {
+        event.preventDefault();
+        this.$emit('signup'); 
+      },
     
       async onLoginSubmit(formValues) {
         try {
@@ -69,4 +93,4 @@
   }
 </script>
 
-<style scoped src="./auth-modal.vue"></style>
+<style scoped src='./auth-modal.vue'/>

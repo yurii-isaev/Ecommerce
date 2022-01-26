@@ -57,7 +57,7 @@
   </Form>
   <div class="signup">
     <span class="signup">Already have an account?
-      <label for="check">Login</label>
+      <a href="#" @click="emitLogin">Login</a>
     </span>
   </div>
 </template>
@@ -65,17 +65,17 @@
 <script>
   import { Field, Form } from 'vee-validate';
   import { mapActions, mapGetters } from 'vuex';
-  import validationRegistrationSchema from '@/schemas/validationRegistrationSchema';
+  import RegistrationSchema from '@/validation/registrationSchema';
 
   export default {
     components: { Form, Field },
-    emits: ['auth'],
+    emits: ['auth', 'login'],
   
     data() {
       return {
         loggedIn: false,
         username: '',
-        schema: validationRegistrationSchema,
+        schema: RegistrationSchema,
       };
     }, 
     
@@ -83,6 +83,11 @@
     
     methods: {
       ...mapActions(['POST_USER_REGISTER_TO_API' ]),
+  
+      emitLogin(event) {
+        event.preventDefault();
+        this.$emit('login');
+      },
       
       async onSignupSubmit(formValues) {
         try {
@@ -104,4 +109,4 @@
   }
 </script>
 
-<style scoped src="./auth-modal.vue"></style>
+<style scoped src='./auth-modal.vue'/>

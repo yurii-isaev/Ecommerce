@@ -123,6 +123,6 @@
      justify-content: space-evenly;
      align-items: center;
      margin-top: 20px; 
-     margin-bottom: 20px;
+     /*margin-bottom: 20px;*/
   }
 </style>
