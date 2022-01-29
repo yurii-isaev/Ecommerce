@@ -6,11 +6,11 @@ import MainPage from '@/pages/main-page';
 import CartItemDetails from '@/components/cart/cart-item-details';
 
 const routes = [
-   // {
-   //    component: () => import('@/pages/auth-page'),
-   //    path: '/auth',
-   //    name: 'auth-page',
-   // },
+   {
+      component: () => import('@/components/auth/change-password-form'),
+      path: '/change-password',
+      name: 'change-password-form',
+   },
     {
       path: '/',
       name: 'mainPage',

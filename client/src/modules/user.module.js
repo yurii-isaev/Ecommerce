@@ -129,7 +129,19 @@ const UserModule = {
 
         if (response.data.success) {
           await commit('SET_AUTH_MESSAGE', response.data.message);
-          console.log('send email successful');
+        } else {
+          // console.error('Registration failed:', response.data.message);
+        }
+      } catch (error) {
+        // console.error('Error during authentication check:', error);
+      }
+    },
+    async SEND_PASSWORD_CHANGED({commit}, data) {
+      try {
+        const response = await axios.post('http://localhost:5000/api/auth/ChangePassword', data);
+
+        if (response.data.success) {
+          await commit('SET_AUTH_MESSAGE', response.data.message);
         } else {
           // console.error('Registration failed:', response.data.message);
         }
