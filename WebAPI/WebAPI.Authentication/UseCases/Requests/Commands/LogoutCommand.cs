@@ -3,27 +3,27 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using WebAPI.Authentication.UseCases.Tranfers.Output;
+using WebAPI.Authentication.UseCases.Models.Output;
 using WebAPI.Authentication.UseCases.Types;
 
 namespace WebAPI.Authentication.UseCases.Requests.Commands;
 
-public class LogoutUserCommand: IRequest<ServerResponse>
+public class LogoutCommand: IRequest<ServerResponse>
 {
   public HttpContext HttpContext { get; }
 
-  public LogoutUserCommand(HttpContext httpContext)
+  public LogoutCommand(HttpContext httpContext)
   {
     HttpContext = httpContext;
   }
 }
 
 
-public class LogoutUserCommandHandler : IRequestHandler<LogoutUserCommand, ServerResponse>
+public class LogoutCommandHandler : IRequestHandler<LogoutCommand, ServerResponse>
 {
   /// <summary> Handles a request.</summary>
   /// <returns>Returns Server Response.</returns>
-  public async Task<ServerResponse> Handle(LogoutUserCommand request, CancellationToken token)
+  public async Task<ServerResponse> Handle(LogoutCommand request, CancellationToken token)
   {
     var httpContext = request.HttpContext;
 
@@ -46,14 +46,14 @@ public class LogoutUserCommandHandler : IRequestHandler<LogoutUserCommand, Serve
       {
         Code = 200,
         Success = true,
-        Message = "You've successfully logged out",
+        Message = Messages.LogoutSuccess,
         DataSet = null
       });
     }
     catch (Exception ex)
     {
       // Return an error flag if an error occurred.
-      return new InternalServerError("Internal server error: " + ex.Message);
+      return new InternalServerError(Messages.ServerError + ex.Message);
     }
   }
 }

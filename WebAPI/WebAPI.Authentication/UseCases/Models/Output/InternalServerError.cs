@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebAPI.Authentication.UseCases.Tranfers.Output;
+namespace WebAPI.Authentication.UseCases.Models.Output;
 
 public class InternalServerError : ServerResponse
 {

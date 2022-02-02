@@ -1,4 +1,4 @@
-namespace WebAPI.Authentication.UseCases.Tranfers.Output;
+namespace WebAPI.Authentication.UseCases.Models.Output;
 
 public class ServerResponse
 {

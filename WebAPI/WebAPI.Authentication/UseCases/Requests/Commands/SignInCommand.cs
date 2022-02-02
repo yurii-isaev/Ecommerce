@@ -9,92 +9,92 @@ using Microsoft.Extensions.Options;
 using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.Infrastructure.Options;
 using WebAPI.Authentication.Infrastructure.Providers;
-using WebAPI.Authentication.UseCases.Tranfers;
-using WebAPI.Authentication.UseCases.Tranfers.Input;
-using WebAPI.Authentication.UseCases.Tranfers.Output;
+using WebAPI.Authentication.UseCases.Models;
+using WebAPI.Authentication.UseCases.Models.Input;
+using WebAPI.Authentication.UseCases.Models.Output;
 using WebAPI.Authentication.UseCases.Types;
 
-namespace WebAPI.Authentication.UseCases.Requests.Commands
+namespace WebAPI.Authentication.UseCases.Requests.Commands;
+
+/// <summary>
+/// Sets a property of the request object.
+/// </summary>
+public class SignInCommand : IRequest<ServerResponse>
 {
-  /// <summary>
-  /// Sets a property of the request object.
-  /// </summary>
-  public class SignInCommand : IRequest<ServerResponse>
+  public LoginDto? LoginDto { get; set; }
+}
+
+
+public class SignInCommandHandler : IRequestHandler<SignInCommand, ServerResponse>
+{
+  readonly IHttpContextAccessor _httpContextAccessor;
+  readonly IOptions<JwtOptions> _jwtOptions;
+  readonly UserManager<User> _userManager;
+  readonly SignInManager<User> _signInManager;
+
+  public SignInCommandHandler
+  (
+    IHttpContextAccessor httpContextAccessor,
+    IOptions<JwtOptions> jwtOptions,
+    SignInManager<User> signInManager,
+    UserManager<User> userManager
+  )
   {
-    public LoginDto? LoginDto { get; set; }
+    _userManager = userManager;
+    _signInManager = signInManager;
+    _jwtOptions = jwtOptions;
+    _httpContextAccessor = httpContextAccessor;
   }
 
-  public class SignInCommandHandler : IRequestHandler<SignInCommand, ServerResponse>
+  /// <summary> Handles a request. </summary>
+  /// <param name="request">The request.</param>
+  /// <param name="token">Cancellation token.</param>
+  /// <returns>Server Response.</returns>
+  public async Task<ServerResponse> Handle(SignInCommand request, CancellationToken token)
   {
-    readonly IHttpContextAccessor _httpContextAccessor;
-    readonly IOptions<JwtOptions> _jwtOptions;
-    readonly UserManager<User> _userManager;
-    readonly SignInManager<User> _signInManager;
+    var httpContext = _httpContextAccessor.HttpContext;
 
-    public SignInCommandHandler
-    (
-      IHttpContextAccessor httpContextAccessor,
-      IOptions<JwtOptions> jwtOptions,
-      SignInManager<User> signInManager,
-      UserManager<User> userManager
-    )
+    try
     {
-      _userManager = userManager;
-      _signInManager = signInManager;
-      _jwtOptions = jwtOptions;
-      _httpContextAccessor = httpContextAccessor;
-    }
+      var user = await _userManager.FindByEmailAsync(request.LoginDto!.Email);
 
-    /// <summary> Handles a request. </summary>
-    /// <param name="request">The request.</param>
-    /// <param name="token">Cancellation token.</param>
-    /// <returns>Server Response.</returns>
-    public async Task<ServerResponse> Handle(SignInCommand request, CancellationToken token)
-    {
-      var httpContext = _httpContextAccessor.HttpContext;
-
-      try
+      if (user != null)
       {
-        var user = await _userManager.FindByEmailAsync(request.LoginDto!.Email);
+        var result = await _signInManager.PasswordSignInAsync(user.UserName, request.LoginDto.Password, true, false);
 
-        if (user != null)
+        if (result.IsNotAllowed)
         {
-          var result = await _signInManager.PasswordSignInAsync(user.UserName, request.LoginDto.Password, true, false);
+          // var user = await _userManager.FindByEmailAsync(request.LoginDto.Email);
+          var roles = await _userManager.GetRolesAsync(user);
 
-          if (result.IsNotAllowed)
+          // Creating an object with a token and user data.
+          var profile = new ProfileDto(user.Id, user.UserName, user.CreatedAt, user.Email, roles.ElementAt(0));
+
+          // Generate jwt by provider.
+          var jwtProvider = new JwtProvider(_jwtOptions, _userManager);
+          var jwt = await jwtProvider.GenerateToken(user);
+
+          // Adding data to browser cookies
+          httpContext!.Response.Cookies.Append(Messages.JwtCookiesKey, jwt, new CookieOptions
           {
-            // var user = await _userManager.FindByEmailAsync(request.LoginDto.Email);
-            var roles = await _userManager.GetRolesAsync(user);
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None
+          });
 
-            // Creating an object with a token and user data.
-            var profile = new ProfileDto(user.Id, user.UserName, user.CreatedAt, user.Email, roles.ElementAt(0));
-            
-            // Generate jwt by provider.
-            var jwtProvider = new JwtProvider(_jwtOptions, _userManager);
-            var jwt = await jwtProvider.GenerateToken(user);
-
-            // Adding data to browser cookies
-            httpContext!.Response.Cookies.Append(Messages.JwtCookiesKey, jwt, new CookieOptions
-            {
-              HttpOnly = true,
-              Secure = true,
-              SameSite = SameSiteMode.None
-            });
-
-            return await Task.FromResult(new ServerResponse(200, true, Messages.TokenGenerated, profile));
-          }
-
-          return await Task.FromResult(new ServerResponse(500, false, Messages.InvalidEmailOrPassword, ""));
+          return await Task.FromResult(new ServerResponse(200, true, Messages.TokenGenerated, profile));
         }
-        else
-        {
-          throw new InvalidOperationException();
-        }
+
+        return await Task.FromResult(new ServerResponse(500, false, Messages.InvalidEmailOrPassword, ""));
       }
-      catch (Exception ex)
+      else
       {
-        return await Task.FromResult(new ServerResponse(500, ex.Message, Messages.UserNotExist));
+        throw new InvalidOperationException();
       }
+    }
+    catch (Exception ex)
+    {
+      return await Task.FromResult(new ServerResponse(500, ex.Message, Messages.UserNotExist));
     }
   }
 }

@@ -10,15 +10,15 @@ using Microsoft.Extensions.Primitives;
 using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.Infrastructure.Options;
 using WebAPI.Authentication.UseCases.Contracts;
-using WebAPI.Authentication.UseCases.Tranfers.Input;
-using WebAPI.Authentication.UseCases.Tranfers.Output;
+using WebAPI.Authentication.UseCases.Models.Input;
+using WebAPI.Authentication.UseCases.Models.Output;
 using WebAPI.Authentication.UseCases.Types;
 
 namespace WebAPI.Authentication.UseCases.Requests.Commands;
 
 public class ForgotPasswordCommand : IRequest<ServerResponse>
 {
-  public AccountDto? AccountDto { get; set; }
+  public CredentialDto? CredentialDto { get; set; }
 }
 
 
@@ -42,19 +42,19 @@ public class ForgotPasswordCommandHandler : Controller, IRequestHandler<ForgotPa
 
   /// <summary> Handles a request. </summary>
   /// <returns> Returns string about success. </returns>
-  public async Task<ServerResponse> Handle(ForgotPasswordCommand request, CancellationToken token)
+  public async Task<ServerResponse> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
   {
     try
     {
-      var currentUser = await _userManager.FindByEmailAsync(request.AccountDto!.Email);
+      var currentUser = await _userManager.FindByEmailAsync(request.CredentialDto!.Email);
 
       if (currentUser != null || ((User)null!).EmailConfirmed)
       {
         var resetToken = await _userManager.GeneratePasswordResetTokenAsync(currentUser!);
-        var url = "http://localhost:8080/#/change-password";
+        var url = "http://localhost:8080/change-password";
         var emailLink = await GenerateEmailLink(request, resetToken, url, currentUser!);
 
-        await _emailService.SendEmail(request.AccountDto.Email!, emailLink, _emailOptions.Value);
+        await _emailService.SendEmail(request.CredentialDto.Email!, emailLink, _emailOptions.Value);
 
         return new ServerResponse(200, true, Messages.MailCollectLink, "");
       } 

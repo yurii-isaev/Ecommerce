@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using WebAPI.Authentication.Domain.Entities;
-using WebAPI.Authentication.UseCases.Tranfers;
+using WebAPI.Authentication.UseCases.Models;
 
 namespace WebAPI.Authentication.UseCases.Requests.Queries
 {

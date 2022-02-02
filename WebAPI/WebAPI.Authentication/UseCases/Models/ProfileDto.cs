@@ -1,6 +1,6 @@
 using System;
 
-namespace WebAPI.Authentication.UseCases.Tranfers
+namespace WebAPI.Authentication.UseCases.Models
 {
   public class ProfileDto
   {

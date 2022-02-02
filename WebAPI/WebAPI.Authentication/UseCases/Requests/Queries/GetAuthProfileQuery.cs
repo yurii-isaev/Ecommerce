@@ -7,8 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using WebAPI.Authentication.UseCases.Tranfers;
-using WebAPI.Authentication.UseCases.Tranfers.Output;
+using WebAPI.Authentication.UseCases.Models;
+using WebAPI.Authentication.UseCases.Models.Output;
+using WebAPI.Authentication.UseCases.Types;
 
 namespace WebAPI.Authentication.UseCases.Requests.Queries;
 
@@ -71,19 +72,18 @@ public class GetAuthProfileQueryHandler : IRequestHandler<GetAuthProfileQuery, S
           {
             Code = 200,
             Success = true,
-            Message = "User is authenticated",
+            Message = Messages.AuthSuccess,
             DataSet = new {profile}
           });
         }
       }
 
       // If the user is not authenticated or has invalid authentication data, throw an exception.
-      throw new AuthenticationException("User is not authenticated or has invalid authentication data");
+      throw new AuthenticationException(Messages.InvalidAuthentication);
     }
     catch (Exception ex)
     {
-      // Handle other exceptions.
-      return new InternalServerError("Internal server error: " + ex.Message);
+      return new InternalServerError(Messages.ServerError + ex.Message);
     }
   }
 }
