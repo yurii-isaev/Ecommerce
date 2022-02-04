@@ -28,7 +28,7 @@
             </button>
          </li>
          <li class="menu-item">
-            <router-link class="router-link" :to="{ name: 'cart' }">
+            <router-link class="router-link" :to="{ name: 'cart-list' }">
                <img src="@/assets/graphics/vector/cart.svg" alt="cart"/>
                <span class="cart-quantity-icon"> {{ cart.length }} </span>
             </router-link>
@@ -40,10 +40,8 @@
             </router-link>
          </li>
          <li class="menu-item">
+           <!-- Auth Modal Component -->
             <AuthModal/>
-<!--            <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#authModal">-->
-<!--               <img src="@/assets/graphics/vector/profile.svg" alt="profile"/>-->
-<!--            </button>-->
          </li>
       </ul>
    </header>
@@ -95,13 +93,20 @@
 </script>
 
 <style scoped>
+
+  .form-group label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }  
+  
   .header {
-     display: flex;
-     justify-content: space-between;
-     border-bottom: 1px solid #CBD5E0;
-     padding: 0 1.25rem;
-     padding-top: 0.5rem;
-     padding-bottom: 0.625rem;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #CBD5E0;
+    padding: 0 1.25rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.625rem;
   }  
   
   .text-section {
