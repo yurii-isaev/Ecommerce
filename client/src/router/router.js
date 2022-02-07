@@ -10,7 +10,11 @@ const routes = [
     path: '/change-password',
     name: 'change-password-form',
   },
-    
+  {
+    component: () => import('@/components/order/order-delivery'),
+    path: '/order-delivery',
+    name: 'order-delivery',
+  },
   {
     path: '/',
     name: 'mainPage',
