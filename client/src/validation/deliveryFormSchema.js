@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { number, string } from 'yup';
+import { string } from 'yup';
 import * as patterns from '@/validation/patterns';
 
 const { emailPattern, fullNamePattern, addressPattern, cityPattern, statePattern, zipCodePattern } = patterns;
@@ -27,7 +27,7 @@ const deliveryFormSchema = Yup.object().shape({
       .required('State is required')
       .matches(statePattern, 'State is invalid'),
   
-  zipCode: number()
+  zipCode: string()
       .required('Zip code is required')
       .matches(zipCodePattern, 'Zip code is invalid'),
 });

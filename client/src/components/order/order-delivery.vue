@@ -129,6 +129,7 @@
     margin-top: 10px;
     right: $padding*3;
     bottom: $padding*2;
+    color: white;
   }  
   .btn:hover {
     background-color: #5f8141;
