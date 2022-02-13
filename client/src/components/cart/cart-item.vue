@@ -3,12 +3,12 @@
     
     <img class="cart-item-image"
          alt="image"
-         v-if="cart_item_data.image"
+         v-if="cart_item_data && cart_item_data.image"
          :src="require('@/assets/images/' + cart_item_data.image)"
     />
   
     <div class="cart-item-name">
-      <p><strong>{{ cart_item_data.name }}</strong></p>
+      <p v-if="cart_item_data && cart_item_data.name"><strong>{{ cart_item_data.name }}</strong></p>
       <br>
       <div v-if="orderItem && cart_item_data">
         <p>{{ formattedCustomPrice }}</p>
@@ -35,10 +35,11 @@
       <router-link class="router-link" :to="{
             name: 'cart-item-details',
             params: { id: cart_item_data.id },
-            props:  { id: cart_item_data.id } }">
-        <button class="btn btn-yellow"> Details</button>
+            props:  { id: cart_item_data.id }
+      }">
+        <button class="btn btn-yellow"> Details </button>
       </router-link>
-      <button class="btn btn-red" @click="removeFromCart"> Delete</button>
+      <button class="btn btn-red" @click="removeFromCart"> Delete </button>
     </div>
   </div>
 </template>
@@ -53,23 +54,40 @@
         type: Object, 
         default: () => {}
       },
-    }, 
-    
+    },
+  
+    data() {
+      return {
+        localCartItemData: this.cart_item_data, // create a local copy of the prop
+      };
+    },
+  
     computed: {
-      ...mapGetters(['ORDER_ITEM_ID']), 
+      ...mapGetters(['CART_ITEM_ID']), 
       
       orderItem() {
-        return this.ORDER_ITEM_ID(this.cart_item_data.id);
-      }, 
-      
+        return this.CART_ITEM_ID(this.cart_item_data.id);
+      },
+  
       formattedPrice() {
+        if (!this.cart_item_data) return '';
         return this.$formatPrice(this.cart_item_data.price);
-      }, 
-      
+      },
+  
       formattedCustomPrice() {
+        if (!this.orderItem) return '';
         return this.$formatPrice(this.orderItem.price);
       }
-    }, 
+    },
+  
+    watch: {
+      'CART_ITEM_ID': {
+        handler(newValue) {
+          this.localCartItemData = newValue;
+        },
+        deep: true
+      }
+    },
     
     methods: {
       increment() {
@@ -141,24 +159,6 @@
 
   .cart-item p {
     margin: 0; 
-  }
-
-  /* Детали */
-  .btn-red {
-    background-color: #db5f4b;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  .btn-red:hover {
-    background-color: #b84633;
-  }
-  
-  .btn-yellow {
-    background-color: #db9a31;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  .btn-yellow:hover {
-    background-color: #a07023;
   }
   
   @media (max-width: 768px) { 

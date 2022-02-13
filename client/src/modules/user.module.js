@@ -123,9 +123,9 @@ const UserModule = {
       }
     },
 
-    async SEND_FORGOT_PASSWORD_EMAIL({commit}, data) {
+    async SEND_FORGOT_PASSWORD_EMAIL({commit}, credential) {
       try {
-        const response = await axios.post('http://localhost:5000/api/auth/ForgotPassword', data);
+        const response = await axios.post('http://localhost:5000/api/auth/ForgotPassword', credential);
 
         if (response.data.success) {
           await commit('SET_AUTH_MESSAGE', response.data.message);
@@ -136,9 +136,10 @@ const UserModule = {
         // console.error('Error during authentication check:', error);
       }
     },
-    async SEND_PASSWORD_CHANGED({commit}, data) {
+    
+    async SEND_PASSWORD_CHANGED({commit}, credential) {
       try {
-        const response = await axios.post('http://localhost:5000/api/auth/ChangePassword', data);
+        const response = await axios.post('http://localhost:5000/api/auth/ChangePassword', credential);
 
         if (response.data.success) {
           await commit('SET_AUTH_MESSAGE', response.data.message);

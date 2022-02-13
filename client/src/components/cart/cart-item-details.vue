@@ -1,22 +1,19 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col col-md-4">
+      <div class="col col-md-5">
         <div class="cart-item-details">
-          <p><strong>Name: </strong>{{ cartItem.name }}</p>
-          <p><strong>Avalible: </strong>{{ cartItem.avalible }}</p>
-          <p><strong>Filling: </strong>{{ cartItem.filling }}</p>
-          <p><strong>Weight: </strong>{{ cartItem.weight }}</p>
-          <p><strong>Tier: </strong>{{ cartItem.tier }}</p>
-          <p><strong>Standart Price: </strong>{{ formattedPrice }}</p>
-          <br/>
-          <span class="price alert-success">
-                  <strong>Custom Price: </strong>
-                  {{ price !== cartItem.price ? formattedCustomPrice : formattedPrice }}</span>
+          <p><strong>Name: </strong>{{ cartItem?.name }}</p>
+          <p><strong>Avalible: </strong>{{ cartItem?.avalible }}</p>
+          <p><strong>Filling: </strong>{{ cartItem?.filling }}</p>
+          <p><strong>Weight: </strong>{{ cartItem?.weight }}</p>
+          <p><strong>Tier: </strong>{{ cartItem?.tier }}</p>
+          <p><strong>Standart Price: </strong>{{ formattedDefaultPrice }}</p>
+          <p><strong>Custom Price: </strong>{{ price !== cartItem?.price ? formattedCustomPrice : formattedPrice }}</p>
         </div>
       </div>
       
-      <div class="col col-md-8">
+      <div class="col col-md-7">
         <img class="cart-item-image img-fluid"
              alt="img"
              v-if="cartItem && cartItem.image"
@@ -34,7 +31,20 @@
     <div>
       <h1 style="font-size:30px">Cake custom builder</h1>
       <hr>
-      <button class="btn btn-primary" type="button" @click="addLayer">Add layer</button>
+      <div class="wrap">
+        <button class="btn btn-green" type="button" @click="addLayer">
+          Add layer
+        </button>
+  
+        <button type="button"
+                class="btn btn-yellow"
+                v-show="hasLayers"
+                data-v-show="hasLayers"
+                @click="updateOrders()">
+          Save
+        </button>
+      </div>
+      
       <hr>
       
       <div class="row">
@@ -64,6 +74,7 @@
             <tbody>
             <tr v-for="(layer, i) in layers" :key="layer.id">
               <td style="width:300px">
+                
                 <select class="form-control"
                         v-model="layers[i].type">
                   
@@ -72,14 +83,14 @@
                           :key="lt.id">
                     {{ lt.label }}
                   </option>
-                  
                 </select>
+                
               </td>
               <td>
                 <input class="form-control" type="text" v-model.number="layers[i].height">
               </td>
               <td>
-                <button class="btn btn-danger" type="button" @click="deleteLayer(i)">
+                <button class="btn btn-red" type="button" @click="deleteLayer(i)">
                   Delete
                 </button>
               </td>
@@ -88,18 +99,15 @@
           </table>
         </div>
       </div>
-      <hr>
+      <br> <br>
       
-      <div class="alert alert-success price" v-show="hasLayers">
-        <span class="price">{{ formattedCustomPrice }}</span>
+      <div class="alert alert-success price-custom" v-show="hasLayers">
+        <span class="price">
+          <strong>Custom Price: </strong> {{ formattedCustomPrice }}
+        </span>
       </div>
+      <br> <br>
       
-      <button type="button" class="btn btn-warning"
-              data-v-show="hasLayers"
-              @click="addToOrders()">
-        Order now
-      </button>
-      <hr>
     </div>
   </div>
 </template>
@@ -131,7 +139,8 @@
           }
         },
         defaultLayerType: 'biscuit',
-        defaultHeight: 3
+        defaultHeight: 3,
+        defaultPrice: null
       }
     },
   
@@ -153,7 +162,11 @@
       hasLayers() {
         return this.layers.length > 0;
       },
-    
+  
+      formattedDefaultPrice() {
+        return this.$formatPrice(this.defaultPrice);
+      },
+  
       formattedPrice() {
         return this.$formatPrice(this.cartItem.price);
       },
@@ -164,10 +177,16 @@
     }, 
     
     methods: {
-      ...mapActions(['ADD_TO_ORDERS']), 
-      
-      addToOrders() {
-        this.ADD_TO_ORDERS({
+      ...mapActions(['UPDATE_CART_STATE']),
+  
+      updateOrders() {
+  
+        if (!this.cartItem.id || typeof this.price !== 'number') {
+          console.error("Invalid cart item or price:", this.cartItem, this.price);
+          return; 
+        }
+        
+        this.UPDATE_CART_STATE({
           id: this.cartItem.id, 
           article: this.cartItem.article, 
           image: this.cartItem.image, 
@@ -181,7 +200,7 @@
           layers: this.layers, 
           price: this.price,
         });
-      }, 
+      },
       
       addLayer() {
         this.layers.push({
@@ -209,6 +228,7 @@
     
     mounted() {
       this.fetchItemDetails();
+      this.defaultPrice = this.cartItem.price; // Keep the original price value
     },
   }
 </script>
@@ -218,6 +238,11 @@
   p {
     font-size: large;
   }  
+  
+  .wrap {
+    display: flex;
+    justify-content: space-evenly;
+  }
   
   .cart-item {
     display: flex;
@@ -259,9 +284,9 @@
     background: url(@/assets/images/curd.jpg);
   }
 
-  .price {
+  .price-custom {
     font-size: 26px;
-    margin-right: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   } 
   
   .layer-enter-active {
