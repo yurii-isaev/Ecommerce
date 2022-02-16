@@ -3,14 +3,14 @@
     
     <img class="cart-item-image"
          alt="image"
-         v-if="cart_item_data && cart_item_data.image"
-         :src="require('@/assets/images/' + cart_item_data.image)"
+         v-if="cart_item && cart_item.image"
+         :src="require('@/assets/images/' + cart_item.image)"
     />
   
     <div class="cart-item-name">
-      <p v-if="cart_item_data && cart_item_data.name"><strong>{{ cart_item_data.name }}</strong></p>
+      <p v-if="cart_item && cart_item.name"><strong>{{ cart_item.name }}</strong></p>
       <br>
-      <div v-if="orderItem && cart_item_data">
+      <div v-if="orderItem && cart_item">
         <p>{{ formattedCustomPrice }}</p>
       </div>
       <div v-else>
@@ -24,18 +24,29 @@
         <button class="quantity-btn" @click="increment">
           <strong>+</strong>
         </button>
-        <strong>{{ cart_item_data.quantity }}</strong>
+        <strong>{{ cart_item.quantity }}</strong>
         <button class="quantity-btn" @click="decrement">
           <strong>-</strong>
         </button>
       </span>
     </div>
+  
+    <div class="cart-item-total">
+      <p v-if="cart_item && cart_item.price"><strong>Сart item total</strong></p>
+      <br>
+      <div v-if="orderItem && cart_item">
+        <p>{{ formattedCustomTotal }}</p>
+      </div>
+      <div v-else>
+        <p>{{ formattedPrice }}</p>
+      </div>
+    </div>
     
     <div class="cart-item-btn">
       <router-link class="router-link" :to="{
             name: 'cart-item-details',
-            params: { id: cart_item_data.id },
-            props:  { id: cart_item_data.id }
+            params: { id: cart_item.id },
+            props:  { id: cart_item.id }
       }">
         <button class="btn btn-yellow"> Details </button>
       </router-link>
@@ -50,7 +61,7 @@
   export default {
     
     props: {
-      cart_item_data: {
+      cart_item: {
         type: Object, 
         default: () => {}
       },
@@ -58,7 +69,7 @@
   
     data() {
       return {
-        localCartItemData: this.cart_item_data, // create a local copy of the prop
+        localCartItemData: this.cart_item, // create a local copy of the prop
       };
     },
   
@@ -66,17 +77,22 @@
       ...mapGetters(['CART_ITEM_ID']), 
       
       orderItem() {
-        return this.CART_ITEM_ID(this.cart_item_data.id);
+        return this.CART_ITEM_ID(this.cart_item.id);
       },
   
       formattedPrice() {
-        if (!this.cart_item_data) return '';
-        return this.$formatPrice(this.cart_item_data.price);
+        if (!this.cart_item) return '';
+        return this.$formatPrice(this.cart_item.price);
       },
   
       formattedCustomPrice() {
         if (!this.orderItem) return '';
         return this.$formatPrice(this.orderItem.price);
+      },
+  
+      formattedCustomTotal() {
+        if (!this.cart_item) return '';
+        return this.$formatPrice(this.cart_item.price * this.cart_item.quantity);
       }
     },
   
