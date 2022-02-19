@@ -38,6 +38,7 @@ public class AuthController : BaseController
   /// <remarks>
   /// Sample request:
   /// GET -> ../auth/GetAuthProfile.
+  /// + Bearer Token in headers
   /// </remarks>
   [Authorize(Roles = "Customer")]
   [HttpGet("GetAuthProfile")]
@@ -62,6 +63,7 @@ public class AuthController : BaseController
   /// <remarks>
   /// Request example:
   /// POST -> ../auth/Logout.
+  /// + Bearer Token in headers
   /// </remarks>
   [Authorize(Roles = "Customer")]
   [HttpPost("Logout")]

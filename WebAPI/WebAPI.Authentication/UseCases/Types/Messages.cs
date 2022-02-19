@@ -24,6 +24,7 @@ public static class Messages
   public const string SendMessageFailed = "Failed to send a message to this address";
   
   public const string InvalidAuthentication = "User is not authenticated or has invalid authentication data";
+  public const string OrderCreatedSuccess = "Order created successfull";
   
   public const string JwtCookiesKey = "jwt-cookies";
 }

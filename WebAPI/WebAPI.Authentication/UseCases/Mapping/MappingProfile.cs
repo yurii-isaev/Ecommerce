@@ -8,23 +8,16 @@ namespace WebAPI.Authentication.UseCases.Mapping
   /// <summary>
   /// Assembly mapping profile.
   /// </summary>
-  public class AssemblyMappingProfile : Profile
+  public class MappingProfile : Profile
   {
-    public AssemblyMappingProfile()
-    {
-      ApplyMappingsFromAssembly(Assembly.GetExecutingAssembly());
-    }
+    public MappingProfile() => ApplyMappingsFromAssembly(Assembly.GetExecutingAssembly());
 
-    /// <summary>
-    /// Apply mappings from assembly.
-    /// </summary>
-    /// <param name="assembly">The assembly.</param>
     private void ApplyMappingsFromAssembly(Assembly assembly)
     {
       var types = assembly.GetExportedTypes()
-        .Where(type => type.GetInterfaces()
+          .Where(type => type.GetInterfaces()
           .Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IMapFrom<>)))
-        .ToList();
+          .ToList();
 
       foreach (var type in types)
       {

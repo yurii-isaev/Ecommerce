@@ -15,6 +15,8 @@ using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.Infrastructure.Extensions;
 using WebAPI.Authentication.Infrastructure.Options;
 using WebAPI.Authentication.UseCases.Contracts;
+using WebAPI.Authentication.UseCases.Mapping;
+using WebAPI.Authentication.UseCases.Models.Input;
 using WebAPI.Authentication.UseCases.Services;
 
 namespace WebAPI.Authentication
@@ -38,6 +40,7 @@ namespace WebAPI.Authentication
       services.AddControllers();
       services.AddSingleton<IMediator, Mediator>();
       services.AddTransient<IEmailService, EmailService>();
+      services.AddTransient<IOrderRepository>(_ => new OrderRepository(connection!));
       services.AddTransient<IProductRepository>(_ => new ProductRepository(connection!));
       #endregion
 
@@ -87,8 +90,19 @@ namespace WebAPI.Authentication
       });
       #endregion
 
+      #region Mapper
+      services.AddAutoMapper(config =>
+        { 
+          config.CreateMap<OrderDto, Order>().ReverseMap();
+          config.CreateMap<OrderItemDto, OrderItem>().ReverseMap();
+          config.CreateMap<CardPaymentDto, CardPayment>().ReverseMap();
+          config.CreateMap<LayerDto, Layer>().ReverseMap();
+        }
+      );
+      #endregion
+       
       #region Assembly
-      services.AddAutoMapper(Assembly.GetExecutingAssembly());
+      services.AddAutoMapper(typeof(MappingProfile));
       services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(Startup).Assembly));
       #endregion
     }
