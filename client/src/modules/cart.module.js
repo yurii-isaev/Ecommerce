@@ -11,6 +11,7 @@ const CartModule = {
   mutations: {
     SET_CART_VALUE: (state, product) => {
       console.log("Adding product to cart:", product);
+      
       if (!('price' in product) || typeof product.price !== 'number') {
         console.error("Invalid product price:", product);
         return; // Don't add the product if the price is invalid
@@ -30,6 +31,10 @@ const CartModule = {
       } else {
         state.cart.push(product);
       }
+    },
+
+    SET_CART(state, cart) {
+      state.cart = cart;
     },
     
     REMOVE_FROM_CART: (state, index) => {
@@ -56,17 +61,19 @@ const CartModule = {
         state.cart.push(updatedOrder);
       }
     },
-  
 
-    SET_ORDER_RESPONSE_MESSAGE(state, serverMessage) {
-      state.isPaid = true;
-      state.message = serverMessage;
+    SET_ORDER_RESPONSE_MESSAGE(state, success) {
+      state.isPaid = success;
     }
   },
 
   actions: {
     ADD_TO_CART({commit}, product) {
       commit('SET_CART_VALUE', product);
+    },
+
+    CLEAR_CART({ commit }) {
+      commit('SET_CART', []);
     },
 
     DELETE_FROM_CART({commit}, index) {
@@ -87,12 +94,11 @@ const CartModule = {
 
     async POST_USER_ORDER_TO_API({commit}, order) {
       try {
-        const response = await axios.post('http://localhost:5000/api/order/SetUserOrder', order);
-
+        const response = await axios.post('http://localhost:5000/api/order/CreateUserOrder', order);
         if (response.data.success) {
           await commit('SET_ORDER_RESPONSE_MESSAGE', response.data.message);
         } else {
-          console.error('Post user order failed:', response.data.message);
+          await commit('SET_ORDER_RESPONSE_MESSAGE', response.data.message);
         }
       } catch (error) {
         console.error('Error during post user order:', error);
@@ -103,12 +109,11 @@ const CartModule = {
 
   getters: {
     CART_STATE: state => state.cart,
-
     CART_ITEM_ID: (state) => (id) => {
       return state.cart.find(item => item.id === id);
     },
-
     IS_ORDER_PAID: state => state.isPaid,
+    IS_ORDER_MESSAGE: state => state.message,
   },
 
   install: (app) => {

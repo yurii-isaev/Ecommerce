@@ -29,10 +29,10 @@
      justify-content: center;
      margin: 0 auto;
      background-color: #ffffff;
-     width: 90%; /* 3/5 = 60% */
+     width: 95%; /* 3/5 = 60% */
      border-radius: 0.75rem;
      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-     margin-top: 4rem;
+     margin-top: 3rem;
   }
   
   .shadow-grey-200 {

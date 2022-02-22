@@ -30,6 +30,8 @@ const deliveryFormSchema = Yup.object().shape({
   zipCode: string()
       .required('Zip code is required')
       .matches(zipCodePattern, 'Zip code is invalid'),
+
+  consentPrivateData: string().required('Consent Private Data is required')
 });
 
 export default deliveryFormSchema;

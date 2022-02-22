@@ -80,7 +80,7 @@
       schema: PaymentFormSchema,
       cartList: [],
       totalObj: 0,
-      isPaid: false,
+      paid: false,
     }
   },
   
@@ -89,7 +89,7 @@
   },
     
   computed: {
-    ...mapGetters(['USER_STATE', 'IS_ORDER_PAID']),
+    ...mapGetters(['USER_STATE', 'IS_ORDER_PAID', 'IS_ORDER_MESSAGE']),
     
     userID() {
       return this.USER_STATE ? this.USER_STATE.id : null;
@@ -97,20 +97,28 @@
   },
   
   methods: {
-    ...mapActions(['POST_USER_ORDER_TO_API']),
+    ...mapActions(['POST_USER_ORDER_TO_API', 'CLEAR_CART']),
     
     async proceedToCheckout(formValues) {
-      
-      const order = {
-        cartList:   this.cartList,
-        cartTotal:  this.totalObj,
+  
+      const payment = {
         cardHolder: formValues.nameOnCard,
         cardNumber: formValues.numberOnCard,
-        expMonth:   formValues.expMonth,
-        expYear:    formValues.expYear,
-        cvv:        formValues.cvv,
-        isPaid:     true,
-        userId:     this.userID
+        expMonth: formValues.expMonth,
+        expYear: formValues.expYear,
+        cvv: formValues.cvv,
+        userId: this.userID
+      };
+      
+      const order = {
+        cardPayment: payment,
+        orderItems: this.cartList,
+        discount: this.totalObj.discount,
+        quantity: this.totalObj.quantity,
+        subtotal: this.totalObj.subtotal,
+        tax: this.totalObj.tax,
+        total: this.totalObj.total,
+        isPaid: true,
       };
       
       console.warn("[ORDER-PAYMENT] order: ", order);
@@ -121,8 +129,12 @@
         this.paid = this.IS_ORDER_PAID;
         
         if (this.paid) {
+          await this.CLEAR_CART();
           this.$router.push({name: 'order-payment-response', query: { paymentSuccess: this.paid }});
-          console.error('An error occurred:', this.paid);
+        }
+        else {
+          this.$router.push({name: 'order-payment-response', query: { paymentSuccess: this.paid }});
+          console.warn('Payment failed:', this.paid);
         }
       } catch (error) {
         this.$router.push({name: 'order-payment-response', query: { paymentSuccess: this.paid }});

@@ -21,6 +21,11 @@ const routes = [
     name: 'order-delivery',
   },
   {
+    component: () => import('@/components/order/order-payment-response'),
+    path: '/order-payment-response',
+    name: 'order-payment-response',
+  },
+  {
     path: '/',
     name: 'mainPage',
     component: MainPage

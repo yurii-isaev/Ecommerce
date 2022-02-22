@@ -24,8 +24,8 @@ const paymentFormSchema = Yup.object().shape({
 
   // CVV (Card Verification Value)
   cvv: string()
-      .required('CVV is required')
-      .matches(ccvPattern, 'CVV is invalid'),
+      .required('Card Verification Value is required')
+      .matches(ccvPattern, 'Card Verification Value is invalid'),
 });
 
 export default paymentFormSchema;
