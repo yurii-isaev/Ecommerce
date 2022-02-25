@@ -1,43 +1,37 @@
 <template>
   <section>
     <div class="container">
-      <Form @submit="proceedToCheckout" :validation-schema="schema" v-slot="{ errors }">
+      <Form @submit="proceedToPayment" :validation-schema="schema" v-slot="{ errors, submitCount }">
         <div class="row">
           <div class="col">
             <h3 class="title">Order Address</h3>
-  
+            
             <div class="form-row">
               <div class="form-group col">
                 <label>Full name:</label>
                 <Field class="form-control" name="fullName" type="text" placeholder="Full name"
-                       :class="{'is-invalid': errors.fullName}"/>
+                       :class="{'is-invalid': errors.fullName}"
+                       v-model="formData.fullName"/>
                 <div class="invalid-feedback">{{ errors.fullName }}</div>
               </div>
             </div>
             
             <div class="form-row">
               <div class="form-group col">
-                <label>Email:</label>
-                <Field class="form-control" name="email" type="email" placeholder="Email Address" 
-                       :class="{'is-invalid': errors.email}"/>
-                <div class="invalid-feedback">{{ errors.email }}</div>
-              </div>
-            </div>
-  
-            <div class="form-row">
-              <div class="form-group col">
                 <label>Address:</label>
                 <Field class="form-control" name="address" type="text" placeholder="street - house - apartment"
-                       :class="{'is-invalid': errors.address}"/>
+                       :class="{'is-invalid': errors.address}"
+                       v-model="formData.address"/>
                 <div class="invalid-feedback">{{ errors.address }}</div>
               </div>
             </div>
-  
+            
             <div class="form-row">
               <div class="form-group col">
                 <label>City:</label>
                 <Field class="form-control" name="city" type="text" placeholder="City"
-                       :class="{'is-invalid': errors.city}"/>
+                       :class="{'is-invalid': errors.city}"
+                       v-model="formData.city"/>
                 <div class="invalid-feedback">{{ errors.city }}</div>
               </div>
             </div>
@@ -47,22 +41,38 @@
                 <div class="form-group col">
                   <label>State:</label>
                   <Field class="form-control" name="state" type="text" placeholder="State"
-                         :class="{'is-invalid': errors.state}"/>
+                         :class="{'is-invalid': errors.state}"
+                         v-model="formData.state"/>
                   <div class="invalid-feedback">{{ errors.state }}</div>
                 </div>
               </div>
-  
+              
               <div class="form-group col">
                 <label>Zip code:</label>
                 <Field class="form-control" name="zipCode" type="text" placeholder="123 456"
-                       :class="{'is-invalid': errors.zipCode}"/>
+                       :class="{'is-invalid': errors.zipCode}"
+                       v-model="formData.zipCode"/>
                 <div class="invalid-feedback">{{ errors.zipCode }}</div>
               </div>
             </div>
-            
+  
+            <div class="form-group form-check">
+              <div class="form-group col">
+                <Field class="form-check-input" id="consentPrivateData"
+                       name="consentPrivateData"
+                       type="checkbox" value="true"
+                       :class="{'is-invalid': errors.consentPrivateData && submitCount > 0}"
+                />
+                <label for="consentPrivateData" class="form-check-label" style="margin-left:10px">
+                  Consent to the processing of private data
+                </label>
+                <div class="invalid-feedback">{{ errors.consentPrivateData }}</div>
+              </div>
+            </div>
+          
           </div>
         </div>
-        <input type="submit" value="Proceed To Checkout" class="btn btn-shadow_green">
+        <input type="submit" value="Proceed to payment" class="btn btn-shadow_green">
       </Form>
     </div>
   </section>
@@ -79,11 +89,22 @@
     data() {
       return {
         schema: DeliveryFormSchema,
+        formData: {
+          fullName: '',
+          address: '',
+          city: '',
+          state: '',
+          zipCode: '',
+          consentPrivateData: false
+        }
       }
     },
   
     methods: {
-      proceedToCheckout() {
+      async proceedToPayment() {
+        this.formData.consentPrivateData = true;
+        // console.warn("[ORDER-DELIVER] order: ",  this.formData);
+        await this.$store.dispatch('SAVE_ORDER_DETAILS', this.formData);
         this.$router.push({name: 'order-payment'});
       }
     }
@@ -103,7 +124,6 @@
   }  
   
   .form-group {
-    display: flex;
     flex-direction: column;
     align-items: flex-start;
     margin-top: 1rem;

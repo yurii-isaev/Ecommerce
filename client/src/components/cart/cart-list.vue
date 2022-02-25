@@ -32,22 +32,15 @@
       </div>
       
       <div class="wrap">
-        <router-link class="router-link" :to="{
-          name: 'order-payment',
-          query: { cart: JSON.stringify(cartArr), total: JSON.stringify(this.totalCartObj) }
-        }">
-          <button class="btn btn-shadow_green"> Pay order </button>
-        </router-link>
-        <router-link class="router-link" :to="{ name: 'order-delivery'}">
-          <button class="btn btn-shadow_yellow"> Add delivery </button>
-        </router-link>
+        <button class="btn btn-shadow_green" @click="payOrder"> Pay order </button>
+        <button class="btn btn-shadow_yellow" @click="addDelivery"> Add delivery </button>
       </div>
     </div>
   </section>
 </template>
 
 <script>
-  import { mapActions, mapGetters } from 'vuex';
+  import { mapGetters } from 'vuex';
   import CartItem from '@/components/cart/cart-item';
 
   export default {
@@ -56,7 +49,6 @@
   
     data() {
       return {
-        // default state cart
         totalCartObj: {
           subtotal: 0,
           tax:      0,
@@ -74,24 +66,20 @@
     computed: {
       ...mapGetters(['CART_STATE']), 
       
-      cartArr() {
-        return this.CART_STATE;
-      }, 
+      cartArr() { return this.CART_STATE }, 
       
       cartIsEmpty() {
-        return this.cartArr.length === 0;
+        return this.cartArr.length === 0
       }, 
       
       cartTotal() {
-        const total = this.cartArr.reduce((total, item) => {
+        return this.cartArr.reduce((total, item) => {
           if (typeof item.price !== 'number' || typeof item.quantity !== 'number') {
             console.error("Invalid item in cart:", item);
             return total;
           }
           return total + (item.price * item.quantity);
         }, 0);
-        
-        return total;
       }, 
       
       formattedTotal() {
@@ -100,7 +88,17 @@
     }, 
     
     methods: {
-      ...mapActions(['DELETE_FROM_CART', 'INCREMENT_CART_ITEM', 'DECREMENT_CART_ITEM']),
+      async payOrder() {
+        await this.$store.dispatch('UPDATE_CART', this.cartArr);
+        await this.$store.dispatch('ADD_CART_TOTAL', this.totalCartObj);
+        this.$router.push({ name: 'order-payment' });
+      },
+  
+      async addDelivery() {
+        await this.$store.dispatch('UPDATE_CART', this.cartArr);
+        await this.$store.dispatch('ADD_CART_TOTAL', this.totalCartObj);
+        this.$router.push({ name: 'order-delivery' });
+      },
   
       updateTotalCartObj() {
         this.totalCartObj = {
@@ -114,17 +112,17 @@
       }, 
       
       incrementItem(index) {
-        this.INCREMENT_CART_ITEM(index);
+        this.$store.dispatch('INCREMENT_CART_ITEM', index);
         this.updateTotalCartObj();
       }, 
       
       decrementItem(index) {
-        this.DECREMENT_CART_ITEM(index);
+        this.$store.dispatch('DECREMENT_CART_ITEM', index);
         this.updateTotalCartObj();
       }, 
       
       removeFromCart(index) {
-        this.DELETE_FROM_CART(index);
+        this.$store.dispatch('DELETE_FROM_CART', index);
         },
       },
   }
@@ -132,57 +130,60 @@
 
 <style lang="scss" scoped>
 
-.col-6 p {
-  white-space: nowrap; /* Предотвращает перенос текста */
-}
+  .col-6 p {
+    font-size: 17px;
+    margin: 10px;
+    white-space: nowrap; /* Предотвращает перенос текста */
+  }
 
-.wrap {
-  display: grid;
-}
-
-.cart {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: $padding*2;
-  //border: solid 1px;
-}
-
-.total {
-  text-align: start;
-  display: flex;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  padding: $padding*2 $padding*3;
-  justify-content: space-evenly;
-  background: $background-black;
-  color: #e0e0e0;
-  font-size: 20px;
-}
-
-.btn-shadow_yellow {
-  background-color: #db9a31;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 25px;
-  right: $padding*3;
-  bottom: $padding*2;
-}
-
-.btn-shadow_yellow:hover {
-  background-color: #aa7a2c;
-}
-
-.btn-shadow_green {
-  background-color: #85a767;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 25px;
-  right: $padding*3;
-  bottom: $padding*2;
-}
-
-.btn-shadow_green:hover {
-  background-color: #5f8141;
-}
+  .wrap {
+    display: grid;
+  }  
+  
+  .cart {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: $padding*2; 
+    //border: solid 1px;
+  }  
+  
+  .total {
+    text-align: start;
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    padding: 2px 52px;
+    justify-content: space-evenly;
+    background: $background-black;
+    color: #e0e0e0;
+    font-size: 20px;
+  }  
+  
+  .btn-shadow_yellow {
+    background-color: #db9a31;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    right: $padding*3;
+    bottom: $padding*2;
+  }  
+  
+  .btn-shadow_yellow:hover {
+    background-color: #aa7a2c;
+  }  
+  
+  .btn-shadow_green {
+    background-color: #85a767;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    margin-top: 15px;
+    right: $padding*3;
+    bottom: $padding*2;
+  }  
+  
+  .btn-shadow_green:hover {
+    background-color: #5f8141;
+  }
 </style>

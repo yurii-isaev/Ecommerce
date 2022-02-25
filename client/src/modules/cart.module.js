@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 const CartModule = {
   state: {
@@ -6,9 +6,17 @@ const CartModule = {
     selectedItem: null,
     message: null,
     isPaid: false,
+    cartTotal: {}
   },
 
   mutations: {
+    SET_CART(state, cart) {
+      state.cart = cart;
+    },
+    SET_TOTAL_CART(state, cartTotal) {
+      state.cartTotal = cartTotal;
+    },
+    
     SET_CART_VALUE: (state, product) => {
       console.log("Adding product to cart:", product);
       
@@ -31,10 +39,6 @@ const CartModule = {
       } else {
         state.cart.push(product);
       }
-    },
-
-    SET_CART(state, cart) {
-      state.cart = cart;
     },
     
     REMOVE_FROM_CART: (state, index) => {
@@ -68,6 +72,14 @@ const CartModule = {
   },
 
   actions: {
+    UPDATE_CART({ commit }, cart) {
+      commit('SET_CART', cart);
+    },
+
+    ADD_CART_TOTAL({ commit }, totalCartObj) {
+      commit('SET_TOTAL_CART', totalCartObj);
+    },
+    
     ADD_TO_CART({commit}, product) {
       commit('SET_CART_VALUE', product);
     },
@@ -96,9 +108,9 @@ const CartModule = {
       try {
         const response = await axios.post('http://localhost:5000/api/order/CreateUserOrder', order);
         if (response.data.success) {
-          await commit('SET_ORDER_RESPONSE_MESSAGE', response.data.message);
+          await commit('SET_ORDER_RESPONSE_MESSAGE', response.data.success);
         } else {
-          await commit('SET_ORDER_RESPONSE_MESSAGE', response.data.message);
+          await commit('SET_ORDER_RESPONSE_MESSAGE', response.data.success);
         }
       } catch (error) {
         console.error('Error during post user order:', error);
@@ -109,11 +121,11 @@ const CartModule = {
 
   getters: {
     CART_STATE: state => state.cart,
+    CART_TOTAL: state => state.cartTotal,
     CART_ITEM_ID: (state) => (id) => {
       return state.cart.find(item => item.id === id);
     },
     IS_ORDER_PAID: state => state.isPaid,
-    IS_ORDER_MESSAGE: state => state.message,
   },
 
   install: (app) => {
