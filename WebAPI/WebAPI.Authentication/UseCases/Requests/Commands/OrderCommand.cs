@@ -34,11 +34,11 @@ public class OrderCommandHandler : IRequestHandler<OrderCommand, ServerResponse>
     {
       var order = _mapper.Map<Order>(request.OrderDto);
       await _repository.CreateOrderAsync(order);
-      return await Task.FromResult(new ServerResponse(200, true, Messages.OrderCreatedSuccess, ""));
+      return new SuccessResponse(Messages.OrderCreatedSuccess, null);
     }
     catch (Exception e)
     {
-      return new InternalServerError(Messages.ServerError + e.Message);
+      return new InternalServerError("OrderCommand: " + e.Message);
     }
   }
 }

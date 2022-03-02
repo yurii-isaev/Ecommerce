@@ -17,20 +17,32 @@ public class Order
   public bool IsPaid { get; set; }
 
   // Navigation properties
-  public List<OrderItem> OrderItems { get; set; } = null!;
+  public OrderAddress? OrderAddress { get; set; }
   
-  public CardPayment CardPayment { get; set; } = null!;
+  public List<OrderDetails> OrderDetails { get; set; } = null!;
+  
+  public OrderCardPayment OrderCardPayment { get; set; } = null!;
 }
 
-public class OrderItem
+public class OrderAddress
 {
-  // [Key]
-  // public Guid Id { get; set; }
-  
+  [ForeignKey("OrderId")]
+  public Guid OrderId { get; set; } 
+  public Order Order { get; set; } = null!;
+  //
+  public string FullName { get; set; } = null!;
+  public string Address { get; set; } = null!;
+  public string City { get; set; } = null!;
+  public string State { get; set; } = null!;
+  public string ZipCode { get; set; } = null!;
+  public bool ConsentPrivateData { get; set; }
+}
+
+public class OrderDetails
+{
   [ForeignKey("OrderId")]
   public Guid OrderId { get; set; }
   public Order Order { get; set; } = null!;
-
   // 
   public string Article { get; set; } = null!;
   public bool Avalible { get; set; }
@@ -49,19 +61,14 @@ public class OrderItem
 public class Layer
 {
   public string Type { get; set; } = null!;
-
   public int Height { get; set; }
 }
 
-public class CardPayment
+public class OrderCardPayment
 {
-  // [Key]
-  // public Guid Id { get; set; }
-
   [ForeignKey("OrderId")]
-  public Guid? OrderId { get; set; } = null!;
+  public Guid OrderId { get; set; }
   public Order Order { get; set; } = null!;
-
   //
   public string CardHolder { get; set; } = null!;
   public string CardNumber { get; set; } = null!;

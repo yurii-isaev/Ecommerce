@@ -30,7 +30,7 @@ public class GetAuthProfileQueryHandler : IRequestHandler<GetAuthProfileQuery, S
   /// Handles a request.
   /// </summary>
   /// <returns>Server Response.</returns>
-  public async Task<ServerResponse> Handle(GetAuthProfileQuery request, CancellationToken token)
+  public Task<ServerResponse> Handle(GetAuthProfileQuery request, CancellationToken token)
   {
     var httpContext = request.HttpContext;
 
@@ -68,13 +68,7 @@ public class GetAuthProfileQueryHandler : IRequestHandler<GetAuthProfileQuery, S
           };
 
           // Return a successful response with the user's profile.
-          return await Task.FromResult(new ServerResponse
-          {
-            Code = 200,
-            Success = true,
-            Message = Messages.AuthSuccess,
-            DataSet = new {profile}
-          });
+          return Task.FromResult<ServerResponse>(new SuccessResponse(Messages.AuthSuccess, new {profile}));
         }
       }
 
@@ -83,7 +77,7 @@ public class GetAuthProfileQueryHandler : IRequestHandler<GetAuthProfileQuery, S
     }
     catch (Exception ex)
     {
-      return new InternalServerError(Messages.ServerError + ex.Message);
+      return Task.FromResult<ServerResponse>(new InternalServerError(Messages.ServerError + ex.Message));
     }
   }
 }

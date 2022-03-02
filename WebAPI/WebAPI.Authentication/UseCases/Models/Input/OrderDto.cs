@@ -13,15 +13,33 @@ public class OrderDto
   public decimal Discount { get; set; }
 
   public int Quantity { get; set; }
-  
+
   public bool IsPaid { get; set; }
 
-  public List<OrderItemDto> OrderItems { get; set; } = new();
+  public List<OrderDetailsDto> OrderDetails { get; set; } = new();
+
+  public OrderCardPaymentDto OrderCardPayment { get; set; } = new();
   
-  public CardPaymentDto  CardPayment { get; set; } = new();
+  // Optional property
+  public OrderAddressDto? OrderAddress { get; set; } 
 }
 
-public class OrderItemDto
+public class OrderAddressDto
+{
+  public string FullName { get; set; } = null!;
+
+  public string Address { get; set; } = null!;
+
+  public string City { get; set; } = null!;
+
+  public string State { get; set; } = null!;
+
+  public string ZipCode { get; set; } = null!;
+
+  public bool ConsentPrivateData { get; set; }
+}
+
+public class OrderDetailsDto
 {
   public string Article { get; set; } = null!;
 
@@ -34,7 +52,7 @@ public class OrderItemDto
   public string Image { get; set; } = null!;
 
   public string ImageSlice { get; set; } = null!;
-  
+
   public LayerDto[]? Layers { get; set; }
 
   public string Name { get; set; } = null!;
@@ -55,7 +73,7 @@ public class LayerDto
   public int Height { get; set; }
 }
 
-public class CardPaymentDto 
+public class OrderCardPaymentDto
 {
   public string CardHolder { get; set; } = null!;
 

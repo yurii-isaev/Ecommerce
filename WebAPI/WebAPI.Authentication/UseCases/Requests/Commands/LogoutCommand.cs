@@ -23,7 +23,7 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, ServerRespons
 {
   /// <summary> Handles a request.</summary>
   /// <returns>Returns Server Response.</returns>
-  public async Task<ServerResponse> Handle(LogoutCommand request, CancellationToken token)
+  public Task<ServerResponse> Handle(LogoutCommand request, CancellationToken token)
   {
     var httpContext = request.HttpContext;
 
@@ -42,18 +42,12 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, ServerRespons
       httpContext.Response.Cookies.Append(Messages.JwtCookiesKey, "", cookieOptions);
         
       // Return a success flag.
-      return await Task.FromResult(new ServerResponse
-      {
-        Code = 200,
-        Success = true,
-        Message = Messages.LogoutSuccess,
-        DataSet = null
-      });
+      return Task.FromResult<ServerResponse>(new SuccessResponse(Messages.LogoutSuccess, null));
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
       // Return an error flag if an error occurred.
-      return new InternalServerError(Messages.ServerError + ex.Message);
+      return Task.FromResult<ServerResponse>(new InternalServerError(Messages.ServerError + e.Message));
     }
   }
 }

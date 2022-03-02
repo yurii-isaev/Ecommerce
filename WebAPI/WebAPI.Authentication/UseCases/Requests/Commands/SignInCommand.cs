@@ -74,18 +74,18 @@ public class SignInCommandHandler : IRequestHandler<SignInCommand, ServerRespons
           var jwtProvider = new JwtProvider(_jwtOptions, _userManager);
           var jwt = await jwtProvider.GenerateToken(user);
 
-          // Adding data to browser cookies
+          // Adding data to browser cookies.
           httpContext!.Response.Cookies.Append(Messages.JwtCookiesKey, jwt, new CookieOptions
           {
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None
           });
-
-          return await Task.FromResult(new ServerResponse(200, true, Messages.TokenGenerated, profile));
+          
+          return new SuccessResponse(Messages.TokenGenerated, profile);
         }
 
-        return await Task.FromResult(new ServerResponse(500, false, Messages.InvalidEmailOrPassword, ""));
+        return new InternalServerError(Messages.InvalidEmailOrPassword);
       }
       else
       {
@@ -94,7 +94,7 @@ public class SignInCommandHandler : IRequestHandler<SignInCommand, ServerRespons
     }
     catch (Exception ex)
     {
-      return await Task.FromResult(new ServerResponse(500, ex.Message, Messages.UserNotExist));
+      return new InternalServerError(Messages.UserNotExist + ex.Message);
     }
   }
 }

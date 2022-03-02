@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -94,8 +93,9 @@ namespace WebAPI.Authentication
       services.AddAutoMapper(config =>
         { 
           config.CreateMap<OrderDto, Order>().ReverseMap();
-          config.CreateMap<OrderItemDto, OrderItem>().ReverseMap();
-          config.CreateMap<CardPaymentDto, CardPayment>().ReverseMap();
+          config.CreateMap<OrderAddressDto, OrderAddress>().ReverseMap();
+          config.CreateMap<OrderDetailsDto, OrderDetails>().ReverseMap();
+          config.CreateMap<OrderCardPaymentDto, OrderCardPayment>().ReverseMap();
           config.CreateMap<LayerDto, Layer>().ReverseMap();
         }
       );

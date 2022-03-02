@@ -65,7 +65,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ServerRes
         var tempUser = await _userManager.FindByEmailAsync(request.RegisterDto.Email);
         await _userManager.AddToRoleAsync(tempUser, RoleNames.AllRoles.ElementAt(0));
 
-        // Get a user roles
+        // Get a user roles.
         var rolesList = await _userManager.GetRolesAsync(user);
 
         // Creating an object with a token and user data.
@@ -74,25 +74,22 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ServerRes
         var jwtProvider = new JwtProvider(_jwtOptions, _userManager);
         var jwt = await jwtProvider.GenerateToken(user);
 
-        // Adding data to browser cookies
+        // Adding data to browser cookies.
         httpContext!.Response.Cookies.Append(Messages.JwtCookiesKey, jwt, new CookieOptions
         {
           HttpOnly = true,
           Secure = true,
           SameSite = SameSiteMode.None
         });
-
-        return await Task.FromResult(new ServerResponse(200, true, Messages.RegistrationSuccess, profile));
+        
+        return new SuccessResponse(Messages.RegistrationSuccess, profile);
       }
 
-      return await Task.FromResult(new ServerResponse(200, Messages.RegistrationFailed,
-          result.Errors.Select(e => e.Description).ToArray()
-        )
-      );
+      return new SuccessResponse(Messages.RegistrationFailed, result.Errors.Select(e => e.Description).ToArray());
     }
     catch (Exception ex)
     {
-      return await Task.FromResult(new ServerResponse(500, ex.Message, ""));
+      return new InternalServerError(ex.Message);
     }
   }
 }

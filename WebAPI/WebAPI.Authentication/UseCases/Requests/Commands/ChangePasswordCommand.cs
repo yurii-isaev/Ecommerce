@@ -42,14 +42,14 @@ public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordComman
 
       if (resetResult.Succeeded)
       {
-        return await Task.FromResult(new ServerResponse(200, true, Messages.PasswordChangedSuccess, ""));
+        return new SuccessResponse(Messages.PasswordChangedSuccess, null);
       }
 
-      return await Task.FromResult(new ServerResponse(500, false, Messages.PasswordChangedFailed, ""));
+      return new InternalServerError(Messages.PasswordChangedFailed);
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      return await Task.FromResult(new ServerResponse(500, false, ex.Message, ""));
+      return new InternalServerError(Messages.ServerError + e.Message);
     }
   }
 }

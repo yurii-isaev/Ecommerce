@@ -55,14 +55,15 @@ public class ForgotPasswordCommandHandler : Controller, IRequestHandler<ForgotPa
         var emailLink = await GenerateEmailLink(request, resetToken, url, currentUser!);
 
         await _emailService.SendEmail(request.CredentialDto.Email!, emailLink, _emailOptions.Value);
-
-        return new ServerResponse(200, true, Messages.MailCollectLink, "");
+        
+        return new SuccessResponse(Messages.MailCollectLink, null);
       } 
-      return new ServerResponse(500, false, Messages.SendMessageFailed, "");
+
+      return new InternalServerError(Messages.SendMessageFailed);
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      return new ServerResponse(500, false, ex.Message, "");
+      return new InternalServerError(Messages.ServerError + e.Message);
     }
   }
 

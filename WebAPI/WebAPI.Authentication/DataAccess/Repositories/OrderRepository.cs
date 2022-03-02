@@ -28,31 +28,41 @@ public class OrderRepository : IOrderRepository
         {
           // Insert the data into the Orders table.
           string insertOrderQuery = @"
-             INSERT INTO Orders (Subtotal, Tax, Total, Discount, Quantity, IsPaid)
-             OUTPUT INSERTED.Id
-             VALUES (@Subtotal, @Tax, @Total, @Discount, @Quantity, @IsPaid)";
+            INSERT INTO Orders (Subtotal, Tax, Total, Discount, Quantity, IsPaid)
+            OUTPUT INSERTED.Id
+            VALUES (@Subtotal, @Tax, @Total, @Discount, @Quantity, @IsPaid)";
 
           Guid orderId = await connection.ExecuteScalarAsync<Guid>(insertOrderQuery, order, transaction);
           
-          string insertOrderItemsQuery = @"
-             INSERT INTO OrderItems (OrderId, Article, Avalible, Category, Filling, Image, ImageSlice, Name, Price, Quantity, Tier, Weight)
-             VALUES (@OrderId, @Article, @Avalible, @Category, @Filling, @Image, @ImageSlice, @Name, @Price, @Quantity, @Tier, @Weight)";
+          string insertOrderDetailsQuery = @"
+            INSERT INTO OrderDetails (OrderId, Article, Avalible, Category, Filling, Image, ImageSlice, Name, Price, Quantity, Tier, Weight)
+            VALUES (@OrderId, @Article, @Avalible, @Category, @Filling, @Image, @ImageSlice, @Name, @Price, @Quantity, @Tier, @Weight)";
           
-          foreach (var item in order.OrderItems)
+          foreach (var item in order.OrderDetails)
           {
             item.OrderId = orderId;
-            await connection.ExecuteAsync(insertOrderItemsQuery, item, transaction);
+            await connection.ExecuteAsync(insertOrderDetailsQuery, item, transaction);
           }
 
-          // Insert the data into the CardPayments table.
-          string insertCardPaymentsQuery = @"
-            INSERT INTO CardPayments (OrderId, CardHolder, CardNumber, ExpMonth, ExpYear, Cvv, UserId)
+          // Insert the data into the OrderCardPayments table.
+          string insertOrderPaymentsQuery = @"
+            INSERT INTO OrderCardPayments (OrderId, CardHolder, CardNumber, ExpMonth, ExpYear, Cvv, UserId)
             VALUES (@OrderId, @CardHolder, @CardNumber, @ExpMonth, @ExpYear, @Cvv, @UserId)";
-      
-          // Set the OrderId for the CardPayment.
-          order.CardPayment.OrderId = orderId;
+          
+          // Set the OrderId for the OrderCardPayments table.
+          order.OrderCardPayment.OrderId = orderId;
+          await connection.ExecuteAsync(insertOrderPaymentsQuery, order.OrderCardPayment, transaction);
+          
+          if (order.OrderAddress != null)
+          {
+            string insertOrderAddressQuery = @"
+              INSERT INTO OrderAddress (OrderId, FullName, Address, City, State, ZipCode, ConsentPrivateData)
+              VALUES (@OrderId, @FullName, @Address, @City, @State, @ZipCode, @ConsentPrivateData)";
+  
+            order.OrderAddress.OrderId = orderId;
+            await connection.ExecuteAsync(insertOrderAddressQuery, order.OrderAddress, transaction);
+          }
 
-          await connection.ExecuteAsync(insertCardPaymentsQuery, order.CardPayment, transaction);
           transaction.Commit();
         }
         catch (Exception)
