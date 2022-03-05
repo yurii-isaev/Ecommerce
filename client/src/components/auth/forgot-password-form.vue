@@ -40,7 +40,7 @@
       };
     },
   
-    computed: {...mapGetters(['GET_AUTH_RESPONSE'])},
+    computed: { ...mapGetters(['GET_AUTH_RESPONSE']) },
   
     methods: {
       ...mapActions(['SEND_FORGOT_PASSWORD_EMAIL']),

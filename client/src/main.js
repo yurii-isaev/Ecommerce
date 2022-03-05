@@ -5,7 +5,6 @@ import router from './router/router';
 import { formatPrice } from '@/filters/price.filter';
 
 const app = createApp(App);
-
 app.config.globalProperties.$formatPrice = formatPrice;
 
 app.use(router);

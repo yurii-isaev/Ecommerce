@@ -76,83 +76,100 @@
   import { mapGetters } from 'vuex';
   import PaymentFormSchema from '@/validation/paymentFormSchema';
 
+  function isEmptyObject(obj) {
+    return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
+  }
+
   export default {
-    components: { Form, Field }, 
-    
+    components: {Form, Field},
+  
     data() {
       return {
-        schema: PaymentFormSchema, 
+        schema: PaymentFormSchema,
         formData: {
-          nameOnCard: '', 
-          numberOnCard: '', 
-          expMonth: '', 
-          expYear: '', 
-          zipCode: '', 
+          nameOnCard: '',
+          numberOnCard: '',
+          expMonth: '',
+          expYear: '',
+          zipCode: '',
           cvv: ''
-        }, 
+        },
         paid: false,
-      }
-    },
-    
+     }
+   },
+  
     computed: {
-      ...mapGetters(['USER_STATE','CART_TOTAL','CART_STATE','ORDER_DETAILS','IS_ORDER_PAID']),
+      ...mapGetters(['USER_STATE', 'CART_TOTAL', 'CART_STATE', 'ORDER_DETAILS', 'IS_ORDER_PAID']),
     
-      userID() { return this.USER_STATE?.id || null },
+      userID() {
+        return this.USER_STATE?.id || null
+      },
     
-      cartList() { return this.CART_STATE },
+      cartList() {
+        return this.CART_STATE
+      },
     
-      cartTotal() { return this.CART_TOTAL },
+      cartTotal() {
+        return this.CART_TOTAL
+      },
     
-      orderDetails() { return this.ORDER_DETAILS || null }
+      orderAddress() {
+        // Проверяем, является ли ORDER_DETAILS пустым объектом или не определен
+        if (this.ORDER_DETAILS && !isEmptyObject(this.ORDER_DETAILS)) {
+          return this.ORDER_DETAILS;
+        } else {
+          return null;
+        }
+      }
     },
   
-  methods: {
-    async proceedToCheckout() {
-      const payment = {
-        cardHolder: this.formData.nameOnCard,
-        cardNumber: this.formData.numberOnCard,
-        expMonth: this.formData.expMonth,
-        expYear: this.formData.expYear,
-        cvv: this.formData.cvv,
-        userId: this.userID
-      };
-    
-      const order = {
-        cardPayment: payment,
-        orderItems: this.cartList,
-        discount: this.cartTotal.discount,
-        quantity: this.cartTotal.quantity,
-        subtotal: this.cartTotal.subtotal,
-        tax: this.cartTotal.tax,
-        total: this.cartTotal.total,
-        isPaid: true,
-      };
-    
-      // Checking if the delivery data has been provided
-      if (this.orderDetails) {
-        order.orderAddress = this.orderDetails;
-      }
-    
-      console.warn("[ORDER-PAYMENT] order: ", order);
-    
-      try {
-        await this.$store.dispatch('POST_USER_ORDER_TO_API', order);
-        this.paid = this.IS_ORDER_PAID;
+    methods: {
+      async proceedToCheckout() {
+        const payment = {
+          cardHolder: this.formData.nameOnCard,
+          cardNumber: this.formData.numberOnCard,
+          expMonth: this.formData.expMonth,
+          expYear: this.formData.expYear,
+          cvv: this.formData.cvv,
+          userId: this.userID
+        };
       
-        if (this.paid) {
-          await this.$store.dispatch('CLEAR_CART');
-          this.$router.push({name: 'order-payment-response', query: { paymentSuccess: this.paid }});
+        const order = {
+          orderCardPayment: payment,
+          orderDetails: this.cartList,
+        
+          discount: this.cartTotal.discount,
+          quantity: this.cartTotal.quantity,
+          subtotal: this.cartTotal.subtotal,
+          tax: this.cartTotal.tax,
+          total: this.cartTotal.total,
+          isPaid: true,
+        };
+      
+        // Добавляем orderAddress в объект order только если он не равен null
+        if (this.orderAddress !== null) {
+          order.orderAddress = this.orderAddress;
         }
-        else {
-          await console.warn('Payment failed:', this.paid);
-          this.$router.push({name: 'order-payment-response', query: { paymentSuccess: this.paid }});
+      
+        console.warn("[ORDER-PAYMENT] order: ", order);
+      
+        try {
+          await this.$store.dispatch('POST_USER_ORDER_TO_API', order);
+          this.paid = this.IS_ORDER_PAID;
+        
+          if (this.paid) {
+            await this.$store.dispatch('CLEAR_CART');
+            this.$router.push({name: 'order-payment-response', query: {paymentSuccess: this.paid}});
+          } else {
+            await console.warn('Payment failed:', this.paid);
+            this.$router.push({name: 'order-payment-response', query: {paymentSuccess: this.paid}});
+          }
+        } catch (error) {
+          this.$router.push({name: 'order-payment-response', query: {paymentSuccess: this.paid}});
+          console.error('An error occurred:', error);
         }
-      } catch (error) {
-        this.$router.push({name: 'order-payment-response', query: { paymentSuccess: this.paid }});
-        console.error('An error occurred:', error);
       }
-    },
-  
+    
     // mounted() {
     //   this.loadCartListFromRoute();
     // },

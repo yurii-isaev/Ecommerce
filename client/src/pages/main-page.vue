@@ -1,16 +1,14 @@
 <template>
-   <div class='main-page'>
-      <h1>Welcome to Online shop</h1>
-      <p>
-         <router-link :to="{ name: 'catalog' }">
-            to Catalog
-         </router-link>
-      </p>
-   </div>
+  <div class='main-page'>
+    <!-- <h1>Welcome to Online shop</h1> -->
+    <catalog />
+  </div>
 </template>
 
 <script>
+  import Catalog from '@/components/catalog/catalog';
+
   export default {
-     name: "main-page",
+    components: { catalog: Catalog }
   }
 </script>

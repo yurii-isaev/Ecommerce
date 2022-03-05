@@ -1,16 +1,15 @@
 <template>
-  <!-- Header-->
+  <!-- Header -->
   <li class="menu-item">
-    <button v-if="!loggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
+    <div v-if="!loggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
       <img src="@/assets/graphics/vector/profile.svg" alt="profile"/>
-      <br> <br>
-      <strong> Sign In </strong>
-    </button>
+    </div>
     <div v-else>
       <a class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#logoutModal">
-        <img src="@/assets/graphics/vector/profile.svg" alt="profile"/>
-        <br> <br>
-        Hello, <strong>{{ username }}</strong>
+        <div class="profile-info">
+          <img src="@/assets/graphics/vector/profile.svg" alt="profile"/>
+          <span>Hello, <br> <strong>{{ username }}</strong></span>
+        </div>
       </a>
     </div>
   </li>
@@ -76,7 +75,7 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters } from 'vuex';
+  import { mapGetters } from 'vuex';
   import LoginForm from '@/components/auth/login-form';
   import SignupForm from '@/components/auth/signup-form';
   import ForgotPasswordForm from '@/components/auth/forgot-password-form';
@@ -92,11 +91,11 @@
       };
     },
     
-    computed: { ...mapGetters(['USER_STATE', 'IS_AUTHENTICATED']) },
+    computed: {
+      ...mapGetters(['USER_STATE', 'IS_AUTHENTICATED'])
+    },
     
     methods: {
-      ...mapActions(['LOGOUT', 'CHECK_AUTHENTICATION']),
-  
       switchToForgotPasswordForm() {
         this.currentForm = 'forgotPassword';
       },
@@ -115,14 +114,14 @@
       },
       
       async logout() {
-        await this.LOGOUT();
+        await this.$store.dispatch('LOGOUT');
         this.loggedIn = this.IS_AUTHENTICATED;
         this.username = '';
       }
     }, 
     
     async mounted() {
-      await this.CHECK_AUTHENTICATION();
+      await this.$store.dispatch('CHECK_AUTHENTICATION');
       this.loggedIn = this.IS_AUTHENTICATED;
       if (this.loggedIn && this.USER_STATE && this.USER_STATE.userName) {
         this.username = this.USER_STATE.userName;
@@ -132,6 +131,15 @@
 </script>
 
 <style scoped>
+  .profile-info {
+    display: flex;
+    align-items: center;
+  }
+
+  .profile-info img {
+    margin-right: 8px; /* Отступ между иконкой и текстом */
+  }
+
   .form-group {
     margin-top: 1rem;
     text-align: left;
