@@ -1,5 +1,5 @@
 <template>
-  <header class="header">
+  <div class="header">
     <router-link class="router-link" :to="{ name: 'mainPage' }">
       <div class="text-section">
         <img src="@/assets/logo/logo.png" alt="Logo" style="width:3.75rem"/>
@@ -9,13 +9,13 @@
         </div>
       </div>
     </router-link>
-    
+  
     <div class="input-box">
-      <i class="uil uil-search"></i>
-      <input type="text" v-model="searchValue">
-      <button class="search-btn" @click="search(searchValue)">
-        <i class="material-icons">search</i>
-      </button>
+      <i class="uil uil-search search-icon"></i>
+      <input type="text" v-model="searchValue" :placeholder="placeholderText"
+             @input="search(searchValue)"
+             @focus="hidePlaceholder"
+             @blur="showPlaceholder">
       <button class="search-btn_clear" @click="clearSearchField">
         <i class="material-icons">cancel</i>
       </button>
@@ -24,7 +24,7 @@
     <ul class="header-menu">
       <li class="menu-item">
         <router-link class="router-link" :to="{ name: 'catalog' }">
-          <img src="@/assets/graphics/vector/store.svg" alt="icon"/>
+          <img class="icon" src="@/assets/graphics/vector/cake.svg" style="height:30px" alt="icon"/>
         </router-link>
       </li>
       
@@ -36,27 +36,27 @@
       </li>
   
       <li class="menu-item">
-        <div v-if="!isLoggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
+        <div v-if="!isLoggedIn || cartLength === 0" data-bs-toggle="modal" data-bs-target="#authModal">
           <img src="@/assets/graphics/vector/cart.svg" alt="icon"/>
-          <span class="cart-quantity-icon"> {{ cartLength }} </span>
+          <span class="cart-quantity-icon" v-if="cartLength > 0"> {{ cartLength }} </span>
         </div>
         <div v-else>
           <router-link class="router-link" :to="{ name: 'cart-list' }">
             <img src="@/assets/graphics/vector/cart.svg" alt="icon"/>
-            <span class="cart-quantity-icon"> {{ cartLength }} </span>
+            <span class="cart-quantity-icon" v-if="cartLength > 0"> {{ cartLength }} </span>
           </router-link>
         </div>
       </li>
   
       <li class="menu-item">
-        <div v-if="!isLoggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
+        <div v-if="!isLoggedIn || favoritsLength === 0" data-bs-toggle="modal" data-bs-target="#authModal">
           <img src="@/assets/graphics/vector/favorits-heart.svg" alt="icon"/>
-          <span class="cart-quantity-icon">{{ favoritsLength }}</span>
+          <span class="cart-quantity-icon" v-if="favoritsLength > 0"> {{ favoritsLength }} </span>
         </div>
         <div v-else>
           <router-link class="router-link" :to="{ name: 'cart-list' }">
             <img src="@/assets/graphics/vector/favorits-heart.svg" alt="icon"/>
-            <span class="cart-quantity-icon">{{ favoritsLength }}</span>
+            <span class="cart-quantity-icon" v-if="favoritsLength > 0"> {{ favoritsLength }} </span>
           </router-link>
         </div>
       </li>
@@ -66,7 +66,7 @@
         <AuthModal/>
       </li>
     </ul>
-  </header>
+  </div>
 </template>
 
 <script>
@@ -79,8 +79,10 @@
     
     data() {
       return {
-        searchValue: '',
         isLoggedIn: false,
+        searchValue: '',
+        placeholderText: '🔍 Catalog search',
+        isPlaceholderVisible: true
       }
     },
   
@@ -92,12 +94,11 @@
     watch: {
       IS_AUTHENTICATED(value) {
         this.isLoggedIn = value;
-        console.log('Authentication status changed:', value);
       }
     },
     
     computed: {
-      ...mapGetters(['CART_STATE', 'FAVORITS_STATE', 'IS_AUTHENTICATED']),
+      ...mapGetters(['CART_STATE', 'FAVORITS_STATE', 'IS_AUTHENTICATED', 'SEARCH_VALUE']),
   
       cartLength() {
         return this.CART_STATE.length;
@@ -110,7 +111,7 @@
     
     methods: {
       search(value) {
-        this.$store.dispatch('ACTION_SEARCH_VALUE_TO_STORE', value);
+        this.$store.dispatch('SEARCH_VALUE_TO_STORE', value);
         if (this.$route.path !== '/catalog') {
           this.$router.push('/catalog');
         }
@@ -118,16 +119,89 @@
       
       clearSearchField() {
         this.searchValue = '';
-        this.$store.dispatch('ACTION_SEARCH_VALUE_TO_STORE');
+        this.isPlaceholderVisible = true;
+        this.$store.dispatch('SEARCH_VALUE_TO_STORE');
         if (this.$route.path !== '/catalog') {
           this.$router.push('/catalog');
         }
+        this.updatePlaceholder();
       },
+      
+      hidePlaceholder() {
+        this.isPlaceholderVisible = false;
+        this.updatePlaceholder();
+      },
+      
+      showPlaceholder() {
+        if (!this.searchValue) {
+          this.isPlaceholderVisible = true;
+          this.updatePlaceholder();
+        }
+      },
+      
+      updatePlaceholder() {
+        this.placeholderText = this.isPlaceholderVisible ? '🔍 Catalog search' : '';
+      }
     }
   }
 </script>
 
 <style scoped>
+
+  .icon {
+    filter: drop-shadow(1px 1px #9B9B9B) drop-shadow(0px 0px 0 #9B9B9B);
+  }
+
+  .header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .text-section {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    width: 3.75rem; 
+    height: auto;
+  }
+
+  .text-content {
+    margin-left: 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem; /* rem для относительных размеров шрифтов */
+    margin: 0;
+  }
+
+  .description {
+    font-size: 1rem; /* rem для относительных размеров шрифтов */
+    margin: 0;
+  }
+
+
+  @media (max-width: 600px) {
+    .text-section {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .logo {
+      width: 2.5rem; /* Уменьшите размер логотипа на маленьких экранах */
+    }
+  
+    .title {
+      font-size: 1.2rem;
+    }
+  
+    .description {
+      font-size: 0.9rem;
+    }
+  }
 
   ol, ul {
     padding: inherit
@@ -188,7 +262,7 @@
   .header-menu {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.7rem;
   }  
   
   .menu-item {

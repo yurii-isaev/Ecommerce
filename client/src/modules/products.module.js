@@ -7,9 +7,10 @@ const ProductModule = {
    },
 
    mutations: {
-      SET_SEARCH_VALUE_TO_VUEX: (state, value) => {
+      SET_SEARCH_VALUE: (state, value) => {
          state.searchValue = value;
       },
+      
       SET_PRODUCTS_TO_STATE: (state, products) => {
          state.products = products;
       }
@@ -17,7 +18,7 @@ const ProductModule = {
 
    actions: {
       SEARCH_VALUE_TO_STORE({commit}, value) {
-         commit('SET_SEARCH_VALUE_TO_VUEX', value)
+         commit('SET_SEARCH_VALUE', value)
       },
 
       GET_PRODUCTS_FROM_API({commit}) {
@@ -34,7 +35,7 @@ const ProductModule = {
    },
 
    getters: {
-      SEARCH_STATE: state => state.searchValue,
+      SEARCH_VALUE: state => state.searchValue,
       PRODUCTS_STATE: state => state.products,
    },
 

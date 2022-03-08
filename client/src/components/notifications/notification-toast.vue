@@ -67,8 +67,8 @@
 <style lang="scss" scoped>
   .notification {
      position: fixed;
-     top: 80px;
-     right: 16px;
+     top: 100px;
+     right: 10px;
      z-index: 10;
      opacity: 0.8;
      
@@ -86,7 +86,7 @@
         align-items: center;
         height: 50px;
         margin-bottom: 16px;
-        background: green; 
+        background: #85a767;
         
         &.error {
            background: red;

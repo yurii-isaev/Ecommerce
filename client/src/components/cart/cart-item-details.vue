@@ -73,10 +73,9 @@
             
             <tbody>
             <tr v-for="(layer, i) in layers" :key="layer.id">
+              
               <td style="width:300px">
-                
-                <select class="form-control"
-                        v-model="layers[i].type">
+                <select class="form-control" v-model="layers[i].type">
                   
                   <option v-for="(lt, key) in layersTypes"
                           :value="key"
@@ -84,16 +83,18 @@
                     {{ lt.label }}
                   </option>
                 </select>
-                
               </td>
+              
               <td>
                 <input class="form-control" type="text" v-model.number="layers[i].height">
               </td>
+              
               <td>
                 <button class="btn btn-red" type="button" @click="deleteLayer(i)">
                   Delete
                 </button>
               </td>
+              
             </tr>
             </tbody>
           </table>
@@ -238,6 +239,10 @@
   p {
     font-size: large;
   }  
+  
+  .table {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  }
   
   .wrap {
     display: flex;

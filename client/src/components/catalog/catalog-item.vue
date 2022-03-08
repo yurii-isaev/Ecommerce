@@ -14,9 +14,9 @@
 
       <p class="product-title"><strong> {{ product_props.name }} </strong></p>
 
-      <p class="product-details">{{ formattedPrice() }} </p>
+      <p class="product-details">{{ formattedPrice() }}</p>
 
-      <button class="btn btn-success" @click="addToCart"> Add to cart </button>
+      <button class="btn btn-green" @click="addToCart"> Add to cart </button>
    </div>
 </template>
 
