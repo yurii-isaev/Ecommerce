@@ -24,8 +24,7 @@
     <ul class="header-menu">
       <li class="menu-item">
         <router-link class="router-link" :to="{ name: 'catalog' }">
-          <img src="@/assets/graphics/vector/store.svg"
-               alt="icon"/>
+          <img src="@/assets/graphics/vector/store.svg" alt="icon"/>
         </router-link>
       </li>
       
@@ -35,19 +34,31 @@
              style="height:30px"
         />
       </li>
-      
+  
       <li class="menu-item">
-        <router-link class="router-link" :to="{ name: 'cart-list' }">
+        <div v-if="!isLoggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
           <img src="@/assets/graphics/vector/cart.svg" alt="icon"/>
-          <span class="cart-quantity-icon"> {{ cart.length }} </span>
-        </router-link>
+          <span class="cart-quantity-icon"> {{ cartLength }} </span>
+        </div>
+        <div v-else>
+          <router-link class="router-link" :to="{ name: 'cart-list' }">
+            <img src="@/assets/graphics/vector/cart.svg" alt="icon"/>
+            <span class="cart-quantity-icon"> {{ cartLength }} </span>
+          </router-link>
+        </div>
       </li>
-      
+  
       <li class="menu-item">
-        <router-link class="router-link" :to="{ name: 'favorits-list' }">
+        <div v-if="!isLoggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
           <img src="@/assets/graphics/vector/favorits-heart.svg" alt="icon"/>
-          <span class="cart-quantity-icon"> {{ favorits.length }} </span>
-        </router-link>
+          <span class="cart-quantity-icon">{{ favoritsLength }}</span>
+        </div>
+        <div v-else>
+          <router-link class="router-link" :to="{ name: 'cart-list' }">
+            <img src="@/assets/graphics/vector/favorits-heart.svg" alt="icon"/>
+            <span class="cart-quantity-icon">{{ favoritsLength }}</span>
+          </router-link>
+        </div>
       </li>
       
       <li class="menu-item" style="margin-top:5px">
@@ -63,23 +74,37 @@
   import AuthModal from '@/components/auth/auth-modal';
   
   export default {
+    
     components: { AuthModal }, 
     
     data() {
       return {
         searchValue: '',
+        isLoggedIn: false,
       }
-    }, 
+    },
+  
+    async mounted() {
+      await this.$store.dispatch('CHECK_AUTHENTICATION');
+      this.isLoggedIn = this.IS_AUTHENTICATED;
+    },
+  
+    watch: {
+      IS_AUTHENTICATED(value) {
+        this.isLoggedIn = value;
+        console.log('Authentication status changed:', value);
+      }
+    },
     
     computed: {
-      ...mapGetters(['CART_STATE', 'FAVORITS_STATE']), 
+      ...mapGetters(['CART_STATE', 'FAVORITS_STATE', 'IS_AUTHENTICATED']),
+  
+      cartLength() {
+        return this.CART_STATE.length;
+      },
       
-      cart() {
-        return this.CART_STATE;
-      }, 
-      
-      favorits() {
-        return this.FAVORITS_STATE;
+      favoritsLength() {
+        return this.FAVORITS_STATE.length;
       },
     }, 
     
@@ -89,7 +114,7 @@
         if (this.$route.path !== '/catalog') {
           this.$router.push('/catalog');
         }
-      }, 
+      },
       
       clearSearchField() {
         this.searchValue = '';
@@ -103,8 +128,9 @@
 </script>
 
 <style scoped>
+
   ol, ul {
-    padding: inherit;
+    padding: inherit
   }
   
   .form-group label {
@@ -224,8 +250,12 @@
     font-size: 20px;
     background: none;
     color: #9B9B9B;
-  }  
-  
+  }
+
+  .menu-item {
+    position: relative;
+  }
+
   .cart-quantity-icon {
     display: flex;
     position: absolute;
@@ -240,5 +270,6 @@
     align-items: center;
     justify-content: center;
     font-size: 13px;
+    z-index: 10; /* Ensure it's above other elements */
   }
 </style>

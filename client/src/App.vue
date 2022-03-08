@@ -25,7 +25,11 @@
   }  
   
   body {
-     background-color: rgb(247 254 231);
+    background-color: rgb(247 254 231)
+  }
+
+  img {
+    cursor: pointer
   }
 
   /*reset styles*/
