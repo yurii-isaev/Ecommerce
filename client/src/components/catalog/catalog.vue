@@ -220,6 +220,7 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 40px;
+    margin-bottom: 20px;
   }  
   
   @media screen and (max-width: 1200px) { 

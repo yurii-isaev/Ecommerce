@@ -14,7 +14,7 @@
 		"json-server": "^1.0.0-alpha.23",
 		"postcss": "^8.4.36",
 		"vee-validate": "^4.12.6",
-		"vue": "^3.2.13",
+		"vue": "^3.4.25",
 		"vue-loader": "^17.4.2",
 		"vue-router": "^4.3.0",
 		"vuex": "^4.0.2",

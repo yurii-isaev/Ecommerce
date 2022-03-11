@@ -1,39 +1,42 @@
 <template>
-  <section>
-    <p v-if="cartIsEmpty" style="margin:35px">Your cart is empty.</p>
+  <section class="section">
+    <p v-if="cartIsEmpty" class="empty-list-message">Your cart is empty.</p>
     
     <!--  Cart Item Component -->
-    <CartItem
-        v-for="(item, index) in cartArr"
-        :key="item.article"
-        :cart_item="item"
-        @removeFromCart="removeFromCart(index)"
-        @increment="incrementItem(index)"
-        @decrement="decrementItem(index)"
-    />
+    <div class="cart-items">
+      <CartItem
+          v-for="(item, index) in cartArr"
+          :key="item.article"
+          :cart_item="item"
+          @removeFromCart="removeFromCart(index)"
+          @increment="incrementItem(index)"
+          @decrement="decrementItem(index)"
+      />
+    </div>
     
-    <!--  Total Cart Obj-->
-    <div class="total" v-if="cartArr">
-      <div class="row">
-        <div class="col-6">
-          <p>Subtotal: </p>
-          <p>Tax: &nbsp;</p>
-          <p>Total: &nbsp;</p>
-          <p>Discount: &nbsp;</p>
-          <p>Quantity: &nbsp;</p>
+    <!--  Total Section-->
+    <div class="total-wrapper">
+      <div class="total" v-if="cartArr.length > 0">
+        <div class="row">
+          <div class="col-6">
+            <p>Subtotal:</p>
+            <p>Tax:</p>
+            <p>Total:</p>
+            <p>Discount:</p>
+            <p>Quantity:</p>
+          </div>
+          <div class="col-6">
+            <p>{{ formattedTotal }}</p>
+            <p>0</p>
+            <p>{{ formattedTotal }}</p>
+            <p>0</p>
+            <p>{{ cartArr.length }}</p>
+          </div>
         </div>
-        <div class="col-6">
-          <p>{{ formattedTotal }}</p>
-          <p>0</p>
-          <p>{{ formattedTotal }}</p>
-          <p>0</p>
-          <p>{{ cartArr.length }}</p>
+        <div class="wrap">
+          <button class="btn btn-green" @click="payOrder"> Pay order </button>
+          <button class="btn btn-yellow" @click="addDelivery"> Add delivery </button>
         </div>
-      </div>
-      
-      <div class="wrap">
-        <button class="btn btn-shadow_green" @click="payOrder"> Pay order </button>
-        <button class="btn btn-shadow_yellow" @click="addDelivery"> Add delivery </button>
       </div>
     </div>
   </section>
@@ -44,15 +47,15 @@
   import CartItem from '@/components/cart/cart-item';
 
   export default {
-  
+    
     components: { CartItem },
   
     data() {
       return {
         totalCartObj: {
           subtotal: 0,
-          tax:      0,
-          total:    0,
+          tax: 0,
+          total: 0,
           discount: 0,
           quantity: 0
         }
@@ -66,7 +69,9 @@
     computed: {
       ...mapGetters(['CART_STATE']), 
       
-      cartArr() { return this.CART_STATE }, 
+      cartArr() {
+        return this.CART_STATE
+      }, 
       
       cartIsEmpty() {
         return this.cartArr.length === 0
@@ -103,8 +108,8 @@
       updateTotalCartObj() {
         this.totalCartObj = {
           subtotal: this.cartTotal, 
-          tax:      0, 
-          total:    this.cartTotal, 
+          tax: 0, 
+          total: this.cartTotal, 
           discount: 0, 
           quantity: this.cartArr.length
         };
@@ -129,61 +134,71 @@
 </script>
 
 <style lang="scss" scoped>
-
   .col-6 p {
     font-size: 17px;
     margin: 10px;
-    white-space: nowrap; /* Предотвращает перенос текста */
+    white-space: nowrap; /* Prevents text wrapping */
+  }
+
+  .empty-list-message {
+    margin: 35px;
+    font-size: 17px;
   }
 
   .wrap {
     display: grid;
-  }  
-  
-  .cart {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: $padding*2; 
-    //border: solid 1px;
-  }  
-  
+  }
+
+  .cart-section {
+    display: flex;
+    flex-direction: column;
+    min-height: 70vh; // The minimum height of the container is equal to the height of the viewport
+  }
+
+  .cart-items {
+    flex-grow: 1;     // Causes cart items to take up all available space
+    overflow-y: auto; // Allows you to scroll through recycle bin items if they don't fit
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; // Changed to flex-start for normal arrangement of elements
+    min-height: 0;  // Make sure cart-items have a minimum height
+  }
+
+  .total-wrapper {
+    margin-top: auto; // This will cause the total-wrapper to move down if there are few elements
+    width: 100%;      // Spans the entire width
+    background: rgba($background-black, 0.9); // Adding Transparency to an Existing Variable
+  }
+
   .total {
     text-align: start;
     display: flex;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    padding: 2px 52px;
     justify-content: space-evenly;
-    background: $background-black;
     color: #e0e0e0;
     font-size: 20px;
-  }  
-  
-  .btn-shadow_yellow {
+    //padding: 2px 52px;
+  }
+
+  .btn-yellow {
     background-color: #db9a31;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 25px;
     right: $padding*3;
     bottom: $padding*2;
-  }  
-  
-  .btn-shadow_yellow:hover {
+  }
+  .btn-yellow:hover {
     background-color: #aa7a2c;
   }  
   
-  .btn-shadow_green {
+  .btn-green {
     background-color: #85a767;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 25px;
     margin-top: 15px;
     right: $padding*3;
     bottom: $padding*2;
-  }  
-  
-  .btn-shadow_green:hover {
+  }
+  .btn-green:hover {
     background-color: #5f8141;
   }
 </style>
