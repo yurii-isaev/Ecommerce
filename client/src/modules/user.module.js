@@ -60,20 +60,16 @@ const UserModule = {
       }
     },
 
-    async POST_USER_LOGIN_TO_API({commit}, formValues) {
+    async POST_USER_LOGIN_TO_API({commit}, formData) {
       try {
-        const userData = {
-          Email: formValues.email,
-          Password: formValues.password,
-        };
-
-        const response = await axios.post('http://localhost:5000/api/auth/SignIn', userData, {
+        const response = await axios.post('http://localhost:5000/api/auth/SignIn', formData, {
           // Pass the withCredentials flag to send cookies.
           withCredentials: true
         });
 
         if (response.data.success) {
-          console.log('Sign In successful');
+          // console.log('Sign In successful');
+          commit('SET_AUTH_MESSAGE', 'Sign In successful');
           commit('SET_USER_DATA', response.data.dataSet);
         } else {
           // console.error('Registration failed:', response.data.message);

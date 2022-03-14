@@ -29,8 +29,8 @@
           <!-- Login Form Component -->
           <div v-if="currentForm === 'login'" class="login form">
             <div class="login form">
-              <header>Login</header>
-              <LoginForm
+<!--              <header>Login</header>-->
+              <LoginForm 
                   @auth="handleAuthentication"
                   @forgot-password="switchToForgotPasswordForm"
                   @signup="switchToSignupForm"/>
@@ -40,9 +40,7 @@
           <div v-if="currentForm === 'signup'" class="signup form">
             <div class="signup form">
               <header>Signup</header>
-              <SignupForm
-                  @auth="handleAuthentication"
-                  @login="switchToLoginForm"/>
+              <SignupForm @auth="handleAuthentication" @login="switchToLoginForm"/>
               </div>
           </div>
           <!-- Signup Form Component -->
@@ -131,6 +129,21 @@
 </script>
 
 <style scoped>
+
+/* Стили для сообщения о процессе аутентификации */
+.authentication-message {
+  color: gray;
+  font-size: 20px;
+}
+
+/* Стили для сообщения об успешной аутентификации */
+.success-response {
+  color: green;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+
   .profile-info {
     display: flex;
     align-items: center;

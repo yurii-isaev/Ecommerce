@@ -36,7 +36,7 @@
       </li>
   
       <li class="menu-item">
-        <div v-if="!isLoggedIn || cartLength === 0" data-bs-toggle="modal" data-bs-target="#authModal">
+        <div v-if="!isLoggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
           <img src="@/assets/graphics/vector/cart.svg" alt="icon"/>
           <span class="cart-quantity-icon" v-if="cartLength > 0"> {{ cartLength }} </span>
         </div>
@@ -49,12 +49,12 @@
       </li>
   
       <li class="menu-item">
-        <div v-if="!isLoggedIn || favoritsLength === 0" data-bs-toggle="modal" data-bs-target="#authModal">
+        <div v-if="!isLoggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
           <img src="@/assets/graphics/vector/favorits-heart.svg" alt="icon"/>
           <span class="cart-quantity-icon" v-if="favoritsLength > 0"> {{ favoritsLength }} </span>
         </div>
         <div v-else>
-          <router-link class="router-link" :to="{ name: 'cart-list' }">
+          <router-link class="router-link" :to="{ name: 'favorits-list' }">
             <img src="@/assets/graphics/vector/favorits-heart.svg" alt="icon"/>
             <span class="cart-quantity-icon" v-if="favoritsLength > 0"> {{ favoritsLength }} </span>
           </router-link>
@@ -81,7 +81,7 @@
       return {
         isLoggedIn: false,
         searchValue: '',
-        placeholderText: '🔍 Catalog search',
+        placeholderText: 'Catalog search',
         isPlaceholderVisible: true
       }
     },
@@ -140,7 +140,7 @@
       },
       
       updatePlaceholder() {
-        this.placeholderText = this.isPlaceholderVisible ? '🔍 Catalog search' : '';
+        this.placeholderText = this.isPlaceholderVisible ? 'Catalog search' : '';
       }
     }
   }

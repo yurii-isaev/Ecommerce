@@ -26,7 +26,7 @@
     </div>
   </Form>
   <div v-else>
-    <p style="color:green;font-weight:bold;font-size:150%">{{ message }}</p>
+    <p class="success-message">{{ message }}</p>
   </div>
   <br> <br>
 </template>
@@ -66,7 +66,12 @@
 </script>
 
 <style scoped>
-
+  .success-message {
+    color: green;
+    font-weight: bold;
+    font-size: 150%;
+  }
+  
   Form {
     margin: 20px;
   }
