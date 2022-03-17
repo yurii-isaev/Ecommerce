@@ -21,8 +21,8 @@
         
         <img class="cart-item-image img-fluid"
              alt="img"
-             v-if="cartItem && cartItem.image_slice"
-             :src="require('@/assets/images/' + cartItem.image_slice)">
+             v-if="cartItem && cartItem.imageSlice"
+             :src="require('@/assets/images/' + cartItem.imageSlice)">
       </div>
     </div>
   </div>
@@ -76,10 +76,7 @@
               
               <td style="width:300px">
                 <select class="form-control" v-model="layers[i].type">
-                  
-                  <option v-for="(lt, key) in layersTypes"
-                          :value="key"
-                          :key="lt.id">
+                  <option v-for="(lt, key) in layersTypes" :value="key" :key="lt.id">
                     {{ lt.label }}
                   </option>
                 </select>
@@ -191,7 +188,7 @@
           id: this.cartItem.id, 
           article: this.cartItem.article, 
           image: this.cartItem.image, 
-          image_slice: this.cartItem.image_slice, 
+          imageSlice: this.cartItem.imageSlice, 
           name: this.cartItem.name, 
           avalible: this.cartItem.avalible, 
           category: this.cartItem.category, 

@@ -2,12 +2,12 @@
   <!-- Header -->
   <li class="menu-item">
     <div v-if="!loggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
-      <img src="@/assets/graphics/vector/profile.svg" alt="profile"/>
+      <img src="@/assets/vector/profile.svg" alt="profile"/>
     </div>
     <div v-else>
       <a class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#logoutModal">
         <div class="profile-info">
-          <img src="@/assets/graphics/vector/profile.svg" alt="profile"/>
+          <img src="@/assets/vector/profile.svg" alt="profile"/>
           <span>Hello, <br> <strong>{{ username }}</strong></span>
         </div>
       </a>

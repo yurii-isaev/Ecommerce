@@ -106,14 +106,18 @@ const CartModule = {
 
     async POST_USER_ORDER_TO_API({commit}, order) {
       try {
-        const response = await axios.post('http://localhost:5000/api/order/CreateUserOrder', order);
-        if (response.data.success) {
-          await commit('SET_ORDER_RESPONSE_MESSAGE', response.data.success);
-        } else {
+        const response = await axios.post('http://localhost:5000/api/order/CreateOrder', order, {
+          withCredentials: true
+        });
+        if (response.data.code == 200) {
+          console.log(response.data)
           await commit('SET_ORDER_RESPONSE_MESSAGE', response.data.success);
         }
-      } catch (error) {
-        console.error('Error during post user order:', error);
+        if (response.data.code == 400) {
+          //
+        }
+      } catch (error) { // if response.status == 400
+        console.error('POST_USER_ORDER_TO_API_ERROR:', error);
         throw error;
       }
     },

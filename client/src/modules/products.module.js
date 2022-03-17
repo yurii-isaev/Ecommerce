@@ -21,16 +21,15 @@ const ProductModule = {
          commit('SET_SEARCH_VALUE', value)
       },
 
-      GET_PRODUCTS_FROM_API({commit}) {
-         return axios('http://localhost:5000/api/store/GetAllProducts', {
-            method: "GET"
-         }).then((products) => {
-            commit('SET_PRODUCTS_TO_STATE', products.data)
-            return products;
-         }).catch((error) => {
+      async GET_PRODUCTS_FROM_API({commit}) {
+         try {
+            const response = await axios.get('http://localhost:5000/api/store/GetAllProducts');
+            commit('SET_PRODUCTS_TO_STATE', response.data);
+            // return response;
+         } catch (error) {
             console.error(error);
-            return error;
-         })
+            //return error;
+         }
       }
    },
 

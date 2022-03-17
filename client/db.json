@@ -1,109 +1,126 @@
 {
-   "products": [
-      {
-         "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba0",
-         "article": "000523",
-         "image": "three_chocolate_cake.jpg",
-         "image_slice": "three_chocolate_cake_slice.jpg",
-         "name": "Three Chocolate Cake",
-         "avalible": false,
-         "category": "cake",
-         "filling": "chocolate",
-         "weight": 1400,
-         "tier": 1,
-         "price": 100.234234234
-      },
-      {
-         "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba1",
-         "article": "000405",
-         "image": "tired_pear_cake.jpg",
-         "image_slice": "tired_pear_cake_slice.jpg",
-         "name": "Tired Pear Cake",
-         "avalible": false,
-         "category": "cake",
-         "filling": "fruits",
-         "weight": 1400,
-         "tier": 1,
-         "price": 200.23412341
-      },
-      {
-         "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba2",
-         "article": "001507",
-         "image": "wild_berries_cake.jpg",
-         "image_slice": "wild_berries_cake_slice.jpg",
-         "name": "Wild Berries Cake",
-         "avalible": false,
-         "category": "cake",
-         "filling": "fruits and berries",
-         "weight": 1400,
-         "tier": 1,
-         "price": 8300.2364125
-      },
-      {
-         "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba3",
-         "article": "000972",
-         "image": "raffaello_cake.jpg",
-         "image_slice": "raffaello_cake_slice.jpg",
-         "name": "Raffaello Cake",
-         "avalible": false,
-         "category": "cake",
-         "filling": "coconut chips",
-         "weight": 1400,
-         "tier": 1,
-         "price": 300
-      },
-      {
-         "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba4",
-         "article": "0001475",
-         "image": "lavender-blueberry_cake.jpg",
-         "image_slice": "lavender-blueberry_cake_slice.jpg",
-         "name": "Lavender-blueberry Cake",
-         "avalible": false,
-         "category": "cake",
-         "filling": "fruits",
-         "weight": 1400,
-         "tier": 1,
-         "price": 300
-      },
-      {
-         "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba5",
-         "article": "0001436",
-         "image": "snickers_cake.jpg",
-         "image_slice": "snickers_cake_slice.jpg",
-         "name": "Snickers Cake",
-         "avalible": false,
-         "category": "cake",
-         "filling": "nuts and nougat",
-         "weight": 1400,
-         "tier": 1,
-         "price": 300
-      }
-   ],
-   "posts": [
-      {
-         "id": "1",
-         "title": "a title",
-         "views": 100
-      },
-      {
-         "id": "2",
-         "title": "another title",
-         "views": 200
-      }
-   ],
-   "comments": [
-      {
-         "id": "1",
-         "text": "a comment about post 1",
-         "postId": "1"
-      },
-      {
-         "id": "2",
-         "text": "another comment about post 1",
-         "postId": "1"
-      }
-   ],
-   "profile": {
-      "name": "typicode"
-   }
+  "products": [
+    {
+      "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba0",
+      "article": "000523",
+      "image": "three_chocolate_cake.jpg",
+      "image_slice": "three_chocolate_cake_slice.jpg",
+      "name": "Three Chocolate Cake",
+      "avalible": false,
+      "category": "cake",
+      "filling": "chocolate",
+      "weight": 1400,
+      "tier": 1,
+      "price": 100.234234234
+    },
+    {
+      "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba1",
+      "article": "000405",
+      "image": "tired_pear_cake.jpg",
+      "image_slice": "tired_pear_cake_slice.jpg",
+      "name": "Tired Pear Cake",
+      "avalible": false,
+      "category": "cake",
+      "filling": "fruits",
+      "weight": 1400,
+      "tier": 1,
+      "price": 200.23412341
+    },
+    {
+      "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba2",
+      "article": "001507",
+      "image": "wild_berries_cake.jpg",
+      "image_slice": "wild_berries_cake_slice.jpg",
+      "name": "Wild Berries Cake",
+      "avalible": false,
+      "category": "cake",
+      "filling": "fruits and berries",
+      "weight": 1400,
+      "tier": 1,
+      "price": 8300.2364125
+    },
+    {
+      "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba3",
+      "article": "000972",
+      "image": "raffaello_cake.jpg",
+      "image_slice": "raffaello_cake_slice.jpg",
+      "name": "Raffaello Cake",
+      "avalible": false,
+      "category": "cake",
+      "filling": "coconut chips",
+      "weight": 1400,
+      "tier": 1,
+      "price": 300
+    },
+    {
+      "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba4",
+      "article": "0001475",
+      "image": "lavender-blueberry_cake.jpg",
+      "image_slice": "lavender-blueberry_cake_slice.jpg",
+      "name": "Lavender-blueberry Cake",
+      "avalible": false,
+      "category": "cake",
+      "filling": "fruits",
+      "weight": 1400,
+      "tier": 1,
+      "price": 300
+    },
+    {
+      "id": "61f0c404-5cb3-11e7-907b-a6006ad3dba5",
+      "article": "0001436",
+      "image": "snickers_cake.jpg",
+      "image_slice": "snickers_cake_slice.jpg",
+      "name": "Snickers Cake",
+      "avalible": false,
+      "category": "cake",
+      "filling": "nuts and nougat",
+      "weight": 1400,
+      "tier": 1,
+      "price": 300
+    }
+  ],
+  "posts": [
+    {
+      "id": "1",
+      "title": "a title",
+      "views": 100
+    },
+    {
+      "id": "2",
+      "title": "another title",
+      "views": 200
+    }
+  ],
+  "comments": [
+    {
+      "id": "1",
+      "text": "a comment about post 1",
+      "postId": "1"
+    },
+    {
+      "id": "2",
+      "text": "another comment about post 1",
+      "postId": "1"
+    }
+  ],
+  "orders": [
+    {
+      "id": "02E54686-297A-40E4-86A7-3C3290EA7174",
+      "subtotal": 200.47,
+      "tax": 0.00,
+      "total": 200.47,
+      "discount": 0.00,
+      "quantity": 1,
+      "isPaid": true
+    },
+    {
+      "id": "194EE2A2-3C9B-49C2-845A-6B17918010FF",
+      "subtotal": 200.47,
+      "tax": 0.00,
+      "total": 200.47,
+      "discount": 0.00,
+      "quantity": 1,
+      "isPaid": true
+    }
+  ]
 }

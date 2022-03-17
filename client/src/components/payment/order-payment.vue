@@ -76,10 +76,6 @@
   import { mapGetters } from 'vuex';
   import PaymentFormSchema from '@/validation/paymentFormSchema';
 
-  function isEmptyObject(obj) {
-    return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
-  }
-
   export default {
     components: {Form, Field},
   
@@ -102,21 +98,21 @@
       ...mapGetters(['USER_STATE', 'CART_TOTAL', 'CART_STATE', 'ORDER_DETAILS', 'IS_ORDER_PAID']),
     
       userID() {
-        return this.USER_STATE?.id || null
+        return this.USER_STATE?.id || null;
       },
     
       cartList() {
-        return this.CART_STATE
+        return this.CART_STATE;
       },
     
       cartTotal() {
-        return this.CART_TOTAL
+        console.log(this.CART_TOTAL)
+        return this.CART_TOTAL;
       },
-    
+  
       orderAddress() {
-        // Проверяем, является ли ORDER_DETAILS пустым объектом или не определен
-        if (this.ORDER_DETAILS && !isEmptyObject(this.ORDER_DETAILS)) {
-          return this.ORDER_DETAILS;
+        if (this.ORDER_DETAILS && typeof this.ORDER_DETAILS.orderAddress === 'object') {
+          return this.ORDER_DETAILS.orderAddress;
         } else {
           return null;
         }
@@ -137,7 +133,7 @@
         const order = {
           orderCardPayment: payment,
           orderDetails: this.cartList,
-        
+          userId: this.userID,
           discount: this.cartTotal.discount,
           quantity: this.cartTotal.quantity,
           subtotal: this.cartTotal.subtotal,
@@ -146,12 +142,12 @@
           isPaid: true,
         };
       
-        // Добавляем orderAddress в объект order только если он не равен null
+        // Add orderAddress to the order object only if it is not null
         if (this.orderAddress !== null) {
           order.orderAddress = this.orderAddress;
         }
       
-        console.warn("[ORDER-PAYMENT] order: ", order);
+        // console.warn("ORDER-PAYMENT_OBJECT: ", order);
       
         try {
           await this.$store.dispatch('POST_USER_ORDER_TO_API', order);
@@ -161,12 +157,12 @@
             await this.$store.dispatch('CLEAR_CART');
             this.$router.push({name: 'order-payment-response', query: {paymentSuccess: this.paid}});
           } else {
-            await console.warn('Payment failed:', this.paid);
+            await console.warn('PAYMENT_FAILED:', this.paid);
             this.$router.push({name: 'order-payment-response', query: {paymentSuccess: this.paid}});
           }
         } catch (error) {
           this.$router.push({name: 'order-payment-response', query: {paymentSuccess: this.paid}});
-          console.error('An error occurred:', error);
+          console.error('ORDER-PAYMENT_ERROR:', error);
         }
       }
     

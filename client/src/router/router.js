@@ -4,22 +4,33 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     {
-      component: () => import('@/components/auth/change-password-form'),
+      component: () => import('@/components/auth/change-password'),
       path: '/change-password',
-      name: 'change-password-form',
+      name: 'change-password',
     },
     {
-      component: () => import('@/components/order/order-payment'),
+      component: () => import('@/components/order/order-list'),
+      path: '/order-list',
+      name: 'order-list',
+    },
+    {
+      component: () => import('@/components/order/order-list-item-details'),
+      path: '/order/:id',
+      name: 'order-list-item-details',
+      props: true 
+    },
+    {
+      component: () => import('@/components/payment/order-payment'),
       path: '/order-payment',
       name: 'order-payment',
     },
     {
-      component: () => import('@/components/order/order-delivery'),
+      component: () => import('@/components/payment/order-delivery'),
       path: '/order-delivery',
       name: 'order-delivery',
     },
     {
-      component: () => import('@/components/order/order-payment-response'),
+      component: () => import('@/components/payment/order-payment-response'),
       path: '/order-payment-response',
       name: 'order-payment-response',
     },

@@ -33,21 +33,14 @@ const UserModule = {
   },
 
   actions: {
-    async POST_USER_REGISTER_TO_API({commit}, formValues) {
+    async POST_USER_REGISTER_TO_API({commit}, credentialData) {
       try {
-        const userData = {
-          UserName: formValues.username,
-          Email: formValues.email,
-          Password: formValues.password,
-          AcceptTerms: !!formValues.acceptTerms, // converting a variable value to a boolean data type
-        };
-
-        const response = await axios.post('http://localhost:5000/api/auth/SignUp', userData, {
+        const response = await axios.post('http://localhost:5000/api/auth/SignUp', credentialData, {
           // Pass the withCredentials flag to send cookies.
           withCredentials: true 
         });
 
-        if (response.data.success) {
+        if (response.status == 200) {
           console.log('Registration successful');
           commit('SET_USER_DATA', response.data.dataSet);
         } else {
@@ -67,7 +60,7 @@ const UserModule = {
           withCredentials: true
         });
 
-        if (response.data.success) {
+        if (response.status == 200) {
           // console.log('Sign In successful');
           commit('SET_AUTH_MESSAGE', 'Sign In successful');
           commit('SET_USER_DATA', response.data.dataSet);
@@ -88,7 +81,7 @@ const UserModule = {
           withCredentials: true
         });
 
-        if (response.data.success) {
+        if (response.status == 200) {
           // Successfully log out, delete cookies on the client side.
           document.cookie = "jwt-cookies=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           await commit('UPDATE_USER_DATA');
@@ -107,7 +100,7 @@ const UserModule = {
           withCredentials: true
         });
 
-        if (response.data.success) {
+        if (response.status == 200) {
           commit('SET_USER_DATA', response.data.dataSet.profile);
         } else {
           console.error('Authentication check failed:', response.data.message);
@@ -123,7 +116,7 @@ const UserModule = {
       try {
         const response = await axios.post('http://localhost:5000/api/auth/ForgotPassword', credential);
 
-        if (response.data.success) {
+        if (response.status == 200) {
           await commit('SET_AUTH_MESSAGE', response.data.message);
         } else {
           // console.error('Registration failed:', response.data.message);
@@ -137,7 +130,7 @@ const UserModule = {
       try {
         const response = await axios.post('http://localhost:5000/api/auth/ChangePassword', credential);
 
-        if (response.data.success) {
+        if (response.status == 200) {
           await commit('SET_AUTH_MESSAGE', response.data.message);
         } else {
           // console.error('Registration failed:', response.data.message);

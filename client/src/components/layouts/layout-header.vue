@@ -24,25 +24,24 @@
     <ul class="header-menu">
       <li class="menu-item">
         <router-link class="router-link" :to="{ name: 'catalog' }">
-          <img class="icon" src="@/assets/graphics/vector/cake.svg" style="height:30px" alt="icon"/>
+          <img class="icon" src="@/assets/vector/cake.svg" style="height:30px" alt="icon"/>
         </router-link>
       </li>
       
       <li class="menu-item">
-        <img src="@/assets/graphics/vector/order-list.svg"
-             alt="icon"
-             style="height:30px"
-        />
+        <router-link class="router-link" :to="{ name: 'order-list' }">
+          <img class="icon" src="@/assets/vector/order-list.svg" style="height:30px" alt="icon"/>
+        </router-link>
       </li>
   
       <li class="menu-item">
         <div v-if="!isLoggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
-          <img src="@/assets/graphics/vector/cart.svg" alt="icon"/>
+          <img src="@/assets/vector/cart.svg" alt="icon"/>
           <span class="cart-quantity-icon" v-if="cartLength > 0"> {{ cartLength }} </span>
         </div>
         <div v-else>
           <router-link class="router-link" :to="{ name: 'cart-list' }">
-            <img src="@/assets/graphics/vector/cart.svg" alt="icon"/>
+            <img src="@/assets/vector/cart.svg" alt="icon"/>
             <span class="cart-quantity-icon" v-if="cartLength > 0"> {{ cartLength }} </span>
           </router-link>
         </div>
@@ -50,12 +49,12 @@
   
       <li class="menu-item">
         <div v-if="!isLoggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
-          <img src="@/assets/graphics/vector/favorits-heart.svg" alt="icon"/>
+          <img src="@/assets/vector/favorits-heart.svg" alt="icon"/>
           <span class="cart-quantity-icon" v-if="favoritsLength > 0"> {{ favoritsLength }} </span>
         </div>
         <div v-else>
           <router-link class="router-link" :to="{ name: 'favorits-list' }">
-            <img src="@/assets/graphics/vector/favorits-heart.svg" alt="icon"/>
+            <img src="@/assets/vector/favorits-heart.svg" alt="icon"/>
             <span class="cart-quantity-icon" v-if="favoritsLength > 0"> {{ favoritsLength }} </span>
           </router-link>
         </div>

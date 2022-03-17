@@ -1,9 +1,7 @@
 <template>
   <div class="product-card">
     <img class="favorite-icon" alt="favorit"
-         :src="!product_props.isFavorite
-           ? require('@/assets/graphics/vector/like-1.svg') 
-           : require('@/assets/graphics/vector/like-2.svg')"
+         :src="!product_props.isFavorite ? require('@/assets/vector/like-1.svg') : require('@/assets/vector/like-2.svg')"
          @click="addOrDeleteToFavoriteCallback"
     />
     <img class="product-image" alt="img" :src="require('@/assets/images/' + product_props.image)"/>

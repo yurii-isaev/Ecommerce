@@ -64,7 +64,7 @@
 
 <script>
   import { Field, Form } from 'vee-validate';
-  import { mapActions, mapGetters } from 'vuex';
+  import { mapGetters } from 'vuex';
   import RegistrationSchema from '@/validation/registrationSchema';
 
   export default {
@@ -82,16 +82,29 @@
     computed: { ...mapGetters(['USER_STATE', 'IS_AUTHENTICATED']) }, 
     
     methods: {
-      ...mapActions(['POST_USER_REGISTER_TO_API' ]),
-  
       emitLogin(event) {
         event.preventDefault();
         this.$emit('login');
       },
       
-      async onSignupSubmit(formValues) {
+      async onSignupSubmit(formData) {
         try {
-          await this.POST_USER_REGISTER_TO_API(formValues);
+  
+          // const formData = {
+          //   email: this.email,
+          //   password: this.password
+          // };
+          
+          const credentialData = {
+            userName: formData.username,
+            email: formData.email,
+            password: formData.password,
+            acceptTerms: !!formData.acceptTerms, // converting a variable value to a boolean data type
+          };
+  
+          await this.$store.dispatch('POST_USER_REGISTER_TO_API', credentialData);
+          
+          
           this.loggedIn = this.IS_AUTHENTICATED;
           if (this.loggedIn) {
             this.username = this.USER_STATE.userName;

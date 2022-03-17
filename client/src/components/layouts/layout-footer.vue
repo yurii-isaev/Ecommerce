@@ -33,7 +33,7 @@
   }
 
   .footerBottom p {
-    color: rgb(197 204 181);;
+    color: rgb(197 204 181);
     margin: 0.3rem;
   }
 
