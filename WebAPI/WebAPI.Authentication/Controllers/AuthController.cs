@@ -16,6 +16,7 @@ public class AuthController : BaseController
   /// Sample request:
   /// GET -> ../auth/GetAllUsers.
   /// </remarks>
+  [Authorize(Roles = "Admin")]
   [HttpGet("GetAllUsers")]
   public async Task<ActionResult<IEnumerable>> GetUserList()
   {

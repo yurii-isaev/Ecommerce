@@ -94,7 +94,7 @@ GO
 INSERT INTO Products (Name, Image, ImageSlice, Article, Avalible, Category, Filling, Weight, Tier, Price)
 VALUES ('Raffaello Cake',
         'raffaello_cake.jpg',
-        'raffaello_cake_slice.jp',
+        'raffaello_cake_slice.jpg',
         '000972',
         1,
         'cake',
@@ -129,4 +129,29 @@ VALUES ('Snickers Cake',
         1,
         300);
 GO
-
+--
+INSERT INTO Products (Name, Image, ImageSlice, Article, Avalible, Category, Filling, Weight, Tier, Price)
+VALUES ('Meringue Roll',
+        'meringue_roll.jpg',
+        'meringue_roll_slice.jpg',
+        '0001437',
+        1,
+        'roll',
+        'nuts and nougat',
+        1400,
+        1,
+        500);
+GO
+--
+INSERT INTO Products (Name, Image, ImageSlice, Article, Avalible, Category, Filling, Weight, Tier, Price)
+VALUES ('Cherry Pie',
+        'cherry_pie.jpg',
+        'cherry_pie_slice.jpg',
+        '0001438',
+        1,
+        'pie',
+        'nuts and nougat',
+        1400,
+        1,
+        3100);
+GO

@@ -1,20 +1,26 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAPI.Authentication.Domain.Entities;
 
 public class Order
 {
-  // [Key]
-  // public Guid Id { get; set; }
-  
+  [Key]
+  public Guid Id { get; set; }
+  //
   public decimal Subtotal { get; set; }
   public decimal Tax { get; set; }
   public decimal Total { get; set; }
   public decimal Discount { get; set; }
   public int Quantity { get; set; }
   public bool IsPaid { get; set; }
+  public DateTime CreatedAt { get; set; }
+
+  //
+  [ForeignKey("UserId")]
+  public string UserId { get; set; } = null!;
 
   // Navigation properties
   public OrderAddress? OrderAddress { get; set; }
@@ -26,24 +32,26 @@ public class Order
 
 public class OrderAddress
 {
-  [ForeignKey("OrderId")]
-  public Guid OrderId { get; set; } 
-  public Order Order { get; set; } = null!;
-  //
+  [Key]
+  public Guid Id { get; set; }
+  
   public string FullName { get; set; } = null!;
   public string Address { get; set; } = null!;
   public string City { get; set; } = null!;
   public string State { get; set; } = null!;
   public string ZipCode { get; set; } = null!;
   public bool ConsentPrivateData { get; set; }
+  //
+  [ForeignKey("OrderId")]
+  public Guid OrderId { get; set; } 
+  public Order Order { get; set; } = null!;
 }
 
 public class OrderDetails
 {
-  [ForeignKey("OrderId")]
-  public Guid OrderId { get; set; }
-  public Order Order { get; set; } = null!;
-  // 
+  [Key]
+  public Guid Id { get; set; }
+  
   public string Article { get; set; } = null!;
   public bool Avalible { get; set; }
   public string Category { get; set; } = null!;
@@ -56,6 +64,10 @@ public class OrderDetails
   public int Quantity { get; set; }
   public int Tier { get; set; }
   public int Weight { get; set; }
+  //
+  [ForeignKey("OrderId")]
+  public Guid OrderId { get; set; }
+  public Order Order { get; set; } = null!;
 }
 
 public class Layer
@@ -66,14 +78,19 @@ public class Layer
 
 public class OrderCardPayment
 {
-  [ForeignKey("OrderId")]
-  public Guid OrderId { get; set; }
-  public Order Order { get; set; } = null!;
-  //
+  [Key]
+  public Guid Id { get; set; }
+  
   public string CardHolder { get; set; } = null!;
   public string CardNumber { get; set; } = null!;
   public string ExpMonth { get; set; } = null!;
   public int ExpYear { get; set; }
   public string Cvv { get; set; } = null!;
+  //
+  [ForeignKey("OrderId")]
+  public Guid OrderId { get; set; }
+  public Order Order { get; set; } = null!;
+  //
+  [ForeignKey("UserId")]
   public string UserId { get; set; } = null!;
 }

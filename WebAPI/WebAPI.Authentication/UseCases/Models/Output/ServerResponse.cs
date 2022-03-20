@@ -16,12 +16,4 @@ public class ServerResponse
     Message = message;
     DataSet = dataSet;
   }
-
-  public ServerResponse(int сode, bool success, string message, object dataSet)
-  {
-    Code    = сode;
-    Success = success;
-    Message = message;
-    DataSet = dataSet;
-  }
 }

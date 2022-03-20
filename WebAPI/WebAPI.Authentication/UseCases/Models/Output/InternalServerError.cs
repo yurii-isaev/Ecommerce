@@ -7,7 +7,6 @@ public class InternalServerError : ServerResponse
   public InternalServerError(string message)
   {
     Code = StatusCodes.Status500InternalServerError;
-    Success = false;
     Message = message;
   }
 }

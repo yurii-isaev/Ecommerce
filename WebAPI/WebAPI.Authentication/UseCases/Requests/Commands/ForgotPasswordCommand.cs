@@ -51,7 +51,7 @@ public class ForgotPasswordCommandHandler : Controller, IRequestHandler<ForgotPa
       if (currentUser != null || ((User)null!).EmailConfirmed)
       {
         var resetToken = await _userManager.GeneratePasswordResetTokenAsync(currentUser!);
-        var url = "http://localhost:8080/change-password";
+        var url = "http://localhost:5602/#/change-password/";
         var emailLink = await GenerateEmailLink(request, resetToken, url, currentUser!);
 
         await _emailService.SendEmail(request.CredentialDto.Email!, emailLink, _emailOptions.Value);
@@ -79,7 +79,7 @@ public class ForgotPasswordCommandHandler : Controller, IRequestHandler<ForgotPa
     var query = HttpUtility.ParseQueryString(uriBuilder.Query);
     query["token"] = token;
     query["userid"] = user.Id;
-    // uriBuilder.Query = "http://localhost:8080/#/change-password";
+    // uriBuilder.Query = "http://localhost:5602/#/change-password/";
     // uriBuilder.Query = request.AccountDto!.ResetPasswordUri!;
 
     var recoveryLink = uriBuilder.ToString();

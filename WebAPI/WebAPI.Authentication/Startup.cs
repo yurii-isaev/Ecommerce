@@ -78,7 +78,7 @@ namespace WebAPI.Authentication
           {
             builder
               // Specify a specific source.
-              .WithOrigins("http://localhost:8080") 
+              .WithOrigins("http://localhost:5602") 
               // Allows the use of any HTTP methods in requests to your server.
               .AllowAnyMethod()
               // Allows any HTTP headers in requests to be sent to your server.

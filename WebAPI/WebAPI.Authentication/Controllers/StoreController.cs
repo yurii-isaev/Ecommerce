@@ -11,7 +11,7 @@ namespace WebAPI.Authentication.Controllers
   {
     /// <remarks>
     /// Пример запроса:
-    /// GET http://localhost:5000/api/store/all-products
+    /// GET http://localhost:5000/api/store/GetAllProducts
     /// </remarks>
     [
       // Authorize(Roles = "Customer"),
