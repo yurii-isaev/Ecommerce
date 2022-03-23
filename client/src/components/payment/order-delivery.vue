@@ -63,7 +63,7 @@
                        type="checkbox" value="true"
                        :class="{'is-invalid': errors.consentPrivateData && submitCount > 0}"
                 />
-                <label for="consentPrivateData" class="form-check-label" style="margin-left:10px">
+                <label for="consentPrivateData" class="form-check-label">
                   Consent to the processing of private data
                 </label>
                 <div class="invalid-feedback">{{ errors.consentPrivateData }}</div>
@@ -103,7 +103,6 @@
     methods: {
       async proceedToPayment() {
         this.formData.consentPrivateData = true;
-        // console.warn("[ORDER-DELIVER] order: ",  this.formData);
         await this.$store.dispatch('SAVE_ORDER_DETAILS', this.formData);
         this.$router.push({name: 'order-payment'});
       }
@@ -112,7 +111,10 @@
 </script>
 
 <style lang="scss" scoped>
-
+  .form-check-label {
+    margin-left: 10px;
+  }
+  
   .form-control {
     border: 1.5px solid #9B9B9B;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

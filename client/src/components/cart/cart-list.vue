@@ -1,7 +1,6 @@
 <template>
   <section class="section">
     <p v-if="cartIsEmpty" class="empty-list-message">Your cart is empty.</p>
-    
     <!--  Cart Item Component -->
     <div class="cart-items">
       <CartItem
@@ -13,7 +12,6 @@
           @decrement="decrementItem(index)"
       />
     </div>
-    
     <!--  Total Section-->
     <div class="total-wrapper">
       <div class="total" v-if="cartArr.length > 0">

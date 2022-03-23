@@ -4,27 +4,32 @@ const OrderModule = {
   state: {
     orderList: [],
     orderDetails: [],
+    orderAddress: {},
   },
 
   actions: {
-    SAVE_ORDER_DETAILS({commit}, orderDetails) {
-      commit('SET_ORDER_DETAILS', orderDetails);
+    SAVE_ORDER_DETAILS({commit}, orderAddress) {
+      commit('SET_ORDER_ADDRESS_TO_STATE', orderAddress);
     },
 
     async GET_ORDERS_FROM_API({commit}, userId) {
       try {
         const response = await axios.get(`http://localhost:5000/api/order/GetOrderList/${userId}`, {
-          withCredentials: true // Pass the withCredentials flag to send cookies.
+          withCredentials: true
         });
         
         if (response.data.code == 200) {
+          // SET_ORDERS
           commit('SET_ORDERS_TO_STATE', response.data.dataSet)
-          // Извлекаем детали заказа из каждого заказа в dataSet и объединяем их в единый массив
           const allOrderDetails = response.data.dataSet.reduce((acc, order) => {
             return acc.concat(order.orderDetails);
           }, []);
-          // Записываем объединенные детали заказа в хранилище
+          
+          // SET_ORDER_DETAILS
           commit('SET_ORDER_DETAILS_TO_STATE', allOrderDetails);
+          
+          // SET_ORDER_ADDRESS
+          commit('SET_ORDER_ADDRESS_TO_STATE', response.data.dataSet.map(order => order.orderAddress));
           
         } else {
           console.warn('GET_ORDERS_FROM_API:', response.data.message);
@@ -38,18 +43,22 @@ const OrderModule = {
   mutations: {
     SET_ORDERS_TO_STATE(state, inputOrderlist) {
       state.orderList = inputOrderlist;
-      console.info('SET_ORDERS_TO_STATE:', inputOrderlist);
     },
 
     SET_ORDER_DETAILS_TO_STATE(state, details) {
       state.orderDetails = details;
-      console.info('SET_ORDER_DETAILS_TO_STATE:', details);
+    },
+
+    SET_ORDER_ADDRESS_TO_STATE(state, address) {
+      state.orderAddress = address;
+      console.info('SET_ORDER_ADDRESS_TO_STATE:', address);
     },
   },
 
   getters: {
     ORDER_DETAILS: state => state.orderDetails,
     ORDER_LIST: state => state.orderList,
+    ORDER_ADDRESS: state => state.orderAddress,
   },
 };
 

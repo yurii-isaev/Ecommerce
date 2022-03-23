@@ -107,7 +107,7 @@
             this.$emit('auth', authData);
           }
           this.response = this.GET_AUTH_RESPONSE;
-          await new Promise(resolve => setTimeout(resolve, 3000));
+          await new Promise(resolve => setTimeout(resolve, 2000));
           this.isShowResponse = true;
         } catch (error) {
           console.error('An error occurred:', error);

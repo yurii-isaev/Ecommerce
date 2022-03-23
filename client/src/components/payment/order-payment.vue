@@ -95,7 +95,7 @@
    },
   
     computed: {
-      ...mapGetters(['USER_STATE', 'CART_TOTAL', 'CART_STATE', 'ORDER_DETAILS', 'IS_ORDER_PAID']),
+      ...mapGetters(['USER_STATE', 'CART_TOTAL', 'CART_STATE', 'ORDER_DETAILS', 'IS_ORDER_PAID', 'ORDER_ADDRESS']),
     
       userID() {
         return this.USER_STATE?.id || null;
@@ -106,13 +106,13 @@
       },
     
       cartTotal() {
-        console.log(this.CART_TOTAL)
         return this.CART_TOTAL;
       },
   
       orderAddress() {
-        if (this.ORDER_DETAILS && typeof this.ORDER_DETAILS.orderAddress === 'object') {
-          return this.ORDER_DETAILS.orderAddress;
+        if (this.ORDER_ADDRESS && typeof this.ORDER_ADDRESS === 'object') {
+          console.log("ORDER_ADDRESS", this.ORDER_ADDRESS)
+          return this.ORDER_ADDRESS;
         } else {
           return null;
         }
