@@ -43,11 +43,7 @@
     </div>
     
     <div class="cart-item-btn">
-      <router-link class="router-link" :to="{
-            name: 'cart-item-details',
-            params: { id: cart_item.id },
-            props:  { id: cart_item.id }
-      }">
+      <router-link class="router-link" :to="{name: 'cart-item-details',params: { id: cart_item.id },props:  { id: cart_item.id }}">
         <button class="btn btn-yellow"> Details </button>
       </router-link>
       <button class="btn btn-red" @click="removeFromCart"> Delete </button>

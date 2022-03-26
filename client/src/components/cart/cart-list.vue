@@ -45,19 +45,18 @@
   import CartItem from '@/components/cart/cart-item';
 
   export default {
+    components: {CartItem}, 
     
-    components: { CartItem },
-  
     data() {
       return {
         totalCartObj: {
-          subtotal: 0,
-          tax: 0,
-          total: 0,
-          discount: 0,
+          subtotal: 0, 
+          tax: 0, 
+          total: 0, 
+          discount: 0, 
           quantity: 0
         }
-      };
+      }
     }, 
     
     mounted() {
@@ -82,27 +81,27 @@
             return total;
           }
           return total + (item.price * item.quantity);
-        }, 0);
-      }, 
+          }, 0);
+        }, 
       
       formattedTotal() {
         return this.$formatPrice(this.cartTotal);
-      },
+      }
     }, 
     
     methods: {
       async payOrder() {
         await this.$store.dispatch('UPDATE_CART', this.cartArr);
         await this.$store.dispatch('ADD_CART_TOTAL', this.totalCartObj);
-        this.$router.push({ name: 'order-payment' });
-      },
-  
+        this.$router.push({name: 'order-payment'});
+      }, 
+      
       async addDelivery() {
         await this.$store.dispatch('UPDATE_CART', this.cartArr);
         await this.$store.dispatch('ADD_CART_TOTAL', this.totalCartObj);
-        this.$router.push({ name: 'order-delivery' });
-      },
-  
+        this.$router.push({name: 'order-delivery'});
+      }, 
+      
       updateTotalCartObj() {
         this.totalCartObj = {
           subtotal: this.cartTotal, 
@@ -126,8 +125,8 @@
       
       removeFromCart(index) {
         this.$store.dispatch('DELETE_FROM_CART', index);
-        },
-      },
+      }
+    }
   }
 </script>
 
