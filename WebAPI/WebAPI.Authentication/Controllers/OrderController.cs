@@ -19,7 +19,7 @@ public class OrderController : BaseController
   [HttpPost("CreateOrder")]
   public async Task<IActionResult> CreateOrder([FromBody] OrderDto order)
   {
-    var request = new OrderCommand() {OrderDto = order};
+    var request = new CreateOrderCommand() {OrderDto = order};
     return Ok(await Mediator.Send(request));
   }
 
@@ -31,7 +31,19 @@ public class OrderController : BaseController
   [HttpGet("GetOrderList/{userId}")]
   public async Task<IActionResult> GetOrderList(string userId)
   {
-    var request = new GetUserOrderListQuery() {UserId = userId};
+    var request = new GetOrderListQuery() {UserId = userId};
+    return Ok(await Mediator.Send(request));
+  }
+  
+  /// <remarks>
+  /// Sample request:
+  /// DELETE -> http://localhost:5000/api/order/DeleteOrder/{orderId}
+  /// </remarks>
+  [Authorize(Roles = "Customer")]
+  [HttpDelete("DeleteOrder/{orderId}")]
+  public async Task<IActionResult> DeleteOrder(string orderId)
+  {
+    var request = new DeleteOrderCommand() {OrderId = orderId};
     return Ok(await Mediator.Send(request));
   }
 }

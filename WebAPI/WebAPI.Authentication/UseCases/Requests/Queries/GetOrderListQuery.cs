@@ -8,16 +8,16 @@ using WebAPI.Authentication.UseCases.Types;
 
 namespace WebAPI.Authentication.UseCases.Requests.Queries;
 
-public class GetUserOrderListQuery : IRequest<ServerResponse>
+public class GetOrderListQuery : IRequest<ServerResponse>
 {
   public string UserId { get; set; } = null!;
 }
 
-public class GetUserOrderListQueryHandler : IRequestHandler<GetUserOrderListQuery, ServerResponse>
+public class GetOrderListQueryHandler : IRequestHandler<GetOrderListQuery, ServerResponse>
 {
   readonly IOrderRepository _repository;
 
-  public GetUserOrderListQueryHandler(IOrderRepository repository)
+  public GetOrderListQueryHandler(IOrderRepository repository)
   {
     _repository = repository;
   }
@@ -28,7 +28,7 @@ public class GetUserOrderListQueryHandler : IRequestHandler<GetUserOrderListQuer
   /// <param name="request">The request.</param>
   /// <param name="token">Cancellation token.</param>
   /// <returns>Returns user order list.</returns>
-  public async Task<ServerResponse> Handle(GetUserOrderListQuery request, CancellationToken token)
+  public async Task<ServerResponse> Handle(GetOrderListQuery request, CancellationToken token)
   {
     try
     {
@@ -37,7 +37,7 @@ public class GetUserOrderListQueryHandler : IRequestHandler<GetUserOrderListQuer
     }
     catch (Exception e)
     {
-      return new InternalServerError("GetUserOrderListQuery: " + e.Message);
+      return new InternalServerError("GetOrderListQuery: " + e.Message);
     }
   }
 }

@@ -81,16 +81,19 @@ ALTER TABLE OrderDetails      DROP CONSTRAINT FK__OrderDeta__Order__1C1D2798;
 ALTER TABLE OrderCardPayments DROP CONSTRAINT FK__OrderCard__Order__1FEDB87C;
 -- Успешно очищаем таблицу
 TRUNCATE TABLE Orders;
+
 -- Восстанавливаем зависисмость ключей
 ALTER TABLE OrderAddress
-    ADD CONSTRAINT FK__OrderAddr__Order__184C96B4
-    FOREIGN KEY (OrderId) REFERENCES Orders(Id);
+ADD CONSTRAINT FK__OrderAddr__Order__184C96B4
+FOREIGN KEY (OrderId) REFERENCES Orders(Id);
+
 ALTER TABLE OrderDetails
-    ADD CONSTRAINT FK__OrderDeta__Order__1C1D2798
-    FOREIGN KEY (OrderId) REFERENCES Orders(Id);
+ADD CONSTRAINT FK__OrderDeta__Order__1C1D2798
+FOREIGN KEY (OrderId) REFERENCES Orders(Id);
+
 ALTER TABLE OrderCardPayments
-    ADD CONSTRAINT FK__OrderCard__Order__1FEDB87C
-    FOREIGN KEY (OrderId) REFERENCES Orders(Id);
+ADD CONSTRAINT FK__OrderCard__Order__1FEDB87C
+FOREIGN KEY (OrderId) REFERENCES Orders(Id);
 
 -- Удаляет все строки из таблицы, но сохраняет структуру таблицы
 TRUNCATE TABLE OrderDetails;

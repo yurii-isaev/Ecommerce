@@ -1,14 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.UseCases.Contracts;
-using WebAPI.Authentication.UseCases.Models.Input;
 
 namespace WebAPI.Authentication.DataAccess.Repositories;
 
@@ -129,6 +125,57 @@ public class OrderRepository : IOrderRepository
       );
 
       return ordersDictionary.Values;
+    }
+  }
+
+  public async Task DeleteOrderAsync(string orderId)
+  {
+    using (var connection = new SqlConnection(_connectionString))
+    {
+      await connection.OpenAsync();
+
+      // Starting the transaction
+      var transaction = connection.BeginTransaction();
+
+      try
+      {
+        // Delete records from OrderCardPayments
+        await connection.ExecuteAsync(
+          @"DELETE FROM OrderCardPayments WHERE OrderId = @OrderId",
+          new { OrderId = orderId },
+          transaction
+        );
+
+        // Deleting Records from OrderDetails
+        await connection.ExecuteAsync(
+          @"DELETE FROM OrderDetails WHERE OrderId = @OrderId",
+          new { OrderId = orderId },
+          transaction
+        );
+
+        // Removing Records from OrderAddress
+        await connection.ExecuteAsync(
+          @"DELETE FROM OrderAddress WHERE OrderId = @OrderId",
+          new { OrderId = orderId },
+          transaction
+        );
+
+        // Deleting Records from Orders
+        await connection.ExecuteAsync(
+          @"DELETE FROM Orders WHERE Id = @OrderId",
+          new { OrderId = orderId },
+          transaction
+        );
+
+        // Fixing the transaction
+        transaction.Commit();
+      }
+      catch (Exception)
+      {
+        // In case of an error, roll back the transaction
+        transaction.Rollback();
+        throw;
+      }
     }
   }
 }

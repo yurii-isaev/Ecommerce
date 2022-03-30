@@ -11,24 +11,24 @@ using WebAPI.Authentication.UseCases.Types;
 
 namespace WebAPI.Authentication.UseCases.Requests.Commands;
 
-public class OrderCommand: IRequest<ServerResponse>
+public class CreateOrderCommand: IRequest<ServerResponse>
 {
   public OrderDto OrderDto { get; set; } = null!;
 }
 
 
-public class OrderCommandHandler : IRequestHandler<OrderCommand, ServerResponse>
+public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, ServerResponse>
 {
   readonly IOrderRepository _repository;
   readonly IMapper _mapper;
 
-  public OrderCommandHandler(IOrderRepository repository, IMapper mapper)
+  public CreateOrderCommandHandler(IOrderRepository repository, IMapper mapper)
   {
     _repository = repository;
     _mapper = mapper;
   }
 
-  public async Task<ServerResponse> Handle(OrderCommand request, CancellationToken token)
+  public async Task<ServerResponse> Handle(CreateOrderCommand request, CancellationToken token)
   {
     try
     {
