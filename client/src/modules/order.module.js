@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const OrderModule = {
   state: {
-    orderList: [],
+    orderList:    [],
     orderDetails: [],
     orderAddress: {},
   },
@@ -12,25 +12,36 @@ const OrderModule = {
       commit('SET_ORDER_ADDRESS_TO_STATE', orderAddress);
     },
 
+    // actions
+    DELETE_ORDER({commit}, orderId) {
+      axios.delete(`http://localhost:5000/api/order/DeleteOrder/${orderId}`, {
+        withCredentials: true
+      }).then(response => {
+        if (response.data.code === 200) {
+          commit('REMOVE_ORDER_FROM_STATE', orderId);
+        } else {
+          console.warn('DELETE_ORDER API response:', response.data.message);
+        }
+      }).catch(error => {
+        console.error('Error during DELETE_ORDER:', error);
+      });
+    },
+
     async GET_ORDERS_FROM_API({commit}, userId) {
       try {
         const response = await axios.get(`http://localhost:5000/api/order/GetOrderList/${userId}`, {
           withCredentials: true
         });
-        
         if (response.data.code == 200) {
           // SET_ORDERS
           commit('SET_ORDERS_TO_STATE', response.data.dataSet)
           const allOrderDetails = response.data.dataSet.reduce((acc, order) => {
             return acc.concat(order.orderDetails);
           }, []);
-          
           // SET_ORDER_DETAILS
           commit('SET_ORDER_DETAILS_TO_STATE', allOrderDetails);
-          
           // SET_ORDER_ADDRESS
           commit('SET_ORDER_ADDRESS_TO_STATE', response.data.dataSet.map(order => order.orderAddress));
-          
         } else {
           console.warn('GET_ORDERS_FROM_API:', response.data.message);
         }
@@ -51,8 +62,16 @@ const OrderModule = {
 
     SET_ORDER_ADDRESS_TO_STATE(state, address) {
       state.orderAddress = address;
-      console.info('SET_ORDER_ADDRESS_TO_STATE:', address);
     },
+
+    REMOVE_ORDER_FROM_STATE(state, orderId) {
+      // Находим индекс заказа в списке заказов по orderId
+      const index = state.orderList.findIndex(order => order.id === orderId);
+      if (index !== -1) {
+        // Удаляем заказ из списка заказов
+        state.orderList.splice(index, 1);
+      }
+    }
   },
 
   getters: {

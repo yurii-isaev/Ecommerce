@@ -2,15 +2,19 @@
   <section class="section">
     <NotificationToast :messages="messages"/>
     <div class="container">
-      <p v-if="favoritsListIsEmpty" class="empty-list-message">Favorits List is empty.</p>
-      
-      <!-- Catalog Item component-->
-      <CatalogItem
-          v-for="favorit in favorits"
-          :key="favorit.id"
-          :product_props="favorit"
-          @addToCart="addToCart"
-          @addOrDeleteToFavorite="addOrDeleteToFavorite"/>
+      <div v-if="favoritsListIsEmpty">
+        <p class="empty-list-message">Favorites List is empty.</p>
+      </div>
+      <div v-else>
+        <!-- Catalog Item component -->
+        <CatalogItem
+            v-for="favorit in favorits"
+            :key="favorit.id"
+            :product_props="favorit"
+            @addToCart="addToCart"
+            @addOrDeleteToFavorite="addOrDeleteToFavorite">
+        </CatalogItem>
+      </div>
     </div>
   </section>
 </template>
@@ -21,7 +25,6 @@
   import NotificationToast from '../notifications/notification-toast';
 
   export default {
-    
     components: { CatalogItem, NotificationToast },
   
     data() {
@@ -67,10 +70,3 @@
     }
   }
 </script>
-
-<style scoped>
-  .empty-list-message {
-    margin: 35px;
-    font-size: 17px;
-  }
-</style>

@@ -32,7 +32,9 @@
     </div>
   
     <div class="cart-item-total">
-      <p v-if="cart_item && cart_item.price"><strong>Сart item total</strong></p>
+      <p v-if="cart_item && cart_item.price">
+        <strong>Сart item total</strong>
+      </p>
       <br>
       <div v-if="orderItem && cart_item">
         <p>{{ formattedCustomTotal }}</p>
@@ -43,9 +45,7 @@
     </div>
     
     <div class="cart-item-btn">
-      <router-link class="router-link" :to="{name: 'cart-item-details',params: { id: cart_item.id },props:  { id: cart_item.id }}">
-        <button class="btn btn-yellow"> Details </button>
-      </router-link>
+      <button class="btn btn-yellow" @click="transition(cart_item.id)">Details</button>
       <button class="btn btn-red" @click="removeFromCart"> Delete </button>
     </div>
   </div>
@@ -102,6 +102,10 @@
     },
     
     methods: {
+      transition(id) {
+        this.$router.push({ name: 'cart-item-details', params: { id } });
+      },
+      
       increment() {
         this.$emit('increment')
       }, 
@@ -118,7 +122,6 @@
 </script>
 
 <style lang="scss" scoped>
-
   p {
     font-size: large;
   }

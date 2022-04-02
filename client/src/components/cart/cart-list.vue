@@ -1,18 +1,19 @@
 <template>
   <section class="section">
-    <p v-if="cartIsEmpty" class="empty-list-message">Your cart is empty.</p>
-    <!--  Cart Item Component -->
-    <div class="cart-items">
+    <div v-if="cartIsEmpty">
+      <p class="empty-list-message">Your cart is empty.</p>
+    </div>
+    <div v-else class="cart-items">
+      <!-- Cart Item Component -->
       <CartItem
           v-for="(item, index) in cartArr"
           :key="item.article"
           :cart_item="item"
           @removeFromCart="removeFromCart(index)"
           @increment="incrementItem(index)"
-          @decrement="decrementItem(index)"
-      />
+          @decrement="decrementItem(index)">
+      </CartItem>
     </div>
-    <!--  Total Section-->
     <div class="total-wrapper">
       <div class="total" v-if="cartArr.length > 0">
         <div class="row">
@@ -45,7 +46,7 @@
   import CartItem from '@/components/cart/cart-item';
 
   export default {
-    components: {CartItem}, 
+    components: { CartItem }, 
     
     data() {
       return {
@@ -110,7 +111,6 @@
           discount: 0, 
           quantity: this.cartArr.length
         };
-        console.log("[CART-LIST]::totalObj:", this.totalCartObj);
       }, 
       
       incrementItem(index) {
@@ -135,11 +135,6 @@
     font-size: 17px;
     margin: 10px;
     white-space: nowrap; /* Prevents text wrapping */
-  }
-
-  .empty-list-message {
-    margin: 35px;
-    font-size: 17px;
   }
 
   .wrap {

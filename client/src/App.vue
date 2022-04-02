@@ -102,8 +102,8 @@
   /*}  */
   
   h1, h2, h3, h4, h5, h6 {
-     font-size: inherit;
-     font-weight: inherit;
+     /*font-size: inherit;*/
+     /*font-weight: inherit;*/
   }  
   
   a {
@@ -129,5 +129,10 @@
      align-items: center;
      margin-top: 20px; 
      /*margin-bottom: 20px;*/
+  }
+
+  .empty-list-message {
+    margin: 35px;
+    font-size: 17px;
   }
 </style>

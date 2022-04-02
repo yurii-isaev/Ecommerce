@@ -1,114 +1,119 @@
 <template>
   <section class="section">
-    <table>
-      <thead>
-      <tr>
-        <th :class="{ 'selected-filter': filters.createdAt !== '' }" @click="sortBy('createdAt')">
-          <select v-model="filters.createdAt" class="filter-select">
-            <option value="">All</option>
-            <option v-for="date in uniqueDates" :key="date" :value="date">{{ date }}</option>
-          </select>
-          <img v-if="filters.createdAt !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
-          <br>
-          Date Created
-          <span @click.stop="sortBy('createdAt')" class="triangle"
-                :class="{ 'triangle-active': sortKey === 'createdAt', 'triangle-inactive': sortKey !== 'createdAt' }">
-            {{ sortKey === 'createdAt' && sortOrder === -1 ? '▼' : '▲' }}
-          </span>
-        </th>
-        <!--  //  -->
-        <th :class="{ 'selected-filter': filters.orderAddress !== '' }" @click="sortBy('orderAddress')">
-          <select v-model="filters.orderAddress" class="filter-select">
-            <option value="">All</option>
-            <option v-for="address in uniqueAddress" :key="address" :value="address">{{ address }}</option>
-          </select>
-          <img v-if="filters.orderAddress !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
-          <br>
-          Order Address
-          <span @click.stop="sortBy('orderAddress')" class="triangle" 
-                :class="{ 'triangle-active': sortKey === 'orderAddress', 'triangle-inactive': sortKey !== 'orderAddress' }">
-            {{ sortKey === 'orderAddress' && sortOrder === -1 ? '▼' : '▲' }}
-          </span>
-        </th>
-        <!--  //  -->
-        <th :class="{ 'selected-filter': filters.total !== '' }" @click="sortBy('total')">
-          <select v-model="filters.total" class="filter-select">
-            <option value="">All</option>
-            <option v-for="total in uniqueTotals" :key="total" :value="total">{{ total }}</option>
-          </select>
-          <img v-if="filters.total !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
-          <br>
-          Total
-          <span @click.stop="sortBy('total')" class="triangle"
-                :class="{ 'triangle-active': sortKey === 'total', 'triangle-inactive': sortKey !== 'total' }">
-            {{ sortKey === 'total' && sortOrder === -1 ? '▼' : '▲' }}
-          </span>
-        </th>
-        <!--  //  -->
-        <th :class="{ 'selected-filter': filters.discount !== '' }" @click="sortBy('discount')">
-          <select v-model="filters.discount" class="filter-select">
-            <option value="">All</option>
-            <option v-for="discount in uniqueDiscounts" :key="discount" :value="discount">{{ discount }}</option>
-          </select>
-          <img v-if="filters.discount !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
-          <br>
-          Discount
-          <span @click.stop="sortBy('discount')" class="triangle"
-                :class="{ 'triangle-active': sortKey === 'discount', 'triangle-inactive': sortKey !== 'discount' }">
-            {{ sortKey === 'discount' && sortOrder === -1 ? '▼' : '▲' }}
-          </span>
-        </th>
-        <!--  //  -->
-        <th :class="{ 'selected-filter': filters.quantity !== '' }" @click="sortBy('quantity')">
-          <select v-model="filters.quantity" class="filter-select">
-            <option value="">All</option>
-            <option v-for="quantity in uniqueQuantities" :key="quantity" :value="quantity">{{ quantity }}</option>
-          </select>
-          <img v-if="filters.quantity !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
-          <br>
-          Discount
-          <span @click.stop="sortBy('quantity')" class="triangle"
-                :class="{ 'triangle-active': sortKey === 'quantity', 'triangle-inactive': sortKey !== 'quantity' }">
-            {{ sortKey === 'quantity' && sortOrder === -1 ? '▼' : '▲' }}
-          </span>
-        </th>
-        <!--  //  -->
-        <th :class="{ 'selected-filter': filters.isPaid !== '' }">
-          <select v-model="filters.isPaid" class="filter-select">
-            <option value="">All</option>
-            <option value="true">Yes</option>
-            <option value="false">No</option>
-          </select>
-          <img v-if="filters.isPaid !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
-          <br>
-          Is Paid?
-        </th>
-        <!--  //  -->
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="order in filterOrders" :key="order.id">
-        <td>{{ formattedDate(order.createdAt) }}</td>
-        <td>{{ order.orderAddress ? order.orderAddress.address : 'No delivery' }}</td>
-        <td>{{ order.total }}</td>
-        <td>{{ order.discount }}</td>
-        <td>{{ order.quantity }}</td>
-        <td>{{ order.isPaid ? 'Yes' : 'No' }}</td>
-        <td>
-          <button class="btn btn-yellow indent" @click="routingComponent(order.id)">Details</button>
-          <button class="btn btn-red" @click="removeFromOrders">Delete</button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+    <div v-if="orderHistorytIsEmpty">
+      <p class="empty-list-message">Your order history is empty.</p>
+    </div>
+    <div v-else>
+      <h3>Order History</h3>
+      <br>
+      <table>
+        <thead>
+        <tr>
+          <th :class="{ 'selected-filter': filters.createdAt !== '' }" @click="sortBy('createdAt')">
+            <select v-model="filters.createdAt" class="filter-select">
+              <option value="">All</option>
+              <option v-for="date in uniqueDates" :key="date" :value="date">{{ date }}</option>
+            </select>
+            <img v-if="filters.createdAt !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
+            <br> Date Created
+            <span @click.stop="sortBy('createdAt')" class="triangle"
+                  :class="{ 'triangle-active': sortKey === 'createdAt', 'triangle-inactive': sortKey !== 'createdAt' }">
+              {{ sortKey === 'createdAt' && sortOrder === -1 ? '▼' : '▲' }}
+            </span>
+          </th>
+          <!--  //  -->
+          <th :class="{ 'selected-filter': filters.orderAddress !== '' }" @click="sortBy('orderAddress')">
+            <select v-model="filters.orderAddress" class="filter-select">
+              <option value="">All</option>
+              <option v-for="address in uniqueAddress" :key="address" :value="address">{{ address }}</option>
+            </select>
+            <img v-if="filters.orderAddress !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
+            <br> Order Address
+            <span @click.stop="sortBy('orderAddress')" class="triangle"
+                  :class="{ 'triangle-active': sortKey === 'orderAddress', 'triangle-inactive': sortKey !== 'orderAddress' }">
+              {{ sortKey === 'orderAddress' && sortOrder === -1 ? '▼' : '▲' }}
+            </span>
+          </th>
+          <!--  //  -->
+          <th :class="{ 'selected-filter': filters.total !== '' }" @click="sortBy('total')">
+            <select v-model="filters.total" class="filter-select">
+              <option value="">All</option>
+              <option v-for="total in uniqueTotals" :key="total" :value="total">{{ total }}</option>
+            </select>
+            <img v-if="filters.total !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
+            <br> Total
+            <span @click.stop="sortBy('total')" class="triangle"
+                  :class="{ 'triangle-active': sortKey === 'total', 'triangle-inactive': sortKey !== 'total' }">
+              {{ sortKey === 'total' && sortOrder === -1 ? '▼' : '▲' }}
+            </span>
+          </th>
+          <!--  //  -->
+          <th :class="{ 'selected-filter': filters.discount !== '' }" @click="sortBy('discount')">
+            <select v-model="filters.discount" class="filter-select">
+              <option value="">All</option>
+              <option v-for="discount in uniqueDiscounts" :key="discount" :value="discount">{{ discount }}</option>
+            </select>
+            <img v-if="filters.discount !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
+            <br> Discount
+            <span @click.stop="sortBy('discount')" class="triangle"
+                  :class="{ 'triangle-active': sortKey === 'discount', 'triangle-inactive': sortKey !== 'discount' }">
+              {{ sortKey === 'discount' && sortOrder === -1 ? '▼' : '▲' }}
+            </span>
+          </th>
+          <!--  //  -->
+          <th :class="{ 'selected-filter': filters.quantity !== '' }" @click="sortBy('quantity')">
+            <select v-model="filters.quantity" class="filter-select">
+              <option value="">All</option>
+              <option v-for="quantity in uniqueQuantities" :key="quantity" :value="quantity">{{ quantity }}</option>
+            </select>
+            <img v-if="filters.quantity !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
+            <br> Discount
+            <span @click.stop="sortBy('quantity')" class="triangle"
+                  :class="{ 'triangle-active': sortKey === 'quantity', 'triangle-inactive': sortKey !== 'quantity' }">
+              {{ sortKey === 'quantity' && sortOrder === -1 ? '▼' : '▲' }}
+            </span>
+          </th>
+          <!--  //  -->
+          <th :class="{ 'selected-filter': filters.isPaid !== '' }">
+            <select v-model="filters.isPaid" class="filter-select">
+              <option value="">All</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+            <img v-if="filters.isPaid !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
+            <br> Is Paid?
+          </th>
+          <!--  //  -->
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="order in filterOrders" :key="order.id">
+          <td>{{ formattedDate(order.createdAt) }}</td>
+          <td>{{ order.orderAddress ? order.orderAddress.address : 'No delivery' }}</td>
+          <td>{{ order.total }}</td>
+          <td>{{ order.discount }}</td>
+          <td>{{ order.quantity }}</td>
+          <td>{{ order.isPaid ? 'Yes' : 'No' }}</td>
+          <td>
+            <button class="btn btn-yellow indent" @click="transition(order.id)">Details</button>
+            <button class="btn btn-red" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
+          </td>
+          <DeleteModal :modal-id="deleteModalId" :delete-order="deleteOrder" :order-id="order.id"/>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 </template>
 
 <script>
   import { mapGetters } from 'vuex';
+  import DeleteModal  from '@/components/order/delete-modal'; 
 
   export default {
+    components: { DeleteModal },
+    
     data() {
       return {
         filters: {
@@ -121,6 +126,7 @@
         },
         sortKey: 'createdAt',
         sortOrder: -1,
+        deleteModalId: 'deleteModal' 
       }
     },
   
@@ -134,6 +140,10 @@
   
     computed: {
       ...mapGetters(['ORDER_LIST', 'ORDER_ADDRESS', 'USER_STATE']),
+  
+      orderHistorytIsEmpty() {
+        return this.orderList.length === 0;
+      },
     
       orderList() {
         return Array.isArray(this.ORDER_LIST) ? this.ORDER_LIST : [];
@@ -205,9 +215,13 @@
     },
     
     methods: {
-      routingComponent(id) {
+      transition(id) {
         this.$router.push({name: 'order-list-item-details', params: {id: id}});
-      }, 
+      },
+  
+      deleteOrder(index) {
+        this.$store.dispatch('DELETE_ORDER', index);
+      },
       
       formattedDate(date) {
         return this.$formatDate(date);
@@ -249,10 +263,6 @@
           comparison = aValue.localeCompare(bValue);
         }
         return comparison * this.sortOrder;
-      },
-  
-      removeFromOrders(index) {
-        this.$store.dispatch('DELETE_ORDER', index);
       }
     }
   }
@@ -272,7 +282,7 @@
   
   th {
     background-color: #f2f2f2;
-  }  
+  }
   
   .indent {
     margin: 7px;
