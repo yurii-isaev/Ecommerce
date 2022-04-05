@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MediatR" Version="12.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.1" />
         <PackageReference Include="Moq" Version="4.16.1" />
@@ -15,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\WebAPI\WebAPI.csproj" />
+      <ProjectReference Include="..\WebAPI.Authentication\WebAPI.Authentication.csproj" />
     </ItemGroup>
 
 </Project>
