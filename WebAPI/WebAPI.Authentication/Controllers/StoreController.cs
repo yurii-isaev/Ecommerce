@@ -1,31 +1,31 @@
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Authentication.UseCases.Requests.Queries;
 
-namespace WebAPI.Authentication.Controllers
+namespace WebAPI.Authentication.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class StoreController : BaseController
 {
-  [ApiController]
-  [Route("api/[controller]")]
-  public class StoreController : BaseController
+  public StoreController(IMediator mediator) : base(mediator)
+  {}
+
+  /// <remarks>
+  /// Sample request:
+  /// GET http://localhost:5000/api/store/GetAllProducts
+  /// </remarks>
+  [AllowAnonymous]
+  [HttpGet("GetAllProducts")]
+  public async Task<IActionResult> GetAllProducts([FromQuery] int pageNumber, [FromQuery] int pageSize)
   {
-    /// <remarks>
-    /// Пример запроса:
-    /// GET http://localhost:5000/api/store/GetAllProducts
-    /// </remarks>
-    [
-      // Authorize(Roles = "Customer"),
-      // ProducesResponseType(StatusCodes.Status401Unauthorized)
-      HttpGet("GetAllProducts"),
-      ProducesResponseType(StatusCodes.Status200OK),
-      ProducesResponseType(StatusCodes.Status500InternalServerError),
-    ]
-    public async Task<JsonResult> GetAllProducts()
+    var request = new GetProductsListQuery
     {
-      var request = new GetProductsListQuery();
-      var products = await Mediator.Send(request);
-      return new JsonResult(products);
-    }
+      PageNumber = pageNumber,
+      PageSize = pageSize
+    };
+    return Ok(await Mediator.Send(request));
   }
 }
-

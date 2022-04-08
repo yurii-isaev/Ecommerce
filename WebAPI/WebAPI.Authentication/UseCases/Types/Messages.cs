@@ -27,6 +27,7 @@ public static class Messages
   public const string OrderCreatedSuccess = "Order created successfull";
   public const string OrderDeleteSuccess = "Order delete successfull";
   public const string GetOrderListSuccess = "Get order list successfull";
+  public const string GetProductListSuccess = "Get product list successfull";
   
   public const string JwtCookiesKey = "jwt-cookies";
 }

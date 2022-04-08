@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Authentication.UseCases.Models.Input;
@@ -11,6 +12,9 @@ namespace WebAPI.Authentication.Controllers;
 [Route("api/[controller]")]
 public class OrderController : BaseController
 {
+  public OrderController(IMediator mediator) : base(mediator)
+  {}
+  
   /// <remarks>
   /// Sample request:
   /// POST -> http://localhost:5000/api/order/CreateOrder

@@ -1,50 +1,36 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.UseCases.Contracts;
 
-namespace WebAPI.Authentication.DataAccess.Repositories
+namespace WebAPI.Authentication.DataAccess.Repositories;
+
+public class ProductRepository : IProductRepository
 {
-  public class ProductRepository : IProductRepository
+  readonly string _connection;
+
+  public ProductRepository(string connectionString)
   {
-    private readonly string _connection;
+    _connection = connectionString;
+  }
 
-    public ProductRepository(string connectionString)
+  public Task<(List<Product> products, int totalProducts)> GetProductList(int pageNumber, int pageSize)
+
+  {
+    using (IDbConnection db = new SqlConnection(_connection))
     {
-      _connection = connectionString;
+      int skip = (pageNumber - 1) * pageSize;
+      var query = $@"SELECT * FROM Products ORDER BY Id OFFSET {skip} ROWS FETCH NEXT {pageSize} ROWS ONLY";
+      var products = db.Query<Product>(query).AsList();
+
+      var totalQuery = "SELECT COUNT(*) FROM Products";
+      var totalProducts = db.Query<int>(totalQuery).Single();
+
+      return Task.FromResult((products, totalProducts));
     }
-
-    public Task<IEnumerable<Product>> GetProductList()
-    {
-      using (IDbConnection db = new SqlConnection(_connection))
-      {
-        string query = "SELECT * FROM Products";
-        return Task.FromResult<IEnumerable<Product>>(db.Query<Product>(query).AsList());
-      }
-    }
-
-
-    // public async Task CreateProductAsync(Product product)
-    // {
-    //   throw new NotImplementedException();
-    // }
-    //
-    // public async Task<IEnumerable<Product>> GetProductList()
-    // {
-    //   throw new NotImplementedException();
-    // }
-    //
-    // public async Task<Product> GetProductAsync(Guid productId)
-    // {
-    //   throw new NotImplementedException();
-    // }
-    //
-    // public async Task DeleteProductAsync(Guid productId)
-    // {
-    //   throw new NotImplementedException();
-    // }
   }
 }

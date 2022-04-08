@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Authentication.UseCases.Models.Input;
@@ -9,9 +10,12 @@ using WebAPI.Authentication.UseCases.Requests.Queries;
 namespace WebAPI.Authentication.Controllers;
 
 [ApiController]
-[Route("api/[controller]")] // http://localhost:5000/api
+[Route("api/[controller]")]
 public class AuthController : BaseController
 {
+  public AuthController(IMediator mediator) : base(mediator)
+  {}
+  
   /// <remarks>
   /// Sample request:
   /// GET -> ../auth/GetAllUsers.

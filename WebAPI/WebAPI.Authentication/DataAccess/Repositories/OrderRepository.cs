@@ -92,7 +92,7 @@ public class OrderRepository : IOrderRepository
 
       var ordersDictionary = new Dictionary<Guid, Order>();
 
-      var results = await connection.QueryAsync<Order, OrderDetails, OrderAddress, OrderCardPayment, Order>(
+      await connection.QueryAsync<Order, OrderDetails, OrderAddress, OrderCardPayment, Order>(
         query,
         (order, orderDetails, orderAddress, orderPayment) =>
         {
@@ -120,6 +120,7 @@ public class OrderRepository : IOrderRepository
 
           return currentOrder;
         },
+        
         new { UserId = userId },
         splitOn: "Id,Id,Id,Id"
       );

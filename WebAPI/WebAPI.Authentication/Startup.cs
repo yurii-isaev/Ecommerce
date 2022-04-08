@@ -37,7 +37,7 @@ namespace WebAPI.Authentication
       //services.AddScoped<IOptions<JwtOptions>, JwtOptions>();
       services.AddHttpContextAccessor();
       services.AddControllers();
-      services.AddSingleton<IMediator, Mediator>();
+      services.AddTransient<IMediator, Mediator>();
       services.AddTransient<IEmailService, EmailService>();
       services.AddTransient<IOrderRepository>(_ => new OrderRepository(connection!));
       services.AddTransient<IProductRepository>(_ => new ProductRepository(connection!));

@@ -9,6 +9,6 @@ public class SuccessResponse : ServerResponse
     Code = StatusCodes.Status200OK;
     Success = true;
     Message = message;
-    DataSet = dataSet;
+    Set = dataSet;
   }
 }
