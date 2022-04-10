@@ -1,52 +1,44 @@
 <template>
   <div class="catalog">
-    
-    <notification-toast :messages="messages"/>
+    <!-- Component -->
+    <NotificationToast :messages="messages"/>
     
     <div class="catalog-filters">
       <select class="form-sort" v-model="selectedOption" @change="sortByCategories(selectedOption)">
-        <option v-for="category in categories"
-                :value="category.value" :key="category.value">
+        <option v-for="category in categories" :value="category.value" :key="category.value">
           {{ category.name }}
         </option>
       </select>
-      
       <div class="range-slider">
         <div class="range-slider-container">
-          <p>Min: {{ formattedMinPrice }}</p>
-          <input
-              type="range" min="0" max="5000"
-              step="5"
-              v-model.number="minPrice"
-              @change="setRangeSlider"
-          >
+          <p> Min: {{ formattedMinPrice }} </p>
+          <input type="range" min="0" max="5000" step="5" v-model.number="minPrice" @change="setRangeSlider">
         </div>
-        
         <div class="range-slider-container">
-          <p>Max: {{ formattedMaxPrice }}</p>
-          <input
-              type="range" min="5000" max="10000"
-              step="5"
-              v-model.number="maxPrice"
-              @change="setRangeSlider"
-          >
+          <p> Max: {{ formattedMaxPrice }} </p>
+          <input type="range" min="5000" max="10000" step="5" v-model.number="maxPrice" @change="setRangeSlider">
         </div>
       </div>
     </div>
-  
+    
     <div class="catalog-list" v-if="hasSortedProducts">
-      <catalog-item
+      <!-- Component -->
+      <CatalogItem 
           v-for="product in sortedProducts"
           :key="product.id"
           :product_props="product"
           :isFavorite="product.isFavorite"
           @addToCart="addToCart"
-          @addOrDeleteToFavorite="addOrDeleteToFavorite"
-      />
+          @addOrDeleteToFavorite="addOrDeleteToFavorite">
+      </CatalogItem>
     </div>
-    <div v-else style="margin:115px;font-size:larger">
+    
+    <div v-else class="no-matching-products">
       <p>There are no products that match the selected filters.</p>
     </div>
+    
+    <!-- Component -->
+    <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="changePage"/>
   </div>
 </template>
 
@@ -54,11 +46,19 @@
   import { mapGetters } from 'vuex';
   import CatalogItem from '../catalog/catalog-item';
   import NotificationToast from '../notifications/notification-toast';
+  import Pagination from './catalog-pagination';
 
   export default {
-    name: "component-catalog",
+    name: 'v-catalog',
   
-    components: { NotificationToast, CatalogItem },
+    components: { NotificationToast, CatalogItem, Pagination },
+  
+    props: {
+      catalog_props: {
+        type: Array,
+        default: () => []
+      }
+    },
   
     data() {
       return {
@@ -74,18 +74,16 @@
         messages: [],
         minPrice: 0,
         maxPrice: 10000,
-      }
-    },
   
-    props: {
-      catalog_props: {
-        type: Array,
-        default: () => []
+        totalPages: 0,
+        currentPage: 1,
+        pageSize: 4,
+        totalItems: 0,
       }
-    },
-  
+    }, 
+    
     computed: {
-      ...mapGetters(['PRODUCTS_STATE', 'CART_STATE', 'SEARCH_VALUE', 'FAVORITS_STATE']),
+      ...mapGetters(['PRODUCTS_STATE', 'CART_STATE', 'SEARCH_VALUE', 'FAVORITS_STATE', 'TOTAL_PAGES']),
     
       products() {
         return this.PRODUCTS_STATE;
@@ -94,7 +92,7 @@
       cart() {
         return this.CART_STATE;
       },
-  
+    
       hasSortedProducts() {
         return this.sortedProducts.length > 0;
       },
@@ -105,7 +103,7 @@
     
       formattedMaxPrice() {
         return this.$formatPrice(this.maxPrice);
-      },
+      }
     },
   
     methods: {
@@ -136,20 +134,20 @@
           }
         }
       },
-  
+    
       sortByCategories(category) {
         // Creating a copy of an array of products
         this.sortedProducts = [...this.products];
-    
+      
         // Filter products first by category, if it is specified and not equal to 'all'
         if (category && category !== 'all') {
           this.sortedProducts = this.sortedProducts.filter(item => item.category === category);
         }
-    
+      
         // Then filter the filtered array by price range
         this.sortedProducts = this.sortedProducts.filter(item => item.price >= this.minPrice && item.price <= this.maxPrice);
       },
-  
+    
       setRangeSlider() {
         // First, adjust the price range
         if (this.minPrice > this.maxPrice) {
@@ -166,6 +164,24 @@
             ? this.products.filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
             : this.products;
       },
+  
+      changePage(page) {
+        this.currentPage = page;
+        this.fetchProducts();
+      },
+  
+      async fetchProducts() {
+        try {
+          await this.$store.dispatch('GET_PRODUCTS_FROM_API', {
+            pageNumber: this.currentPage,
+            pageSize: this.pageSize
+          });
+          this.sortedProducts = this.products;
+          this.totalPages = this.TOTAL_PAGES;
+        } catch (error) {
+          console.error('An error occurred while retrieving data from the API:', error);
+        }
+      },
     },
   
     watch: {
@@ -175,23 +191,20 @@
     },
   
     async created() {
-      try {
-        await this.$store.dispatch('GET_PRODUCTS_FROM_API');
-        // After successfully retrieving the data from the API, we sort the products
-        this.sortByCategories();
-        this.sortProductsBySearchValue(this.SEARCH_VALUE);
-      } catch (error) {
-        console.error('An error occurred while retrieving data from the API:', error);
-      }
+      this.fetchProducts();
     }
   }
 </script>
 
 <style scoped>
+  .no-matching-products {
+    margin: 115px;
+    font-size: larger;
+  }
 
   .range-slider {
     display: flex;
-    justify-content: space-between; 
+    justify-content: space-between;
   }
 
   .range-slider-container {
@@ -202,8 +215,8 @@
 
   input[type="range"] {
     width: 100%; /* The slider occupies the entire available width of the container */
-  }  
-  
+  }
+
   .form-sort {
     position: relative;
     width: 200px;
@@ -213,22 +226,22 @@
     border-radius: 5px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     border: 2px solid #9B9B9B;
-  }  
-  
+  }
+
   .catalog-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 40px;
-    margin-bottom: 20px;
-  }  
-  
-  @media screen and (max-width: 1200px) { 
+    margin-bottom: 30px;
+  }
+
+  @media screen and (max-width: 1200px) {
     .catalog-item {
       flex: 0 0 calc(50% - 80px);
-    } 
-  }  
-  
+    }
+  }
+
   .catalog-filters {
     display: flex;
     flex-wrap: nowrap;
@@ -238,15 +251,6 @@
     padding: 20px;
     margin-bottom: 20px;
   }
-
-/*.catalog-link-to-cart {*/
-/*   position: fixed;*/
-/*   top: 10px;*/
-/*   right: 10px;*/
-/*   padding: var(--padding) * 2;*/
-/*   border: 1px solid #aeaeae;*/
-/*   background: #ffffff;*/
-/*}*/
 
   .catalog-filters-range-slider input[type=range] {
     /*position: absolute;*/

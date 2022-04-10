@@ -20,7 +20,7 @@ const FavoritsModule = {
          }
       },
       DELETE_FAVORITS_VALUE: (state, favoritId) => {
-         state.favorits = state.favorits.filter(i => i.id !== favoritId);
+         state.favorits = state.favorits.filter(item => item.id !== favoritId);
       }
    },
    actions: {

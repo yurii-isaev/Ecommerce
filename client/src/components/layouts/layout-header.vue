@@ -2,7 +2,7 @@
   <div class="header">
     <router-link class="router-link" :to="{ name: 'mainPage' }">
       <div class="text-section">
-        <img src="@/assets/logo/logo.png" alt="Logo" style="width:3.75rem"/>
+        <!-- <img src="@/assets/logo/logo.png" alt="Logo" style="width:3.75rem"/> -->
         <div class="text-content">
           <h2 class="title">Vue cakes</h2>
           <p class="description">Online store for ordering cakes</p>
@@ -24,14 +24,19 @@
     <ul class="header-menu">
       <li class="menu-item">
         <router-link class="router-link" :to="{ name: 'catalog' }">
-          <img class="icon" src="@/assets/vector/cake.svg" style="height:30px" alt="icon"/>
+          <img class="icon" src="@/assets/vector/cake.svg"  alt="icon"/>
         </router-link>
       </li>
       
       <li class="menu-item">
-        <router-link class="router-link" :to="{ name: 'order-list' }">
-          <img class="icon" src="@/assets/vector/order-list.svg" style="height:30px" alt="icon"/>
-        </router-link>
+        <div v-if="!isLoggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
+          <img src="@/assets/vector/order-list.svg"  alt="icon"/>
+        </div>
+        <div v-else>
+          <router-link class="router-link" :to="{ name: 'order-list' }">
+            <img src="@/assets/vector/order-list.svg" alt="icon"/>
+          </router-link>
+        </div>
       </li>
   
       <li class="menu-item">
@@ -60,8 +65,8 @@
         </div>
       </li>
       
-      <li class="menu-item" style="margin-top:5px">
-        <!-- Auth Modal Component -->
+      <li class="menu-item">
+        <!-- Component -->
         <AuthModal/>
       </li>
     </ul>
@@ -73,7 +78,6 @@
   import AuthModal from '@/components/auth/auth-modal';
   
   export default {
-    
     components: { AuthModal }, 
     
     data() {
@@ -146,10 +150,13 @@
 </script>
 
 <style scoped>
-
   .icon {
     filter: drop-shadow(1px 1px #9B9B9B) drop-shadow(0px 0px 0 #9B9B9B);
   }
+
+  /*li.menu-item {*/
+  /*  margin-top: 5px;*/
+  /*}*/
 
   .header {
     display: flex;

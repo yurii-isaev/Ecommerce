@@ -34,14 +34,14 @@ const OrderModule = {
         });
         if (response.data.code == 200) {
           // SET_ORDERS
-          commit('SET_ORDERS_TO_STATE', response.data.dataSet)
-          const allOrderDetails = response.data.dataSet.reduce((acc, order) => {
+          commit('SET_ORDERS_TO_STATE', response.data.set)
+          const allOrderDetails = response.data.set.reduce((acc, order) => {
             return acc.concat(order.orderDetails);
           }, []);
           // SET_ORDER_DETAILS
           commit('SET_ORDER_DETAILS_TO_STATE', allOrderDetails);
           // SET_ORDER_ADDRESS
-          commit('SET_ORDER_ADDRESS_TO_STATE', response.data.dataSet.map(order => order.orderAddress));
+          commit('SET_ORDER_ADDRESS_TO_STATE', response.data.set.map(order => order.orderAddress));
         } else {
           console.warn('GET_ORDERS_FROM_API:', response.data.message);
         }
@@ -65,10 +65,10 @@ const OrderModule = {
     },
 
     REMOVE_ORDER_FROM_STATE(state, orderId) {
-      // Находим индекс заказа в списке заказов по orderId
+      // Finding the order index in the list of orders by orderId
       const index = state.orderList.findIndex(order => order.id === orderId);
       if (index !== -1) {
-        // Удаляем заказ из списка заказов
+        // Removing an order from the order list
         state.orderList.splice(index, 1);
       }
     }

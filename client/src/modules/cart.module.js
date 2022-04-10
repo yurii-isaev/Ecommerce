@@ -110,7 +110,6 @@ const CartModule = {
           withCredentials: true
         });
         if (response.data.code == 200) {
-          console.log(response.data)
           await commit('SET_ORDER_RESPONSE_MESSAGE', response.data.success);
         }
         if (response.data.code == 400) {
@@ -118,7 +117,7 @@ const CartModule = {
         }
       } catch (error) { // if response.status == 400
         console.error('POST_USER_ORDER_TO_API_ERROR:', error);
-        throw error;
+        // throw error;
       }
     },
   },

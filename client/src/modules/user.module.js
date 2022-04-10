@@ -42,7 +42,7 @@ const UserModule = {
 
         if (response.status == 200) {
           console.log('Registration successful');
-          commit('SET_USER_DATA', response.data.dataSet);
+          commit('SET_USER_DATA', response.data.set);
         } else {
           // console.error('Registration failed:', response.data.message);
           commit('UPDATE_USER_DATA');
@@ -63,7 +63,7 @@ const UserModule = {
         if (response.status == 200) {
           // console.log('Sign In successful');
           commit('SET_AUTH_MESSAGE', 'Sign In successful');
-          commit('SET_USER_DATA', response.data.dataSet);
+          commit('SET_USER_DATA', response.data.set);
         } else {
           // console.error('Registration failed:', response.data.message);
           commit('UPDATE_USER_DATA');
@@ -101,7 +101,7 @@ const UserModule = {
         });
 
         if (response.status == 200) {
-          commit('SET_USER_DATA', response.data.dataSet.profile);
+          commit('SET_USER_DATA', response.data.set.profile);
         } else {
           console.error('Authentication check failed:', response.data.message);
           commit('UPDATE_USER_DATA');

@@ -77,7 +77,7 @@
   import PaymentFormSchema from '@/validation/paymentFormSchema';
 
   export default {
-    components: {Form, Field},
+    components: { Form, Field },
   
     data() {
       return {
@@ -142,12 +142,12 @@
           isPaid: true,
         };
       
-        // Add orderAddress to the order object only if it is not null
-        if (this.orderAddress !== null) {
+        // Add orderAddress to the order only if orderAddress is not empty object
+        if (Object.keys(this.orderAddress).length === 0) {
           order.orderAddress = this.orderAddress;
         }
-      
-        // console.warn("ORDER-PAYMENT_OBJECT: ", order);
+  
+        console.warn("ORDER-PAYMENT_OBJECT: ", JSON.stringify(order, null, 2));
       
         try {
           await this.$store.dispatch('POST_USER_ORDER_TO_API', order);

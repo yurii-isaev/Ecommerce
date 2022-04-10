@@ -21,7 +21,7 @@
       messages:    {type: Array,  default: () => []}, 
       rightButton: {type: String, default: ''}, 
       leftButton:  {type: String, default: ''}, 
-      timeout:     {type: Number, default: 1000}
+      timeout:     {type: Number, default: 1500}
     }, 
     
     methods: {

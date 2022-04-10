@@ -4,8 +4,12 @@
          :src="!product_props.isFavorite ? require('@/assets/vector/like-1.svg') : require('@/assets/vector/like-2.svg')"
          @click="addOrDeleteToFavoriteCallback"
     />
-    <img class="product-image" alt="img" :src="require('@/assets/images/' + product_props.image)"/>
-    <p class="product-title"><strong> {{ product_props.name }} </strong></p>
+    <img class="product-image" alt="img"
+         :src="require('@/assets/images/' + product_props.image)"
+    />
+    <p class="product-title">
+      <strong> {{ product_props.name }} </strong>
+    </p>
     <p class="product-details">{{ formattedPrice() }}</p>
     <button class="btn btn-green" @click="addToCartCallback"> Add to cart</button>
   </div>
