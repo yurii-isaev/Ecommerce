@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace WebAPI.Tests.Setup;
+namespace WebAPI.Tests.IntegrationTests;
 
 /// <summary>
 /// Factory for executing integration api tests using DbConnection.

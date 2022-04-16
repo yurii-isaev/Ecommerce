@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -12,13 +13,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using WebAPI.Authentication;
+using WebAPI.Authentication.Domain.Entities;
 using WebAPI.Authentication.UseCases.Models.Input;
 using WebAPI.Authentication.UseCases.Models.Output;
 using WebAPI.Authentication.UseCases.Requests.Commands;
+using WebAPI.Authentication.UseCases.Requests.Queries;
 using WebAPI.Authentication.UseCases.Types;
-using WebAPI.Tests.Setup;
 
 namespace WebAPI.Tests.IntegrationTests.Controllers;
 
@@ -104,10 +107,10 @@ public class OrderControllerTests
     var serverResponse = new SuccessResponse(Messages.OrderCreatedSuccess, null);
     var content = new StringContent(JsonConvert.SerializeObject(testOrderDto), Encoding.UTF8, "application/json");
 
+    // Mock
     _mediatorMock
       .Setup(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()))
       .ReturnsAsync(serverResponse);
-
 
     // Act
     var response = await _client.PostAsync("/api/order/CreateOrder", content);
@@ -116,5 +119,38 @@ public class OrderControllerTests
     // Assert
     Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
     Assert.IsTrue(responseString.Contains(Messages.OrderCreatedSuccess));
+  }
+
+  [AllowAnonymous]
+  [Test]
+  public async Task GetOrderList_Returns_Ok_With_User_Order_List()
+  {
+    // Arrange
+    var userId = "9833869f-2c8e-4986-90c8-ff256d5bc7e0";
+    var expectedOrderList = new List<Order>();
+    var serverResponse = new SuccessResponse(Messages.GetOrderListSuccess, expectedOrderList);
+
+    // Mock
+    _mediatorMock
+      .Setup(m => m.Send(It.IsAny<GetOrderListQuery>(), It.IsAny<CancellationToken>()))
+      .ReturnsAsync(serverResponse);
+
+    // Act
+    var httpResponse = await _client.GetAsync($"/api/order/GetOrderList/{userId}");
+    var responseString = await httpResponse.Content.ReadAsStringAsync();
+    var response = JsonConvert.DeserializeObject<SuccessResponse>(responseString);
+    var orders = ((JArray) response.Set)!.ToObject<List<Order>>();
+
+    // Assert
+    Assert.AreEqual(HttpStatusCode.OK, httpResponse.StatusCode);
+    Assert.IsTrue(responseString.Contains(Messages.GetOrderListSuccess));
+
+    // Additional checks
+    Assert.IsNotNull(response);
+    Assert.IsNotNull(response.Set);
+    Assert.AreEqual(Messages.GetOrderListSuccess, response.Message);
+
+    // Checking the presence of an identifier in each order
+    Assert.IsTrue(orders.All(_ => true));
   }
 }

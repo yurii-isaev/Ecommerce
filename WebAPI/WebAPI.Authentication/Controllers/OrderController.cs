@@ -19,7 +19,7 @@ public class OrderController : BaseController
   /// Sample request:
   /// POST -> http://localhost:5000/api/order/CreateOrder
   /// </remarks>
-  [Authorize(Roles = "Customer")]
+  // [Authorize(Roles = "Customer")]
   [HttpPost("CreateOrder")]
   public async Task<IActionResult> CreateOrder([FromBody] OrderDto order)
   {
@@ -31,7 +31,7 @@ public class OrderController : BaseController
   /// Sample request:
   /// GET -> http://localhost:5000/api/order/GetOrderList/{userId}
   /// </remarks>
-  [Authorize(Roles = "Customer")]
+  // [Authorize(Roles = "Customer")]
   [HttpGet("GetOrderList/{userId}")]
   public async Task<IActionResult> GetOrderList(string userId)
   {
