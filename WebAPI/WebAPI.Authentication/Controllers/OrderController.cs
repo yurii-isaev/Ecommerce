@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Authentication.UseCases.Models.Input;
 using WebAPI.Authentication.UseCases.Requests.Commands;
@@ -43,7 +42,7 @@ public class OrderController : BaseController
   /// Sample request:
   /// DELETE -> http://localhost:5000/api/order/DeleteOrder/{orderId}
   /// </remarks>
-  [Authorize(Roles = "Customer")]
+  //[Authorize(Roles = "Customer")]
   [HttpDelete("DeleteOrder/{orderId}")]
   public async Task<IActionResult> DeleteOrder(string orderId)
   {

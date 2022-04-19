@@ -34,19 +34,17 @@ public class StoreControllerTests
 
     // Act
     var response = await client.GetAsync("/api/store/GetAllProducts?pageNumber=1&pageSize=10");
-
-    // Assert
-    // Checking that the HTTP status code is 200 (OK)
-    Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-    // Reading the response body
     var content = await response.Content.ReadAsStringAsync();
     // Deserializing a JSON response into a ServerResponse object
-    var serverResponse = JsonSerializer.Deserialize<ServerResponse>(content, new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
-    // Checking that the response is not empty
+    var serverResponse = JsonSerializer.Deserialize<ServerResponse>(content, new JsonSerializerOptions 
+    {
+      PropertyNameCaseInsensitive = true
+    });
+    
+    // Assert
+    Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
     Assert.IsNotNull(serverResponse);
-    // Verifying that the request was successful
     Assert.IsTrue(serverResponse.Success);
-    // Checking that the data in the response is not empty
     Assert.IsNotNull(serverResponse.Set);
   }
 }
