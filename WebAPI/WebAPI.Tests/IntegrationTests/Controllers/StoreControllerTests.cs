@@ -35,6 +35,7 @@ public class StoreControllerTests
     // Act
     var response = await client.GetAsync("/api/store/GetAllProducts?pageNumber=1&pageSize=10");
     var content = await response.Content.ReadAsStringAsync();
+    
     // Deserializing a JSON response into a ServerResponse object
     var serverResponse = JsonSerializer.Deserialize<ServerResponse>(content, new JsonSerializerOptions 
     {
@@ -44,7 +45,7 @@ public class StoreControllerTests
     // Assert
     Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
     Assert.IsNotNull(serverResponse);
-    Assert.IsTrue(serverResponse.Success);
+    Assert.IsTrue(serverResponse.Success); // False -> if server has't started
     Assert.IsNotNull(serverResponse.Set);
   }
 }

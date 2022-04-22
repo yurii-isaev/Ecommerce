@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
+using WebAPI.Authentication.UseCases.Models;
 using WebAPI.Authentication.UseCases.Models.Input;
 
 namespace WebAPI.Tests.UnitTests;
 
-public class OrderTestModel
+public class TestModels
 {
-  public static readonly OrderDto TestOrderDto = new OrderDto
+  public static readonly OrderDto TestOrderDto = new()
   {
     Subtotal = 200.23412341m,
     Tax = 0m,
@@ -42,4 +44,12 @@ public class OrderTestModel
       UserId = "9833869f-2c8e-4986-90c8-ff256d5bc7e0"
     }
   };
+
+  public static readonly RegisterDto TestRegisterDto = new()
+  {
+    UserName = "TestUser",
+    Email = "test@example.com",
+    Password = "8V4-2wE-5tk-qKL"
+  };
+ 
 }

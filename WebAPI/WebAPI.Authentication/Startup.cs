@@ -97,6 +97,7 @@ namespace WebAPI.Authentication
           config.CreateMap<OrderDetailsDto, OrderDetails>().ReverseMap();
           config.CreateMap<OrderCardPaymentDto, OrderCardPayment>().ReverseMap();
           config.CreateMap<LayerDto, Layer>().ReverseMap();
+          config.CreateMap<RegisterDto, User>().ReverseMap();
         }
       );
       #endregion

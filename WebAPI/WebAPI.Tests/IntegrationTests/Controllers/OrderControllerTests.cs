@@ -66,7 +66,7 @@ public class OrderControllerTests
   public async Task CreateOrder_Returns_Ok_With_Valid_Order()
   {
     // Arrange
-    var testModel = OrderTestModel.TestOrderDto;
+    var testModel = TestModels.TestOrderDto;
     var serverResponse = new SuccessResponse(Messages.OrderCreatedSuccess, null);
     var content = new StringContent(JsonConvert.SerializeObject(testModel), Encoding.UTF8, "application/json");
 

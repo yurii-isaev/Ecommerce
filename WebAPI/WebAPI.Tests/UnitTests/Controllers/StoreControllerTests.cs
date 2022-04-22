@@ -12,7 +12,7 @@ using WebAPI.Authentication.UseCases.Models.Output;
 using WebAPI.Authentication.UseCases.Requests.Queries;
 using WebAPI.Authentication.UseCases.Types;
 
-namespace WebAPI.Tests.UnitTests;
+namespace WebAPI.Tests.UnitTests.Controllers;
 
 [TestFixture]
 public class StoreControllerTests

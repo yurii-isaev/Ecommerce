@@ -23,25 +23,27 @@ public class RegisterCommand : IRequest<ServerResponse>
   public RegisterDto RegisterDto { get; set; } = null!;
 }
 
-
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ServerResponse>
 {
   readonly IOptions<JwtOptions> _jwtOptions;
   readonly IHttpContextAccessor _httpContextAccessor;
   readonly IMapper _mapper;
   readonly UserManager<User> _userManager;
+  readonly RoleManager<IdentityRole> _roleManager;
 
   public RegisterCommandHandler
   (
     IOptions<JwtOptions> jwtOptions,
     IHttpContextAccessor httpContextAccessor,
     IMapper mapper,
+    RoleManager<IdentityRole> roleManager,
     UserManager<User> userManager
   )
   {
     _jwtOptions = jwtOptions;
     _httpContextAccessor = httpContextAccessor;
     _mapper = mapper;
+    _roleManager = roleManager;
     _userManager = userManager;
   }
 
@@ -63,6 +65,21 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ServerRes
       if (result.Succeeded)
       {
         var tempUser = await _userManager.FindByEmailAsync(request.RegisterDto.Email);
+
+        foreach (var role in RoleNames.AllRoles)
+        {
+          var roleExists = await _roleManager.RoleExistsAsync(role);
+          if (!roleExists)
+          {
+            Console.WriteLine($"Role {role} does not exist.");
+            return new SuccessResponse("Role CUSTOMER does not exist.", null);
+          }
+          else
+          {
+            Console.WriteLine($"Role {role} exists.");
+          }
+        }
+
         await _userManager.AddToRoleAsync(tempUser, RoleNames.AllRoles.ElementAt(0));
 
         // Get a user roles.
@@ -81,7 +98,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ServerRes
           Secure = true,
           SameSite = SameSiteMode.None
         });
-        
+
         return new SuccessResponse(Messages.RegistrationSuccess, profile);
       }
 

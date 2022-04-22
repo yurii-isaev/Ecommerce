@@ -13,7 +13,7 @@ using WebAPI.Authentication.UseCases.Requests.Commands;
 using WebAPI.Authentication.UseCases.Requests.Queries;
 using WebAPI.Authentication.UseCases.Types;
 
-namespace WebAPI.Tests.UnitTests;
+namespace WebAPI.Tests.UnitTests.Controllers;
 
 [TestFixture]
 public class OrderControllerTests
@@ -78,7 +78,7 @@ public class OrderControllerTests
   public async Task CreateOrder_Returns_OkResult_When_Successful()
   {
     // Arrange
-    var testModel = OrderTestModel.TestOrderDto;
+    var testModel = TestModels.TestOrderDto;
     var successResponse = new SuccessResponse("Order created successfully", testModel);
 
     // Mock
@@ -102,8 +102,8 @@ public class OrderControllerTests
   public async Task CreateOrder_Returns_InternalServerError_When_Exception_Occurs()
   {
     // Arrange
-    var testModel = OrderTestModel.TestOrderDto;
-    var responseError = new InternalServerError( "Internal Server Error");
+    var testModel = TestModels.TestOrderDto;
+    var responseError = new InternalServerError("Internal Server Error");
 
     // Mock
     _mediatorMock
