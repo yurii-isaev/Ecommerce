@@ -110,5 +110,42 @@ public class AuthControllerTests
     Assert.AreEqual("Role CUSTOMER does not exist.", response.Message);
   }
 
- 
+  [Authorize(Roles = "Customer")]
+  [Test]
+  public async Task GetAuthProfile_Returns_Profile_When_User_Is_Authenticated_By_Token()
+  {
+    // Arrange
+    var jwtToken = await TestToken.GenerateJwtToken(_serviceProvider);
+    var expectedProfile = TestModels.TestProfileDto;
+
+    var request = new HttpRequestMessage(HttpMethod.Get, "/api/auth/GetAuthProfile");
+    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+    _mediatorMock
+      .Setup(m => m.Send(It.IsAny<GetAuthProfileQuery>(), It.IsAny<CancellationToken>()))
+      .ReturnsAsync(new SuccessResponse(Messages.AuthSuccess, new { profile = expectedProfile }));
+    
+    // Act
+    var response = await _client.SendAsync(request);
+    var responseString = await response.Content.ReadAsStringAsync();
+    response.EnsureSuccessStatusCode();
+
+    // Assert
+    Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+    Assert.IsTrue(responseString.Contains("profile"));
+  }
+
+  [Authorize(Roles = "Customer")]
+  [Test]
+  public async Task GetAuthProfile_Returns_Unauthorized_When_User_Is_Not_Authenticated()
+  {
+    // Arrange
+    var request = new HttpRequestMessage(HttpMethod.Get, "/api/auth/GetAuthProfile");
+
+    // Act
+    var response = await _client.SendAsync(request);
+
+    // Assert
+    Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+  }
 }

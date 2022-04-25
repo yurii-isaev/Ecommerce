@@ -83,5 +83,60 @@ public class AuthControllerTests
     Assert.AreEqual(Messages.RegistrationFailed, responseData.Message);
   }
 
+  [Test]
+  public async Task GetAuthProfile_Returns_OkObjectResult_With_Profile()
+  {
+    // Arrange
+    var expectedProfile = TestModels.TestProfileDto;
+    var successResponse = new SuccessResponse(Messages.AuthSuccess, new {profile = expectedProfile});
 
+    // Mock
+    _mediatorMock
+      .Setup(m => m.Send(It.IsAny<GetAuthProfileQuery>(), CancellationToken.None))
+      .ReturnsAsync(successResponse);
+
+    // Act
+    var response = await _controller.GetAuthProfile();
+
+    // Assert
+    var okResult = response as OkObjectResult;
+    Assert.NotNull(okResult);
+    Assert.AreEqual(StatusCodes.Status200OK, okResult.StatusCode);
+
+    var responseData = okResult.Value as SuccessResponse;
+    Assert.NotNull(responseData);
+    Assert.IsInstanceOf<ProfileDto>(responseData.Set.profile);
+
+    var profile = responseData.Set.profile as ProfileDto;
+    Assert.AreEqual(expectedProfile.Id, profile.Id);
+    Assert.AreEqual(expectedProfile.UserName, profile.UserName);
+    Assert.AreEqual(expectedProfile.Email, profile.Email);
+    Assert.AreEqual(expectedProfile.Role, profile.Role);
+  }
+
+  [Test]
+  public async Task GetAuthProfile_Returns_InternalServerError_When_Exception_Occurs()
+  {
+    // Arrange
+    var errorMessage = "internal Server Error";
+    var errorResponse = new InternalServerError(Messages.ServerError + errorMessage);
+
+    // Mock
+    _mediatorMock
+      .Setup(m => m.Send(It.IsAny<GetAuthProfileQuery>(), CancellationToken.None))
+      .ReturnsAsync(errorResponse);
+
+    // Act
+    var response = await _controller.GetAuthProfile();
+
+    // Assert
+    var objectResult = response as ObjectResult;
+    Assert.NotNull(objectResult);
+    Assert.AreEqual((int) HttpStatusCode.OK, objectResult.StatusCode);
+
+    var responseData = objectResult.Value as InternalServerError;
+    Assert.NotNull(responseData);
+    Assert.AreEqual((int) HttpStatusCode.InternalServerError, responseData.Code);
+    Assert.AreEqual(Messages.ServerError + errorMessage, responseData.Message);
+  }
 }

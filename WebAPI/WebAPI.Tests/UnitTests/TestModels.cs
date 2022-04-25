@@ -51,5 +51,13 @@ public class TestModels
     Email = "test@example.com",
     Password = "8V4-2wE-5tk-qKL"
   };
- 
+  
+  public static readonly ProfileDto TestProfileDto = new()
+  {
+    Id = "a70d0fe0-1ab4-4b07-a90c-1c270481bf7b",
+    Email = "test@example.com",
+    UserName = "TestUser",
+    DateCreated = new DateTime(),
+    Role = "Customer"
+  };
 }

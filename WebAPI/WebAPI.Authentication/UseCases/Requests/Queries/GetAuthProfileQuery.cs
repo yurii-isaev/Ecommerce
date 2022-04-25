@@ -67,7 +67,7 @@ public class GetAuthProfileQueryHandler : IRequestHandler<GetAuthProfileQuery, S
             Role = userRole
           };
 
-          // Return a successful response with the user's profile.
+          // Return a successful async response with the user's profile.
           return Task.FromResult<ServerResponse>(new SuccessResponse(Messages.AuthSuccess, new {profile}));
         }
       }
