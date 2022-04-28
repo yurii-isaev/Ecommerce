@@ -123,8 +123,8 @@ public class AuthControllerTests
 
     _mediatorMock
       .Setup(m => m.Send(It.IsAny<GetAuthProfileQuery>(), It.IsAny<CancellationToken>()))
-      .ReturnsAsync(new SuccessResponse(Messages.AuthSuccess, new { profile = expectedProfile }));
-    
+      .ReturnsAsync(new SuccessResponse(Messages.AuthSuccess, new {profile = expectedProfile}));
+
     // Act
     var response = await _client.SendAsync(request);
     var responseString = await response.Content.ReadAsStringAsync();
@@ -148,4 +148,61 @@ public class AuthControllerTests
     // Assert
     Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
   }
+
+  [Test] // System.Exception : Failed to create test user if user already created
+  public async Task Logout_Should_Return_Ok_When_Authorized()
+  {
+    // Arrange
+    var jwtToken = await TestToken.GenerateJwtToken(_serviceProvider, "testUser");
+    var serverResponse = new SuccessResponse(Messages.LogoutSuccess, null);
+    _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+    // Mock
+    _mediatorMock
+      .Setup(m => m.Send(It.IsAny<LogoutCommand>(), It.IsAny<CancellationToken>()))
+      .ReturnsAsync(serverResponse);
+
+    // Act
+    HttpResponseMessage response = await _client.PostAsync("/api/auth/Logout", null);
+    response.EnsureSuccessStatusCode();
+    var responseBody = await response.Content.ReadAsStringAsync();
+
+    // Assert
+    Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+    Assert.IsNotNull(response);
+
+    var result = JsonConvert.DeserializeObject<SuccessResponse>(responseBody);
+    Assert.IsNotNull(result);
+    Assert.IsNull(result.Set);
+    Assert.AreEqual(Messages.LogoutSuccess, result.Message);
+
+    _mediatorMock.Verify(m => m.Send(It.IsAny<LogoutCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+  }
+
+  [Test]
+  public async Task Logout_Should_Return_InternalServerError()
+  {
+    // Arrange
+    var jwtToken = await TestToken.GenerateJwtToken(_serviceProvider, "testUser");
+    var serverResponse = new InternalServerError(Messages.ServerError);
+    _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+    // Mock
+    _mediatorMock
+      .Setup(m => m.Send(It.IsAny<LogoutCommand>(), It.IsAny<CancellationToken>()))
+      .ReturnsAsync(serverResponse);
+
+    // Act
+    HttpResponseMessage response = await _client.PostAsync("/api/auth/Logout", null);
+    var responseBody = await response.Content.ReadAsStringAsync();
+
+    // Assert
+    Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+    Assert.IsNotNull(response);
+
+    var result = JsonConvert.DeserializeObject<SuccessResponse>(responseBody);
+    Assert.IsNotNull(result);
+    Assert.AreEqual(Messages.ServerError, result.Message);
+  }
+  
 }

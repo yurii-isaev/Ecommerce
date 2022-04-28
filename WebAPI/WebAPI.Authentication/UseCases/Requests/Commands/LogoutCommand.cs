@@ -21,8 +21,6 @@ public class LogoutCommand: IRequest<ServerResponse>
 
 public class LogoutCommandHandler : IRequestHandler<LogoutCommand, ServerResponse>
 {
-  /// <summary> Handles a request.</summary>
-  /// <returns>Returns Server Response.</returns>
   public Task<ServerResponse> Handle(LogoutCommand request, CancellationToken token)
   {
     var httpContext = request.HttpContext;
@@ -40,8 +38,7 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, ServerRespons
         
       // Applying the cookie setting.
       httpContext.Response.Cookies.Append(Messages.JwtCookiesKey, "", cookieOptions);
-        
-      // Return a success flag.
+      
       return Task.FromResult<ServerResponse>(new SuccessResponse(Messages.LogoutSuccess, null));
     }
     catch (Exception e)

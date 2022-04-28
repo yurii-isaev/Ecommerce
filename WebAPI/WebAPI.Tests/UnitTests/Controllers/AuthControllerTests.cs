@@ -48,7 +48,7 @@ public class AuthControllerTests
     Assert.NotNull(okResult);
     Assert.AreEqual((int) HttpStatusCode.OK, okResult.StatusCode);
     Assert.AreEqual(serverResponse, okResult!.Value);
-    
+
     var responseData = okResult.Value as ServerResponse;
     Assert.NotNull(responseData);
     Assert.NotNull(responseData.Set);
@@ -118,8 +118,7 @@ public class AuthControllerTests
   public async Task GetAuthProfile_Returns_InternalServerError_When_Exception_Occurs()
   {
     // Arrange
-    var errorMessage = "internal Server Error";
-    var errorResponse = new InternalServerError(Messages.ServerError + errorMessage);
+    var errorResponse = new InternalServerError(Messages.ServerError);
 
     // Mock
     _mediatorMock
@@ -137,6 +136,57 @@ public class AuthControllerTests
     var responseData = objectResult.Value as InternalServerError;
     Assert.NotNull(responseData);
     Assert.AreEqual((int) HttpStatusCode.InternalServerError, responseData.Code);
-    Assert.AreEqual(Messages.ServerError + errorMessage, responseData.Message);
+    Assert.AreEqual(Messages.ServerError, responseData.Message);
+  }
+
+  [Test]
+  public async Task Logout_Should_Return_Ok()
+  {
+    // Arrange
+    var serverResponse = new SuccessResponse(Messages.LogoutSuccess, null);
+
+    // Mock
+    _mediatorMock
+      .Setup(m => m.Send(It.IsAny<LogoutCommand>(), It.IsAny<CancellationToken>()))
+      .ReturnsAsync(serverResponse);
+
+    // Act
+    var response = await _controller.Logout();
+
+    // Assert
+    var okResult = response as OkObjectResult;
+    Assert.IsNotNull(okResult);
+    Assert.AreEqual((int) HttpStatusCode.OK, okResult.StatusCode);
+    Assert.AreEqual(serverResponse, okResult.Value);
+
+    var responseData = okResult.Value as SuccessResponse;
+    Assert.NotNull(responseData);
+    Assert.AreEqual((int) HttpStatusCode.OK, responseData.Code);
+    Assert.AreEqual(Messages.LogoutSuccess, responseData.Message);
+  }
+
+  [Test]
+  public async Task Logout_Should_Return_InternalServerError_On_Exception()
+  {
+    // Arrange
+    var errorResponse = new InternalServerError(Messages.ServerError);
+
+    // Mock
+    _mediatorMock
+      .Setup(m => m.Send(It.IsAny<LogoutCommand>(), It.IsAny<CancellationToken>()))
+      .ReturnsAsync(errorResponse);
+
+    // Act
+    var response = await _controller.Logout();
+
+    // Assert
+    var objectResult = response as ObjectResult;
+    Assert.NotNull(objectResult);
+    Assert.AreEqual((int) HttpStatusCode.OK, objectResult.StatusCode);
+
+    var responseData = objectResult.Value as InternalServerError;
+    Assert.NotNull(responseData);
+    Assert.AreEqual((int) HttpStatusCode.InternalServerError, responseData.Code);
+    Assert.AreEqual(Messages.ServerError, responseData.Message);
   }
 }
