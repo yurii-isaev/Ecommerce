@@ -9,6 +9,7 @@ public class TestModels
 {
   public static readonly OrderDto TestOrderDto = new()
   {
+    Id = "5B5A1E98-BC38-4387-AFCF-AB8B0125A3AC",
     Subtotal = 200.23412341m,
     Tax = 0m,
     Total = 200.23412341m,

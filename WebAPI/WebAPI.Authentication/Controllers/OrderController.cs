@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Authentication.UseCases.Models.Input;
 using WebAPI.Authentication.UseCases.Requests.Commands;
@@ -16,9 +17,9 @@ public class OrderController : BaseController
   
   /// <remarks>
   /// Sample request:
-  /// POST -> http://localhost:5000/api/order/CreateOrder
+  /// POST -> ../order/CreateOrder
   /// </remarks>
-  // [Authorize(Roles = "Customer")]
+  [Authorize(Roles = "Customer")]
   [HttpPost("CreateOrder")]
   public async Task<IActionResult> CreateOrder([FromBody] OrderDto order)
   {
@@ -28,9 +29,9 @@ public class OrderController : BaseController
 
   /// <remarks>
   /// Sample request:
-  /// GET -> http://localhost:5000/api/order/GetOrderList/{userId}
+  /// GET -> ../order/GetOrderList/{userId}
   /// </remarks>
-  // [Authorize(Roles = "Customer")]
+  [Authorize(Roles = "Customer")]
   [HttpGet("GetOrderList/{userId}")]
   public async Task<IActionResult> GetOrderList(string userId)
   {
@@ -40,9 +41,9 @@ public class OrderController : BaseController
   
   /// <remarks>
   /// Sample request:
-  /// DELETE -> http://localhost:5000/api/order/DeleteOrder/{orderId}
+  /// DELETE -> ../order/DeleteOrder/{orderId}
   /// </remarks>
-  //[Authorize(Roles = "Customer")]
+  [Authorize(Roles = "Customer")]
   [HttpDelete("DeleteOrder/{orderId}")]
   public async Task<IActionResult> DeleteOrder(string orderId)
   {

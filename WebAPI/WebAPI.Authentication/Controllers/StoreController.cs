@@ -15,7 +15,7 @@ public class StoreController : BaseController
 
   /// <remarks>
   /// Sample request:
-  /// GET http://localhost:5000/api/store/GetAllProducts
+  /// GET -> ../store/GetAllProducts
   /// </remarks>
   [AllowAnonymous]
   [HttpGet("GetAllProducts")]

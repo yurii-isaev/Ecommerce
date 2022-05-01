@@ -32,7 +32,7 @@ public class OrderControllerTests
   public async Task GetOrderList_Returns_OkResult_With_User_Order_List()
   {
     // Arrange
-    var userId = "9833869f-2c8e-4986-90c8-ff256d5bc7e0";
+    var userId = TestModels.TestOrderDto.UserId;
     var expectedOrderList = new List<Order>();
     var serverResponse = new SuccessResponse(Messages.GetOrderListSuccess, expectedOrderList);
 
@@ -41,22 +41,27 @@ public class OrderControllerTests
       .ReturnsAsync(serverResponse);
 
     // Act
-    var result = await _orderController.GetOrderList(userId);
-    var response = (OkObjectResult) result;
+    var response = await _orderController.GetOrderList(userId);
 
     // Assert
-    Assert.IsInstanceOf<OkObjectResult>(result);
-    Assert.AreEqual((int) HttpStatusCode.OK, response.StatusCode);
-    Assert.AreEqual((int) HttpStatusCode.OK, ((ServerResponse) response.Value)!.Code);
-    Assert.AreEqual(serverResponse, response.Value);
+    var okResult = response as ObjectResult;
+    Assert.NotNull(okResult);
+    Assert.AreEqual((int) HttpStatusCode.OK, okResult.StatusCode);
+    Assert.AreEqual(serverResponse, okResult!.Value);
+
+    var responseData = okResult.Value as ServerResponse;
+    Assert.NotNull(responseData);
+    Assert.AreEqual((int) HttpStatusCode.OK, responseData.Code);
+    Assert.AreEqual(Messages.GetOrderListSuccess, responseData.Message);
+    Assert.NotNull(responseData.Set);
   }
 
   [Test]
   public async Task GetOrderList_Returns_InternalServerError_When_Exception_Occurs()
   {
     // Arrange
-    var userId = "9833869f-2c8e-4986-90c8-ff256d5bc7e0";
-    var serverResponse = new InternalServerError("Internal Server Error");
+    var userId = TestModels.TestOrderDto.UserId;
+    var serverResponse = new InternalServerError(Messages.ServerError);
 
     // Mock
     _mediatorMock
@@ -64,14 +69,18 @@ public class OrderControllerTests
       .ReturnsAsync(serverResponse);
 
     // Act
-    var result = await _orderController.GetOrderList(userId);
-    var response = (ObjectResult) result;
+    var response = await _orderController.GetOrderList(userId);
 
     // Assert
-    Assert.IsInstanceOf<ObjectResult>(result);
-    Assert.AreEqual((int) HttpStatusCode.OK, response.StatusCode);
-    Assert.AreEqual((int) HttpStatusCode.InternalServerError, ((InternalServerError) response.Value)!.Code);
-    Assert.AreEqual(serverResponse, response.Value);
+    var errorResult = response as ObjectResult;
+    Assert.NotNull(errorResult);
+    Assert.AreEqual((int) HttpStatusCode.OK, errorResult.StatusCode);
+    Assert.AreEqual(serverResponse, errorResult!.Value);
+
+    var responseData = errorResult!.Value as ServerResponse;
+    Assert.NotNull(serverResponse);
+    Assert.AreEqual((int) HttpStatusCode.InternalServerError, responseData.Code);
+    Assert.AreEqual(serverResponse, errorResult.Value);
   }
 
   [Test]
@@ -79,23 +88,27 @@ public class OrderControllerTests
   {
     // Arrange
     var testModel = TestModels.TestOrderDto;
-    var successResponse = new SuccessResponse("Order created successfully", testModel);
+    var serverResponse = new SuccessResponse(Messages.OrderCreatedSuccess, testModel);
 
     // Mock
     _mediatorMock
       .Setup(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()))
-      .ReturnsAsync(successResponse);
+      .ReturnsAsync(serverResponse);
 
     // Act
-    var result = await _orderController.CreateOrder(testModel);
-    var response = result as OkObjectResult;
+    var response = await _orderController.CreateOrder(testModel);
 
     // Assert
-    Assert.IsInstanceOf<OkObjectResult>(result);
-    Assert.IsNotNull(response);
-    Assert.AreEqual((int) HttpStatusCode.OK, response.StatusCode);
-    Assert.AreEqual((int) HttpStatusCode.OK, ((ServerResponse) response.Value)!.Code);
-    Assert.AreEqual(successResponse, response.Value);
+    var okResult = response as ObjectResult;
+    Assert.NotNull(okResult);
+    Assert.AreEqual((int) HttpStatusCode.OK, okResult.StatusCode);
+    Assert.AreEqual(serverResponse, okResult!.Value);
+
+    var responseData = okResult.Value as ServerResponse;
+    Assert.NotNull(responseData);
+    Assert.AreEqual((int) HttpStatusCode.OK, responseData.Code);
+    Assert.AreEqual(Messages.OrderCreatedSuccess, responseData.Message);
+    Assert.NotNull(responseData.Set);
   }
 
   [Test]
@@ -103,22 +116,25 @@ public class OrderControllerTests
   {
     // Arrange
     var testModel = TestModels.TestOrderDto;
-    var responseError = new InternalServerError("Internal Server Error");
+    var serverResponse = new InternalServerError(Messages.ServerError);
 
     // Mock
     _mediatorMock
       .Setup(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()))
-      .ReturnsAsync(responseError);
+      .ReturnsAsync(serverResponse);
 
     // Act
-    var result = await _orderController.CreateOrder(testModel);
-    var response = result as ObjectResult;
+    var response = await _orderController.CreateOrder(testModel);
 
     // Assert
-    Assert.IsInstanceOf<OkObjectResult>(result);
-    Assert.IsNotNull(response);
-    Assert.AreEqual((int) HttpStatusCode.OK, response.StatusCode);
-    Assert.AreEqual((int) HttpStatusCode.InternalServerError, ((InternalServerError) response.Value)!.Code);
-    Assert.AreEqual(responseError, response.Value);
+    var errorResult = response as ObjectResult;
+    Assert.NotNull(errorResult);
+    Assert.AreEqual((int) HttpStatusCode.OK, errorResult.StatusCode);
+    Assert.AreEqual(serverResponse, errorResult!.Value);
+
+    var responseData = errorResult!.Value as InternalServerError;
+    Assert.NotNull(response);
+    Assert.AreEqual((int) HttpStatusCode.InternalServerError, responseData.Code);
+    Assert.AreEqual(serverResponse, errorResult.Value);
   }
 }

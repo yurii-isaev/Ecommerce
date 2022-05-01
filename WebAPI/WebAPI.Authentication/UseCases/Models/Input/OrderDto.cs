@@ -4,6 +4,8 @@ namespace WebAPI.Authentication.UseCases.Models.Input;
 
 public class OrderDto
 {
+  public string? Id { get; set; }
+  
   public decimal Subtotal { get; set; }
 
   public decimal Tax { get; set; }

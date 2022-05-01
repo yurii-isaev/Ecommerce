@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -48,17 +49,18 @@ public class StoreControllerTests
       .ReturnsAsync(serverResponse);
 
     // Act
-    var result = await _controller.GetAllProducts(pageNumber, pageSize);
-    var okResult = result as OkObjectResult;
-    var realResponse = okResult!.Value as SuccessResponse;
-    var realResponseSet = realResponse!.Set;
-
+    var response = await _controller.GetAllProducts(pageNumber, pageSize);
+    
     // Assert
-    Assert.IsInstanceOf<OkObjectResult>(result);
-    Assert.IsNotNull(okResult);
-    Assert.IsNotNull(realResponse);
-    Assert.IsNotNull(realResponseSet);
-    Assert.AreEqual(dataSet, realResponseSet);
+    var okResult = response as ObjectResult;
+    Assert.NotNull(okResult);
+    Assert.AreEqual((int) HttpStatusCode.OK, okResult.StatusCode);
+
+    var responseData = okResult.Value as SuccessResponse;
+    Assert.NotNull(responseData);
+    Assert.IsNotNull(responseData.Set);
+    Assert.AreEqual((int) HttpStatusCode.OK, responseData.Code);
+    Assert.AreEqual(Messages.GetProductListSuccess, responseData.Message);
   }
   
   [Test]
@@ -67,25 +69,24 @@ public class StoreControllerTests
     // Arrange
     var pageNumber = 1;
     var pageSize = 10;
-    var exception = new InternalServerError("Internal Server Error");
+    var serverResponse = new InternalServerError(Messages.ServerError);
 
     // Mock
     _mockMediator
       .Setup(m => m.Send(It.IsAny<GetProductsListQuery>(), It.IsAny<CancellationToken>()))
-      .ReturnsAsync(exception);
+      .ReturnsAsync(serverResponse);
 
     // Act
-    var result = await _controller.GetAllProducts(pageNumber, pageSize);
-    var objectResult = result as ObjectResult;
-    var serverResponse = objectResult!.Value as ServerResponse;
+    var response = await _controller.GetAllProducts(pageNumber, pageSize);
 
     // Assert
-    Assert.IsInstanceOf<ObjectResult>(result);
-    Assert.IsNotNull(objectResult);
-    Assert.AreEqual(exception, objectResult.Value);
+    var errorResult = response as ObjectResult;
+    Assert.IsNotNull(errorResult);
+    Assert.AreEqual(serverResponse, errorResult.Value);
 
-    Assert.IsNotNull(serverResponse);
-    Assert.IsFalse(serverResponse.Success);
-    Assert.AreEqual(exception.Message, serverResponse.Message);
+    var responseData = errorResult!.Value as ServerResponse;
+    Assert.IsNotNull(responseData);
+    Assert.IsFalse(responseData.Success);
+    Assert.AreEqual(serverResponse.Message, responseData.Message);
   }
 }

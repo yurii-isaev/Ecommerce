@@ -36,6 +36,7 @@ public class CreateOrderCommandTests
     var order = new Order();
     var serverResponse = new SuccessResponse(Messages.OrderCreatedSuccess, null);
 
+    // Mock
     _mapperMock
       .Setup(m => m.Map<Order>(It.IsAny<OrderDto>()))
       .Returns(order);
@@ -62,6 +63,7 @@ public class CreateOrderCommandTests
     var exceptionMessage = "An error occurred while creating the order.";
     var serverResponse = new InternalServerError("OrderCommand: " + exceptionMessage);
 
+    // Mock
     _mapperMock
       .Setup(m => m.Map<Order>(It.IsAny<OrderDto>()))
       .Throws(new Exception(exceptionMessage));

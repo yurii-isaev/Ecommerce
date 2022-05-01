@@ -27,7 +27,7 @@ public class DeleteOrderCommandTests
   public async Task Handle_Valid_OrderId_Deletes_Order()
   {
     // Arrange
-    var orderId = "5B5A1E98-BC38-4387-AFCF-AB8B0125A3AC"; // Provide a valid order id
+    var orderId = TestModels.TestOrderDto.Id;
     var repositoryMock = new Mock<IOrderRepository>();
 
     repositoryMock
@@ -50,7 +50,7 @@ public class DeleteOrderCommandTests
   public async Task Handle_Should_Return_InternalServerError_When_DeleteOrderAsync_Throws_Exception()
   {
     // Arrange
-    var orderId = "5B5A1E98-BC38-4387-AFCF-AB8B0125A3AC";
+    var orderId = TestModels.TestOrderDto.Id;
     var command = new DeleteOrderCommand {OrderId = orderId};
 
     // Mock

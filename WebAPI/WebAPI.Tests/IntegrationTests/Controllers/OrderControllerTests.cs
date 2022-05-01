@@ -1,13 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,7 @@ using WebAPI.Authentication.UseCases.Models.Output;
 using WebAPI.Authentication.UseCases.Requests.Commands;
 using WebAPI.Authentication.UseCases.Requests.Queries;
 using WebAPI.Authentication.UseCases.Types;
+using WebAPI.Tests.IntegrationTests.Setup;
 using WebAPI.Tests.UnitTests;
 
 namespace WebAPI.Tests.IntegrationTests.Controllers;
@@ -32,6 +34,7 @@ public class OrderControllerTests
   private HttpClient _client;
   private Mock<IMediator> _mediatorMock;
   private IConfigurationRoot _configuration;
+  private IServiceProvider _serviceProvider;
 
   [SetUp]
   public void Setup()
@@ -50,6 +53,7 @@ public class OrderControllerTests
       builder.ConfigureServices(services => services.AddScoped(_ => _mediatorMock.Object));
     });
 
+    _serviceProvider = _factory.Services;
     _client = _factory.CreateClient();
   }
 
@@ -61,14 +65,19 @@ public class OrderControllerTests
     _factory?.Dispose();
   }
 
-  [AllowAnonymous]
   [Test]
   public async Task CreateOrder_Returns_Ok_With_Valid_Order()
   {
     // Arrange
     var testModel = TestModels.TestOrderDto;
     var serverResponse = new SuccessResponse(Messages.OrderCreatedSuccess, null);
+    var token = await TestToken.GenerateJwtToken(_serviceProvider);
     var content = new StringContent(JsonConvert.SerializeObject(testModel), Encoding.UTF8, "application/json");
+
+    // Headers
+    var request = new HttpRequestMessage(HttpMethod.Post, "/api/order/CreateOrder");
+    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    request.Content = content;
 
     // Mock
     _mediatorMock
@@ -76,22 +85,26 @@ public class OrderControllerTests
       .ReturnsAsync(serverResponse);
 
     // Act
-    var response = await _client.PostAsync("/api/order/CreateOrder", content);
-    var responseString = await response.Content.ReadAsStringAsync();
+    var httpResponse = await _client.SendAsync(request);
+    var responseString = await httpResponse.Content.ReadAsStringAsync();
 
     // Assert
-    Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+    Assert.AreEqual(HttpStatusCode.OK, httpResponse.StatusCode);
     Assert.IsTrue(responseString.Contains(Messages.OrderCreatedSuccess));
   }
 
-  [AllowAnonymous]
   [Test]
   public async Task GetOrderList_Returns_Ok_With_User_Order_List()
   {
     // Arrange
-    var userId = "9833869f-2c8e-4986-90c8-ff256d5bc7e0";
+    var userId = TestModels.TestOrderDto.UserId;
     var expectedOrderList = new List<Order>();
     var serverResponse = new SuccessResponse(Messages.GetOrderListSuccess, expectedOrderList);
+    var token = await TestToken.GenerateJwtToken(_serviceProvider);
+
+    // Headers
+    var request = new HttpRequestMessage(HttpMethod.Get, $"/api/order/GetOrderList/{userId}");
+    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
     // Mock
     _mediatorMock
@@ -99,7 +112,7 @@ public class OrderControllerTests
       .ReturnsAsync(serverResponse);
 
     // Act
-    var httpResponse = await _client.GetAsync($"/api/order/GetOrderList/{userId}");
+    var httpResponse = await _client.SendAsync(request);
     var responseString = await httpResponse.Content.ReadAsStringAsync();
     var response = JsonConvert.DeserializeObject<SuccessResponse>(responseString);
     var orders = ((JArray) response.Set)!.ToObject<List<Order>>();
@@ -117,13 +130,17 @@ public class OrderControllerTests
     Assert.IsTrue(orders.All(_ => true));
   }
 
-  [AllowAnonymous]
   [Test]
   public async Task DeleteOrder_With_Valid_OrderId_Returns_Ok()
   {
     // Arrange
-    var orderId = "5B5A1E98-BC38-4387-AFCF-AB8B0125A3AC";
+    var orderId = TestModels.TestOrderDto.Id;
     var serverResponse = new SuccessResponse(Messages.OrderDeleteSuccess, null);
+    var token = await TestToken.GenerateJwtToken(_serviceProvider, "testUser");
+
+    // Headers
+    var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/order/DeleteOrder/{orderId}");
+    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
     // Mock
     _mediatorMock
@@ -131,8 +148,7 @@ public class OrderControllerTests
       .ReturnsAsync(serverResponse);
 
     // Act
-    var httpResponse = await _client.DeleteAsync($"/api/order/DeleteOrder/{orderId}");
-    httpResponse.EnsureSuccessStatusCode(); // The method throws an exception if the status code is not successful
+    var httpResponse = await _client.SendAsync(request);
     var responseBody = await httpResponse.Content.ReadAsStringAsync();
     var response = JsonConvert.DeserializeObject<SuccessResponse>(responseBody);
 
@@ -143,13 +159,17 @@ public class OrderControllerTests
     Assert.AreEqual(Messages.OrderDeleteSuccess, response.Message);
   }
 
-  [AllowAnonymous]
   [Test]
   public async Task DeleteOrder_With_Valid_OrderId_Returns_InternalServerError()
   {
     // Arrange
-    var orderId = "5B5A1E98-BC38-4387-AFCF-AB8B0125A3AC";
-    var serverResponse = new InternalServerError("Internal Server Error");
+    var orderId = TestModels.TestOrderDto.Id;
+    var serverResponse = new InternalServerError(Messages.ServerError);
+    var token = await TestToken.GenerateJwtToken(_serviceProvider, "testUser");
+
+    // Headers
+    var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/order/DeleteOrder/{orderId}");
+    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
     // Mock
     _mediatorMock
@@ -157,14 +177,14 @@ public class OrderControllerTests
       .ReturnsAsync(serverResponse);
 
     // Act
-    var httpResponse = await _client.DeleteAsync($"/api/order/DeleteOrder/{orderId}");
+    var httpResponse = await _client.SendAsync(request);
     var responseBody = await httpResponse.Content.ReadAsStringAsync();
     var response = JsonConvert.DeserializeObject<InternalServerError>(responseBody);
 
     // Assert
     Assert.AreEqual(HttpStatusCode.OK, httpResponse.StatusCode);
     Assert.IsNotNull(response);
-    Assert.IsNull(response.Set);
     Assert.AreEqual(serverResponse.Message, response.Message);
+    Assert.IsNull(response.Set);
   }
 }

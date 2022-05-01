@@ -42,7 +42,7 @@ public class AuthController : BaseController
 
   /// <remarks>
   /// Sample request:
-  /// GET -> http://localhost:5000/api/auth/GetAuthProfile.
+  /// GET -> ../auth/GetAuthProfile.
   /// + Bearer Token in headers
   /// </remarks>
   [Authorize(Roles = "Customer")]

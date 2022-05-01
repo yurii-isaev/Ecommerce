@@ -9,7 +9,7 @@ using WebAPI.Authentication;
 using WebAPI.Authentication.DataAccess;
 using WebAPI.Authentication.UseCases.Types;
 
-namespace WebAPI.Tests.IntegrationTests;
+namespace WebAPI.Tests.IntegrationTests.Setup;
 
 /// <summary>
 /// Factory for executing integration api tests using DbContext.

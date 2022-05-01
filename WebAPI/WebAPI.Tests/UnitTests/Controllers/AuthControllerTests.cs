@@ -51,9 +51,9 @@ public class AuthControllerTests
 
     var responseData = okResult.Value as ServerResponse;
     Assert.NotNull(responseData);
-    Assert.NotNull(responseData.Set);
     Assert.AreEqual((int) HttpStatusCode.OK, responseData.Code);
     Assert.AreEqual(Messages.RegistrationSuccess, responseData.Message);
+    Assert.NotNull(responseData.Set);
   }
 
   [Test]
@@ -81,19 +81,20 @@ public class AuthControllerTests
     Assert.NotNull(responseData);
     Assert.AreEqual((int) HttpStatusCode.InternalServerError, responseData.Code);
     Assert.AreEqual(Messages.RegistrationFailed, responseData.Message);
+    Assert.IsNull(responseData.Set);
   }
 
   [Test]
-  public async Task GetAuthProfile_Returns_OkObjectResult_With_Profile()
+  public async Task GetAuthProfile_Returns_Ok_Result_With_Profile()
   {
     // Arrange
     var expectedProfile = TestModels.TestProfileDto;
-    var successResponse = new SuccessResponse(Messages.AuthSuccess, new {profile = expectedProfile});
+    var serverResponse = new SuccessResponse(Messages.AuthSuccess, new {profile = expectedProfile});
 
     // Mock
     _mediatorMock
       .Setup(m => m.Send(It.IsAny<GetAuthProfileQuery>(), CancellationToken.None))
-      .ReturnsAsync(successResponse);
+      .ReturnsAsync(serverResponse);
 
     // Act
     var response = await _controller.GetAuthProfile();
@@ -105,10 +106,10 @@ public class AuthControllerTests
 
     var responseData = okResult.Value as SuccessResponse;
     Assert.NotNull(responseData);
-    Assert.IsInstanceOf<ProfileDto>(responseData.Set.profile);
+    Assert.IsInstanceOf<ProfileDto>(responseData.Set!.profile);
 
     var profile = responseData.Set.profile as ProfileDto;
-    Assert.AreEqual(expectedProfile.Id, profile.Id);
+    Assert.AreEqual(expectedProfile.Id, profile!.Id);
     Assert.AreEqual(expectedProfile.UserName, profile.UserName);
     Assert.AreEqual(expectedProfile.Email, profile.Email);
     Assert.AreEqual(expectedProfile.Role, profile.Role);
@@ -118,12 +119,12 @@ public class AuthControllerTests
   public async Task GetAuthProfile_Returns_InternalServerError_When_Exception_Occurs()
   {
     // Arrange
-    var errorResponse = new InternalServerError(Messages.ServerError);
+    var serverResponse = new InternalServerError(Messages.ServerError);
 
     // Mock
     _mediatorMock
       .Setup(m => m.Send(It.IsAny<GetAuthProfileQuery>(), CancellationToken.None))
-      .ReturnsAsync(errorResponse);
+      .ReturnsAsync(serverResponse);
 
     // Act
     var response = await _controller.GetAuthProfile();
@@ -137,6 +138,7 @@ public class AuthControllerTests
     Assert.NotNull(responseData);
     Assert.AreEqual((int) HttpStatusCode.InternalServerError, responseData.Code);
     Assert.AreEqual(Messages.ServerError, responseData.Message);
+    Assert.IsNull(responseData.Set);
   }
 
   [Test]
@@ -144,7 +146,7 @@ public class AuthControllerTests
   {
     // Arrange
     var serverResponse = new SuccessResponse(Messages.LogoutSuccess, null);
-
+    
     // Mock
     _mediatorMock
       .Setup(m => m.Send(It.IsAny<LogoutCommand>(), It.IsAny<CancellationToken>()))
@@ -158,23 +160,24 @@ public class AuthControllerTests
     Assert.IsNotNull(okResult);
     Assert.AreEqual((int) HttpStatusCode.OK, okResult.StatusCode);
     Assert.AreEqual(serverResponse, okResult.Value);
-
+    
     var responseData = okResult.Value as SuccessResponse;
     Assert.NotNull(responseData);
-    Assert.AreEqual((int) HttpStatusCode.OK, responseData.Code);
+    Assert.AreEqual((int)  HttpStatusCode.OK, responseData.Code);
     Assert.AreEqual(Messages.LogoutSuccess, responseData.Message);
+    Assert.IsNull(responseData.Set);
   }
-
+  
   [Test]
   public async Task Logout_Should_Return_InternalServerError_On_Exception()
   {
     // Arrange
-    var errorResponse = new InternalServerError(Messages.ServerError);
-
+    var serverResponse = new InternalServerError(Messages.ServerError);
+    
     // Mock
     _mediatorMock
       .Setup(m => m.Send(It.IsAny<LogoutCommand>(), It.IsAny<CancellationToken>()))
-      .ReturnsAsync(errorResponse);
+      .ReturnsAsync(serverResponse);
 
     // Act
     var response = await _controller.Logout();
@@ -188,5 +191,6 @@ public class AuthControllerTests
     Assert.NotNull(responseData);
     Assert.AreEqual((int) HttpStatusCode.InternalServerError, responseData.Code);
     Assert.AreEqual(Messages.ServerError, responseData.Message);
+    Assert.IsNull(responseData.Set);
   }
 }
