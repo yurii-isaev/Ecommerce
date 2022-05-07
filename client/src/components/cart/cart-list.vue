@@ -4,7 +4,7 @@
       <p class="empty-list-message">Your cart is empty.</p>
     </div>
     <div v-else class="cart-items">
-      <!-- Cart Item Component -->
+      <!-- Component -->
       <CartItem
           v-for="(item, index) in cartArr"
           :key="item.article"
@@ -46,27 +46,11 @@
   import CartItem from '@/components/cart/cart-item';
 
   export default {
-    components: { CartItem }, 
-    
-    data() {
-      return {
-        totalCartObj: {
-          subtotal: 0, 
-          tax: 0, 
-          total: 0, 
-          discount: 0, 
-          quantity: 0
-        }
-      }
-    }, 
-    
-    mounted() {
-      this.updateTotalCartObj();
-    }, 
-    
+    components: { CartItem },
+  
     computed: {
-      ...mapGetters(['CART_STATE']), 
-      
+      ...mapGetters(['CART_STATE']),
+    
       cartArr() {
         return this.CART_STATE
       }, 
@@ -87,6 +71,16 @@
       
       formattedTotal() {
         return this.$formatPrice(this.cartTotal);
+      }, 
+      
+      totalCartObj() {
+        return {
+          subtotal: this.cartTotal, 
+          tax: 0, 
+          total: this.cartTotal, 
+          discount: 0, 
+          quantity: this.cartArr.length
+        };
       }
     }, 
     

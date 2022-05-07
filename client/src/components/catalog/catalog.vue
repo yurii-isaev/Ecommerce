@@ -16,7 +16,7 @@
         </div>
         <div class="range-slider-container">
           <p> Max: {{ formattedMaxPrice }} </p>
-          <input type="range" min="5000" max="10000" step="5" v-model.number="maxPrice" @change="setRangeSlider">
+          <input type="range" min="0" max="10000" step="5" v-model.number="maxPrice" @change="setRangeSlider">
         </div>
       </div>
     </div>

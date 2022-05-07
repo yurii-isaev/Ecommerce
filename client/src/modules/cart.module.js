@@ -59,7 +59,6 @@ const CartModule = {
       const index = state.cart.findIndex(order => order.id === updatedOrder.id);
       if (index !== -1) {
         state.cart[index] = { ...state.cart[index], ...updatedOrder };
-        // Или используя Vue.set
         // Vue.set(state.cart, index, { ...state.cart[index], ...updatedOrder });
       } else {
         state.cart.push(updatedOrder);
@@ -129,10 +128,6 @@ const CartModule = {
       return state.cart.find(item => item.id === id);
     },
     IS_ORDER_PAID: state => state.isPaid,
-  },
-
-  install: (app) => {
-    app.provide('cart', CartModule.state);
   }
 };
 

@@ -13,9 +13,7 @@
     <div class="input-box">
       <i class="uil uil-search search-icon"></i>
       <input type="text" v-model="searchValue" :placeholder="placeholderText"
-             @input="search(searchValue)"
-             @focus="hidePlaceholder"
-             @blur="showPlaceholder">
+             @input="search(searchValue)" @focus="hidePlaceholder" @blur="showPlaceholder">
       <button class="search-btn_clear" @click="clearSearchField">
         <i class="material-icons">cancel</i>
       </button>
@@ -24,47 +22,47 @@
     <ul class="header-menu">
       <li class="menu-item">
         <router-link class="router-link" :to="{ name: 'catalog' }">
-          <img class="icon" src="@/assets/vector/cake.svg"  alt="icon"/>
+          <img class="icon" :class="{ 'active-icon': isActiveRoute('catalog') }" src="@/assets/vector/cake.svg"  alt="icon"/>
         </router-link>
       </li>
-      
+    
       <li class="menu-item">
         <div v-if="!isLoggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
           <img src="@/assets/vector/order-list.svg"  alt="icon"/>
         </div>
         <div v-else>
           <router-link class="router-link" :to="{ name: 'order-list' }">
-            <img src="@/assets/vector/order-list.svg" alt="icon"/>
+            <img class="icon" :class="{ 'active-icon': isActiveRoute('order-list') }" src="@/assets/vector/order-list.svg" alt="icon"/>
           </router-link>
         </div>
       </li>
-  
+    
       <li class="menu-item">
         <div v-if="!isLoggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
-          <img src="@/assets/vector/cart.svg" alt="icon"/>
+          <img class="icon" :class="{ 'active-icon': isActiveRoute('cart-list') }" src="@/assets/vector/cart.svg" alt="icon"/>
           <span class="cart-quantity-icon" v-if="cartLength > 0"> {{ cartLength }} </span>
         </div>
         <div v-else>
           <router-link class="router-link" :to="{ name: 'cart-list' }">
-            <img src="@/assets/vector/cart.svg" alt="icon"/>
+            <img class="icon" :class="{ 'active-icon': isActiveRoute('cart-list') }" src="@/assets/vector/cart.svg" alt="icon"/>
             <span class="cart-quantity-icon" v-if="cartLength > 0"> {{ cartLength }} </span>
           </router-link>
         </div>
       </li>
-  
+    
       <li class="menu-item">
         <div v-if="!isLoggedIn" data-bs-toggle="modal" data-bs-target="#authModal">
-          <img src="@/assets/vector/favorits-heart.svg" alt="icon"/>
+          <img class="icon" :class="{ 'active-icon': isActiveRoute('favorits-list') }" src="@/assets/vector/favorits-heart.svg" alt="icon"/>
           <span class="cart-quantity-icon" v-if="favoritsLength > 0"> {{ favoritsLength }} </span>
         </div>
         <div v-else>
           <router-link class="router-link" :to="{ name: 'favorits-list' }">
-            <img src="@/assets/vector/favorits-heart.svg" alt="icon"/>
+            <img class="icon" :class="{ 'active-icon': isActiveRoute('favorits-list') }" src="@/assets/vector/favorits-heart.svg" alt="icon"/>
             <span class="cart-quantity-icon" v-if="favoritsLength > 0"> {{ favoritsLength }} </span>
           </router-link>
         </div>
       </li>
-      
+    
       <li class="menu-item">
         <!-- Component -->
         <AuthModal/>
@@ -110,6 +108,10 @@
       favoritsLength() {
         return this.FAVORITS_STATE.length;
       },
+  
+      currentRouteName() {
+        return this.$route.name;
+      },
     }, 
     
     methods: {
@@ -144,20 +146,34 @@
       
       updatePlaceholder() {
         this.placeholderText = this.isPlaceholderVisible ? 'Catalog search' : '';
-      }
+      },
+  
+      isActiveRoute(routeName) {
+        return this.currentRouteName === routeName;
+      },
     }
   }
 </script>
 
 <style scoped>
-  .icon {
-    filter: drop-shadow(1px 1px #9B9B9B) drop-shadow(0px 0px 0 #9B9B9B);
-  }
-
-  /*li.menu-item {*/
-  /*  margin-top: 5px;*/
+  /*.icon {*/
+  /*  filter: drop-shadow(0 0 #9B9B9B) drop-shadow(0px 0px 0 #9B9B9B);*/
   /*}*/
 
+  .active-icon {
+    filter: drop-shadow(0 0 #9B9B9B) drop-shadow(0 0 0 #232222);
+  }
+
+  .icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .active-icon {
+    width: 45px;
+    height: 45px;
+  }
+  
   .header {
     display: flex;
     justify-content: center;

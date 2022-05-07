@@ -54,7 +54,7 @@
   import { Field, Form } from 'vee-validate';
   import  {mapGetters } from 'vuex';
   import LoginSchema from '@/validation/loginSchema';
-  import Spinner from '@/components/auth/auth-spinner';
+  import Spinner from '@/components/load-spinner';
 
   export default {
     components: {Form, Field, Spinner}, 

@@ -2,14 +2,15 @@ import axios from 'axios';
 
 const OrderModule = {
   state: {
-    orderList:    [],
+    orderList: [],
     orderDetails: [],
-    orderAddress: {},
+    allOrderAddress: [],
+    currentOrderAddress: {}
   },
 
   actions: {
     SAVE_ORDER_DETAILS({commit}, orderAddress) {
-      commit('SET_ORDER_ADDRESS_TO_STATE', orderAddress);
+      commit('SET_CURRENT_ORDER_ADDRESS_TO_STATE', orderAddress);
     },
 
     // actions
@@ -49,6 +50,14 @@ const OrderModule = {
         console.error('Error during GET_ORDERS_FROM_API:', error);
       }
     },
+
+    CLEAR_ORDER_DETAILS({ commit }) {
+      commit('CLEAR_ORDER_DETAILS');
+    },
+
+    CLEAR_IS_ORDER_PAID({ commit }) {
+      commit('CLEAR_IS_ORDER_PAID');
+    },
   },
 
   mutations: {
@@ -61,7 +70,11 @@ const OrderModule = {
     },
 
     SET_ORDER_ADDRESS_TO_STATE(state, address) {
-      state.orderAddress = address;
+      state.allOrderAddress = address;
+    },
+
+    SET_CURRENT_ORDER_ADDRESS_TO_STATE(state, address) {
+      state.currentOrderAddress = address;
     },
 
     REMOVE_ORDER_FROM_STATE(state, orderId) {
@@ -71,13 +84,22 @@ const OrderModule = {
         // Removing an order from the order list
         state.orderList.splice(index, 1);
       }
-    }
+    },
+
+    CLEAR_ORDER_DETAILS(state) {
+      state.orderDetails = [];
+    },
+
+    CLEAR_IS_ORDER_PAID(state) {
+      state.isOrderPaid = false;
+    },
   },
 
   getters: {
     ORDER_DETAILS: state => state.orderDetails,
     ORDER_LIST: state => state.orderList,
-    ORDER_ADDRESS: state => state.orderAddress,
+    ALL_ORDER_ADDRESS: state => state.allOrderAddress,
+    CURRENT_ORDER_ADDRESS: state => state.currentOrderAddress,
   },
 };
 

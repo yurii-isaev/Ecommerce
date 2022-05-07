@@ -4,84 +4,93 @@
       <p class="empty-list-message">Your order history is empty.</p>
     </div>
     <div v-else>
-      <h3>Order History</h3>
+      <Spinner :isLoading="isLoading" />
+      <div v-if="!isLoading">
+        <h3>Order History</h3>
       <br>
       <table>
         <thead>
         <tr>
-          <th :class="{ 'selected-filter': filters.createdAt !== '' }" @click="sortBy('createdAt')">
+          <th :class="{ 'selected-filter': filters.createdAt !== '' }">
             <select v-model="filters.createdAt" class="filter-select">
               <option value="">All</option>
               <option v-for="date in uniqueDates" :key="date" :value="date">{{ date }}</option>
             </select>
             <img v-if="filters.createdAt !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
-            <br> Date Created
-            <span @click.stop="sortBy('createdAt')" class="triangle"
-                  :class="{ 'triangle-active': sortKey === 'createdAt', 'triangle-inactive': sortKey !== 'createdAt' }">
-              {{ sortKey === 'createdAt' && sortOrder === -1 ? '▼' : '▲' }}
-            </span>
+            <br> <br>
+            <div @click="sortBy('createdAt')" class="sortable-header"> Date Created
+              <span class="triangle" :class="{ 'triangle-active': sortKey === 'createdAt', 'triangle-inactive': sortKey !== 'createdAt' }">
+                  {{ sortKey === 'createdAt' && sortOrder === -1 ? '▼' : '▲' }}
+                </span>
+            </div>
           </th>
           <!--  //  -->
-          <th :class="{ 'selected-filter': filters.orderAddress !== '' }" @click="sortBy('orderAddress')">
-            <select v-model="filters.orderAddress" class="filter-select">
+          <th :class="{ 'selected-filter': filters.orderAddress !== '' }">
+            <select v-model="filters.orderAddress" class="filter-select" @click.stop>
               <option value="">All</option>
+              <option value="No delivery">No delivery</option>
               <option v-for="address in uniqueAddress" :key="address" :value="address">{{ address }}</option>
             </select>
             <img v-if="filters.orderAddress !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
-            <br> Order Address
-            <span @click.stop="sortBy('orderAddress')" class="triangle"
-                  :class="{ 'triangle-active': sortKey === 'orderAddress', 'triangle-inactive': sortKey !== 'orderAddress' }">
-              {{ sortKey === 'orderAddress' && sortOrder === -1 ? '▼' : '▲' }}
-            </span>
+            <br> <br>
+            <div @click="sortBy('orderAddress')" class="sortable-header"> Order Address
+              <span class="triangle" :class="{ 'triangle-active': sortKey === 'orderAddress', 'triangle-inactive': sortKey !== 'orderAddress' }">
+      {{ sortKey === 'orderAddress' && sortOrder === -1 ? '▼' : '▲' }}
+    </span>
+            </div>
           </th>
           <!--  //  -->
-          <th :class="{ 'selected-filter': filters.total !== '' }" @click="sortBy('total')">
-            <select v-model="filters.total" class="filter-select">
+          <th :class="{ 'selected-filter': filters.total !== '' }">
+            <select v-model="filters.total" class="filter-select" @click.stop>
               <option value="">All</option>
               <option v-for="total in uniqueTotals" :key="total" :value="total">{{ total }}</option>
             </select>
             <img v-if="filters.total !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
-            <br> Total
-            <span @click.stop="sortBy('total')" class="triangle"
-                  :class="{ 'triangle-active': sortKey === 'total', 'triangle-inactive': sortKey !== 'total' }">
-              {{ sortKey === 'total' && sortOrder === -1 ? '▼' : '▲' }}
-            </span>
+            <br> <br>
+            <div @click="sortBy('total')" class="sortable-header"> Total
+              <span class="triangle" :class="{ 'triangle-active': sortKey === 'total', 'triangle-inactive': sortKey !== 'total' }">
+                {{ sortKey === 'total' && sortOrder === -1 ? '▼' : '▲' }}
+              </span>
+            </div>
           </th>
           <!--  //  -->
-          <th :class="{ 'selected-filter': filters.discount !== '' }" @click="sortBy('discount')">
-            <select v-model="filters.discount" class="filter-select">
+          <th :class="{ 'selected-filter': filters.discount !== '' }">
+            <select v-model="filters.discount" class="filter-select" @click.stop>
               <option value="">All</option>
               <option v-for="discount in uniqueDiscounts" :key="discount" :value="discount">{{ discount }}</option>
             </select>
             <img v-if="filters.discount !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
-            <br> Discount
-            <span @click.stop="sortBy('discount')" class="triangle"
-                  :class="{ 'triangle-active': sortKey === 'discount', 'triangle-inactive': sortKey !== 'discount' }">
-              {{ sortKey === 'discount' && sortOrder === -1 ? '▼' : '▲' }}
-            </span>
+            <br> <br>
+            <div @click="sortBy('discount')" class="sortable-header"> Discount
+              <span class="triangle" :class="{ 'triangle-active': sortKey === 'discount', 'triangle-inactive': sortKey !== 'discount' }">
+                {{ sortKey === 'discount' && sortOrder === -1 ? '▼' : '▲' }}
+              </span>
+            </div>
           </th>
           <!--  //  -->
-          <th :class="{ 'selected-filter': filters.quantity !== '' }" @click="sortBy('quantity')">
-            <select v-model="filters.quantity" class="filter-select">
+          <th :class="{ 'selected-filter': filters.quantity !== '' }">
+            <select v-model="filters.quantity" class="filter-select" @click.stop>
               <option value="">All</option>
               <option v-for="quantity in uniqueQuantities" :key="quantity" :value="quantity">{{ quantity }}</option>
             </select>
             <img v-if="filters.quantity !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
-            <br> Discount
-            <span @click.stop="sortBy('quantity')" class="triangle"
-                  :class="{ 'triangle-active': sortKey === 'quantity', 'triangle-inactive': sortKey !== 'quantity' }">
-              {{ sortKey === 'quantity' && sortOrder === -1 ? '▼' : '▲' }}
-            </span>
+            <br> <br>
+            <div @click="sortBy('quantity')" class="sortable-header"> Quantity
+              <span class="triangle" :class="{ 'triangle-active': sortKey === 'quantity', 'triangle-inactive': sortKey !== 'quantity' }">
+                {{ sortKey === 'quantity' && sortOrder === -1 ? '▼' : '▲' }}
+              </span>
+            </div>
           </th>
           <!--  //  -->
           <th :class="{ 'selected-filter': filters.isPaid !== '' }">
-            <select v-model="filters.isPaid" class="filter-select">
+            <select v-model="filters.isPaid" class="filter-select" @click.stop>
               <option value="">All</option>
               <option value="true">Yes</option>
               <option value="false">No</option>
             </select>
             <img v-if="filters.isPaid !== ''" class="filter-icon" src="@/assets/bitmap/filter.png" alt="Filter Icon">
-            <br> Is Paid?
+            <br> <br>
+            <div class="sortable-header"> Is Paid? </div>
           </th>
           <!--  //  -->
           <th>Actions</th>
@@ -104,15 +113,17 @@
         </tbody>
       </table>
     </div>
+    </div>
   </section>
 </template>
 
 <script>
   import { mapGetters } from 'vuex';
-  import DeleteModal  from '@/components/order/delete-modal'; 
+  import DeleteModal from '@/components/order/delete-modal';
+  import Spinner from '@/components/load-spinner';
 
   export default {
-    components: { DeleteModal },
+    components: { DeleteModal, Spinner },
     
     data() {
       return {
@@ -125,21 +136,23 @@
           orderAddress: ''
         },
         sortKey: 'createdAt',
-        sortOrder: -1,
-        deleteModalId: 'deleteModal' 
+        sortOrder: -1, // направление сортировки
+        deleteModalId: 'deleteModal',
+        isLoading: true // состояние загрузки
       }
     },
   
-    async created() {
-      try {
-        await this.$store.dispatch('GET_ORDERS_FROM_API', this.userID);
-      } catch (error) {
-        console.error('An error occurred while retrieving data from the API:', error);
-      }
+    mounted() {
+      this.loadOrders();
+      this.startPolling();
     },
   
+    beforeUnmount() {
+      this.stopPolling();
+    },
+    
     computed: {
-      ...mapGetters(['ORDER_LIST', 'ORDER_ADDRESS', 'USER_STATE']),
+      ...mapGetters(['ORDER_LIST', 'ALL_ORDER_ADDRESS', 'USER_STATE']),
   
       orderHistorytIsEmpty() {
         return this.orderList.length === 0;
@@ -150,22 +163,25 @@
       },
     
       orderAddress() {
-        return this.ORDER_ADDRESS;
+        return this.ALL_ORDER_ADDRESS;
       },
     
       userID() {
         return this.USER_STATE?.id || null;
       },
-    
+  
       filterOrders() {
         let filteredOrders = this.orderList;
-      
+    
         // Apply each filter in turn
         if (this.filters.createdAt) {
           filteredOrders = filteredOrders.filter(order => this.formattedDate(order.createdAt) === this.filters.createdAt);
         }
         if (this.filters.orderAddress) {
-          filteredOrders = filteredOrders.filter(order => this.filters.orderAddress.includes(order.orderAddress ? order.orderAddress.address : null));
+          filteredOrders = filteredOrders.filter(order => {
+            const address = order.orderAddress ? order.orderAddress.address : 'No delivery';
+            return address === this.filters.orderAddress;
+          });
         }
         if (this.filters.total) {
           filteredOrders = filteredOrders.filter(order => order.total === this.filters.total);
@@ -182,7 +198,7 @@
         if (this.sortKey) {
           filteredOrders.sort(this.sortFunction);
         }
-      
+    
         return filteredOrders;
       },
     
@@ -215,6 +231,32 @@
     },
     
     methods: {
+      async loadOrders() {
+        try {
+          this.isLoading = true;
+          await this.$store.dispatch('GET_ORDERS_FROM_API', this.userID);
+          setTimeout(() => {this.isLoading = false}, 2000);
+        } catch (error) {
+          console.error('An error occurred while retrieving data from the API:', error);
+          this.isLoading = false;
+        }
+      },
+  
+      // API path listener
+      startPolling() {
+        this.pollingInterval = setInterval(async () => {
+          try {
+            await this.$store.dispatch('GET_ORDERS_FROM_API', this.userID);
+          } catch (error) {
+            console.error('An error occurred while polling data from the API:', error);
+          }
+        }, 5000); // Poll every 15 seconds
+      },
+  
+      stopPolling() {
+        clearInterval(this.pollingInterval);
+      },
+      
       transition(id) {
         this.$router.push({name: 'order-list-item-details', params: {id: id}});
       },
@@ -226,7 +268,7 @@
       formattedDate(date) {
         return this.$formatDate(date);
       },
-      
+  
       sortBy(key) {
         if (this.sortKey === key) {
           // Если ключ сортировки не изменился, меняем направление сортировки
@@ -243,24 +285,24 @@
         if (typeof a[this.sortKey] === 'number') {
           comparison = a[this.sortKey] - b[this.sortKey];
         } else {
-          // Проверяем, не равны ли значения null и обрабатываем объекты соответствующим образом
           let aValue = a[this.sortKey];
           let bValue = b[this.sortKey];
       
-          // Если это объект и у него есть свойство address, используем его для сравнения
-          if (aValue && typeof aValue === 'object' && aValue.address) {
-            aValue = aValue.address;
-          } else {
-            aValue = aValue || ''; // Если значение null или не объект, используем пустую строку
+          if (this.sortKey === 'orderAddress') {
+            aValue = aValue ? aValue.address : null;
+            bValue = bValue ? bValue.address : null;
           }
       
-          if (bValue && typeof bValue === 'object' && bValue.address) {
-            bValue = bValue.address;
+          // Handle "No delivery" values
+          if (aValue === null && bValue !== null) {
+            comparison = -1;
+          } else if (aValue !== null && bValue === null) {
+            comparison = 1;
+          } else if (aValue === null && bValue === null) {
+            comparison = 0;
           } else {
-            bValue = bValue || ''; // Если значение null или не объект, используем пустую строку
+            comparison = aValue.localeCompare(bValue);
           }
-      
-          comparison = aValue.localeCompare(bValue);
         }
         return comparison * this.sortOrder;
       }
@@ -269,6 +311,13 @@
 </script>
 
 <style lang="scss" scoped>
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Высота экрана */
+  }
+
   table {
     width: 100%;
     border-collapse: collapse;
